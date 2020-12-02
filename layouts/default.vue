@@ -68,8 +68,13 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'Inspire',
+          title: 'products',
           to: '/products',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'create',
+          to: '/products/create',
         },
       ],
       miniVariant: true,
