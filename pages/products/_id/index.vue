@@ -1,7 +1,6 @@
 <template>
   <div>
     <h1 class="display-3 mt-8 mb-16">{{ product.title }}</h1>
-    <v-breadcrumbs :items="currentPathArray" divider="/"> </v-breadcrumbs>
     <div>
       <p>{{ product.description }}</p>
       <h3 class="font-weight-light">
@@ -24,7 +23,6 @@
             v-model="selectedSize"
             :items="productSizesArray"
             label="Produkta izmeeri"
-            outlined
           ></v-select>
         </v-col>
       </v-row>
@@ -35,7 +33,7 @@
             v-model="selectedType"
             :items="productTypesArray"
             label="Produkta tipi"
-            @change="selectedSubtypeName = ''"
+            @change="selectedSubtypeName = null"
           ></v-select>
           <!-- @change="resetSelectedSubtype()" -->
           <!-- Perhaps I can find the time to make this keep the previous subtype arround when the user has switched to another type and immedietly display the previously selected subtype when the user reverts to the type for which he already had selected the subtype -->
@@ -164,30 +162,7 @@ export default {
           })
         }
       })
-      // arr = this.productTypesArray[this.selectedType].subtypes
       return arr
-    },
-    currentPathArray() {
-      const arr = this.$route.path.split('/')
-      const array = [
-        {
-          text: 'home',
-          exact: true,
-          to: '/',
-        },
-        {
-          text: arr[1],
-          exact: true,
-          to: '/products',
-        },
-        {
-          text: arr[2],
-          exact: true,
-          to: '/products/' + arr[2],
-          // disabled: true,
-        },
-      ]
-      return array
     },
     productId() {
       const arr = this.$route.path.split('/')
@@ -224,5 +199,3 @@ export default {
   },
 }
 </script>
-
-<style></style>

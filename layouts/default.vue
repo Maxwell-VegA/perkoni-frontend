@@ -24,18 +24,13 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar clipped-left fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
       <v-toolbar-title v-text="title" />
+      <v-breadcrumbs :items="currentPathArray" divider="/"> </v-breadcrumbs>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -57,7 +52,7 @@ export default {
       fixed: false,
       items: [
         {
-          con: 'mdi-apps-bubble',
+          icon: 'mdi-chart-bubble',
           title: 'Welcome',
           to: '/',
         },
@@ -73,6 +68,16 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
+          title: 'product',
+          to: '/products/15',
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'product edit',
+          to: '/products/15/edit',
+        },
+        {
+          icon: 'mdi-chart-bubble',
           title: 'create',
           to: '/products/create',
         },
@@ -82,6 +87,35 @@ export default {
       rightDrawer: false,
       title: 'DEVINI X PERKONI',
     }
+  },
+  computed: {
+    currentPathArray() {
+      const arr = this.$route.path.split('/')
+      const array = [
+        {
+          text: 'home',
+          exact: true,
+          to: '/',
+        },
+        {
+          text: arr[1],
+          exact: true,
+          to: '/' + arr[1],
+        },
+        {
+          text: arr[2],
+          exact: true,
+          to: '/' + arr[1] + '/' + arr[2],
+          // disabled: true,
+        },
+        {
+          text: arr[3],
+          exact: true,
+          to: '/' + arr[1] + '/' + arr[2] + '/' + arr[3],
+        },
+      ]
+      return array
+    },
   },
 }
 </script>
