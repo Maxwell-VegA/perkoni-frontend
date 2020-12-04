@@ -2,8 +2,8 @@
   <div>
     <v-row>
       <v-col cols="12" md="6">
+        <!-- Basic properties -->
         <div>
-          <!-- Basic properties -->
           <v-text-field
             v-model="product.title"
             outlined
@@ -50,16 +50,13 @@
             rows="8"
             no-resize
           ></v-textarea>
-          <p v-if="devMode" class="text--disabled">
-            product.description - {{ product.description }}
-          </p>
           <br />
         </div>
       </v-col>
 
       <v-col cols="12" md="6">
+        <!-- pricing -->
         <div>
-          <!-- pricing -->
           <v-text-field
             v-model="product.base_price"
             :rules="[rules.required]"
@@ -115,12 +112,20 @@
               #item.0="{ item, header }"
             >
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price * header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price * header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template v-else #item.0="{ item, header }">
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price + header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price + header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template
@@ -128,12 +133,20 @@
               #item.1="{ item, header }"
             >
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price * header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price * header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template v-else #item.1="{ item, header }">
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price + header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price + header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template
@@ -141,12 +154,20 @@
               #item.2="{ item, header }"
             >
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price * header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price * header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template v-else #item.2="{ item, header }">
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price + header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price + header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template
@@ -154,12 +175,20 @@
               #item.3="{ item, header }"
             >
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price * header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price * header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template v-else #item.3="{ item, header }">
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price + header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price + header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template
@@ -167,12 +196,20 @@
               #item.4="{ item, header }"
             >
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price * header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price * header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
             <template v-else #item.4="{ item, header }">
               <b v-if="activePrice">
-                {{ parseFloat(activePrice) + item.price + header.price }}
+                {{
+                  (parseFloat(activePrice) + item.price + header.price).toFixed(
+                    2
+                  )
+                }}
               </b>
             </template>
           </v-data-table>
@@ -185,63 +222,143 @@
       </v-col>
     </v-row>
 
-    <div>
-      <!-- Images -->
-      <v-file-input
-        v-model="files"
-        counter
-        filled
-        label="File input"
-        multiple
-        placeholder="Pievieno produkta fotografijas"
-        prepend-icon=""
-        prepend-inner-icon="mdi-camera"
-        :show-size="1000"
-        @change="onImagesSelected"
-      >
-        <!-- make this accept immages only -->
-        <template #selection="{ index, text }">
-          <v-chip v-if="index < 3" outlined text-color="white" label small>
-            {{ text }}
-          </v-chip>
-          <span
-            v-else-if="index === 3"
-            class="overline grey--text text--darken-3 mx-2"
-            >+{{ files.length - 3 }} File(s)
-          </span>
-        </template>
-      </v-file-input>
-      <p v-if="devMode" class="text--disabled">
-        {{ selectedImages }}
-      </p>
-      <v-img
-        v-for="(image, i) in selectedImages"
-        :key="i"
-        aspect-ratio="1"
-        height="400"
-        width="400"
-        :src="
-          'http://127.0.0.1:8000/storage/product_images/temp/' +
-          selectedImages[i]
-        "
-      >
-        <template #placeholder>
-          <!-- <v-img src="https://source.unsplash.com/random"> </v-img> -->
-          <!-- <v-img
-            aspect-ratio="1"
-            height="400"
-            width="400"
-            src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+    <v-row>
+      <v-col cols="12" md="12" lg="9" xl="6">
+        <!-- Images -->
+        <div>
+          <div v-if="selectedImages[0] != null">
+            <v-expansion-panels focusable>
+              <v-expansion-panel v-for="(image, i) in selectedImages" :key="i">
+                <v-expansion-panel-header ripple>
+                  <v-btn
+                    depressed
+                    outlined
+                    left
+                    elevation="2"
+                    max-width="2"
+                    @click="removeImage(image)"
+                  >
+                    <v-icon size="26" color="white">mdi-close</v-icon>
+                  </v-btn>
+                  <span class="ml-10">
+                    {{ image.title }}
+                  </span>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-img
+                        aspect-ratio="1"
+                        :src="
+                          'http://127.0.0.1:8000/storage/product_images/temp/' +
+                          image.fileName
+                        "
+                      >
+                        <template #placeholder>
+                          <!-- <v-img src="https://source.unsplash.com/random"> </v-img> -->
+                          <v-img
+                            aspect-ratio="1"
+                            src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                          >
+                          </v-img>
+                        </template>
+                      </v-img>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="8">
+                      <v-row>
+                        <v-col cols="12" md="8">
+                          <v-text-field
+                            v-model="image.title"
+                            outlined
+                            label="Attela nosaukums"
+                            autofocus
+                            counter="50"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                          <v-text-field
+                            v-model="image.order"
+                            type="number"
+                            label="Kartas nummurs"
+                            filled
+                            persistent-hint
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="12">
+                          <v-textarea
+                            v-model="image.description"
+                            label="Attela apraksts"
+                            counter="255"
+                            dense
+                            outlined
+                            no-resize
+                          ></v-textarea>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            <br />
+          </div>
+          <v-file-input
+            v-model="files"
+            counter
+            filled
+            label="File input"
+            multiple
+            persistent-hint
+            hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser"
+            placeholder="Pievieno produkta fotografijas"
+            prepend-icon="mdi-camera"
+            :show-size="1000"
+            @change="onImagesSelected"
           >
-          </v-img> -->
-        </template>
-      </v-img>
-      <!-- A checkbox for marking the main image of the group -->
-    </div>
+            <!-- make this accept immages only -->
+            <template #selection="{ index, text }">
+              <v-chip v-if="index < 3" outlined text-color="white" label small>
+                {{ text }}
+              </v-chip>
+              <span
+                v-else-if="index === 3"
+                class="overline grey--text text--darken-3 mx-2"
+                >+{{ files.length - 3 }} File(s)
+              </span>
+            </template>
+          </v-file-input>
+          <!-- @event - loading : while loading images display this dialog -->
+          <!-- <v-dialog
+      v-model="dialog"
+      hide-overlay
+      persistent
+      width="300"
+    >
+      <v-card
+        color="primary"
+        dark
+      >
+        <v-card-text>
+          Please stand by
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mb-0"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog> -->
+          <p v-if="devMode" class="text--disabled">
+            {{ selectedImages }}
+          </p>
+        </div>
+      </v-col>
+    </v-row>
 
+    <!-- secondary properties -->
     <div>
-      <!-- secondary properties -->
       <v-combobox
+        v-model="product.taggs"
         label="Add product taggs"
         clearable
         chips
@@ -251,6 +368,9 @@
         hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
       >
       </v-combobox>
+      <p v-if="devMode" class="text--disabled">
+        product.taggs - {{ product.taggs }}
+      </p>
       <br />
       <br />
       <br />
@@ -262,7 +382,11 @@
     <div>
       <!-- controlls -->
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
-      <v-btn @click="setTable">Set table</v-btn>
+      <v-btn @click="storeProduct">Update Product</v-btn>
+      <v-checkbox
+        v-model="product.isPublic"
+        label="Make product publically visable"
+      ></v-checkbox>
       {{ errors }}
     </div>
   </div>
@@ -275,14 +399,15 @@ export default {
   data() {
     return {
       devMode: false,
-      errors: {},
+      errors: [],
       files: [],
       selectedImages: [null],
       product: {
         user_id: 1,
         title: 'Hoodie "Latvia"',
+        isPublic: false,
+        // isConfirmed: true,
         mainCategory: 'Apgerbi',
-        // mainCategoryIndex: 0,
         subcategory: 'Džemperi',
         description:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
@@ -341,13 +466,13 @@ export default {
       taggs: [
         //   this should probably be a generated collection of the most popular taggs on the site instead of being a predefined collection
         // Perhaps also try to include the user's previously used taggs for convenience
-        { text: 'November' },
-        { text: 'Thunder' },
-        { text: 'Autumn' },
-        { text: 'Latvia' },
-        { text: 'Easter' },
-        { text: 'Cool' },
-        { text: 'DIY' },
+        'November',
+        'Thunder',
+        'Autumn',
+        'Latvia',
+        'Easter',
+        'Cool',
+        'DIY',
       ],
       tableSizes: [],
       tableTypes: [],
@@ -402,9 +527,45 @@ export default {
   },
   mounted() {
     // this.getProduct()
-    // this.setTable()
+    this.setTable()
   },
   methods: {
+    getProduct() {
+      axios
+        .get('http://127.0.0.1:8000/api/products/' + this.productId)
+        .then((res) => {
+          // console.log(res.data)
+          this.product = res.data.data
+        })
+        .catch((err) => (this.errors = err.response.data.message))
+    },
+    storeProduct() {
+      console.log(this.product)
+      axios
+        .post('http://127.0.0.1:8000/api/products', {
+          user_id: this.product.user_id,
+          title: this.product.title,
+          isPublic: this.product.isPublic,
+          isConfirmed: this.product.isConfirmed,
+          mainCategory: this.product.mainCategory,
+          subcategory: this.product.subcategory,
+          description: this.product.description,
+          is_new: this.product.is_new,
+          base_price: this.product.base_price,
+          sale_price: this.product.sale_price,
+          on_sale: this.product.on_sale,
+          operatorIsMultiply: this.product.operatorIsMultiply,
+          types: this.product.types,
+          sizes: this.product.sizes,
+          taggs: this.product.taggs,
+          gender: this.product.gender,
+          images: this.selectedImages,
+          // was it not possible to just for loop through this crap?
+        })
+        .then((res) => console.log(res))
+        .catch((err) => this.errors.push(err.response.data.message))
+        .catch((err) => this.errors.push(err.response.data.errors))
+    },
     setTable() {
       this.tableSizes.push({
         text: 'Tipu / izmeeru cenas',
@@ -429,27 +590,59 @@ export default {
         })
       })
     },
-    getProduct() {
-      axios
-        .get('http://127.0.0.1:8000/api/products/' + this.productId)
-        .then((res) => {
-          // console.log(res.data)
-          this.product = res.data.data
-        })
-        .catch((err) => (this.errors = err.response.data.message))
-    },
     onImagesSelected(event) {
-      this.selectedImages = []
+      if (this.selectedImages[0] == null) {
+        this.selectedImages = []
+      }
       event.forEach((file) => {
         const fd = new FormData()
         fd.append('image', file)
+        const index = this.selectedImages.length
+        const imageNameNoExt = file.name.split('.')
+        this.selectedImages.push({
+          fileName: null,
+          title: imageNameNoExt[0],
+          description: '',
+          order: index + 1,
+        })
         axios
           .post('http://127.0.0.1:8000/api/img', fd)
-          .then((res) => this.selectedImages.push(res.data))
+          .then((res) => (this.selectedImages[index].fileName = res.data))
           .catch((err) => (this.errors = JSON.stringify(err)))
       })
       console.log(this.selectedImages)
     },
+    removeImage(objectToDelete) {
+      // console.log(objectToDelete)
+      const removed = this.selectedImages.filter((imgObject) => {
+        return imgObject !== objectToDelete
+      })
+      this.selectedImages = removed
+    },
   },
 }
 </script>
+
+<style scoped>
+/* 
+
+Taggs will be used for - this should be explained in some hoverable info
+pannel. Each tag should have a tooltip showing how many products already exist
+using the tag.
+
+It will be possible to create a product have it approved and then edit it into a completely different product. Changes to products should be logged and displayed somewhere for the admin to see. 
+
+Confirm deleting the product by typing its name. Product will be deleted in 24 hours. If you want to prevent this you will still be able to access this page from your products dasboard. New changes will not be saved. Or maybe they should be changes (person tries to edit a product figures he should delete it then changes his mind but the changes haven't been saved). 
+
+Display loading progress when uploading images
+
+Product brand
+
+Related products
+
+Product shipping (Weight, Size, Available shipping options) Ability to set specific shipping options per size
+
+
+
+*/
+</style>

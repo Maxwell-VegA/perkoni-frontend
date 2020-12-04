@@ -17,18 +17,108 @@
         <span class="display-1"> {{ computedDisplaySalePrice }}$ </span>
       </div>
 
-      <v-row align="center">
+      <v-dialog v-model="fullscreenImage" width="80vh" height="100vh">
+        <v-card>
+          <v-carousel
+            v-model="selectedImageIndex"
+            style="width: 100%"
+            height="100%"
+            progress-color="white"
+            progress
+            continuous
+            hide-delimiters
+          >
+            <v-carousel-item
+              v-for="(image, i) in compImages"
+              :key="i"
+              @click="fullscreenImage = true"
+            >
+              <v-sheet height="100%" width="100%">
+                <v-img
+                  :src="
+                    'http://127.0.0.1:8000/storage/product_images/temp/' +
+                    image.fileName
+                  "
+                  aspect-ratio="1"
+                >
+                  <v-card-title primary-title>
+                    {{ compImages[selectedImageIndex].title }}
+                  </v-card-title>
+                  <template #placeholder>
+                    <v-img
+                      aspect-ratio="1"
+                      src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                    >
+                    </v-img>
+                  </template>
+                </v-img>
+              </v-sheet>
+            </v-carousel-item>
+          </v-carousel>
+          <v-card-text>
+            {{ compImages[selectedImageIndex].description }}
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+
+      <v-row>
+        <v-col cols="12" lg="4">
+          <v-card>
+            <v-carousel
+              v-model="selectedImageIndex"
+              style="width: 100%"
+              height="100%"
+              progress-color="white"
+              progress
+              continuous
+            >
+              <v-carousel-item
+                v-for="(image, i) in compImages"
+                :key="i"
+                @click="fullscreenImage = true"
+              >
+                <v-sheet height="100%" width="100%">
+                  <v-img
+                    :src="
+                      'http://127.0.0.1:8000/storage/product_images/temp/' +
+                      image.fileName
+                    "
+                    aspect-ratio="1"
+                  >
+                    <!-- <v-card-title primary-title>
+                      {{ compImages[selectedImageIndex].title }}
+                    </v-card-title> -->
+                    <template #placeholder>
+                      <v-img
+                        aspect-ratio="1"
+                        src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                      >
+                      </v-img>
+                    </template>
+                  </v-img>
+                </v-sheet>
+              </v-carousel-item>
+            </v-carousel>
+            <v-card-title primary-title>
+              {{ compImages[selectedImageIndex].title }}
+            </v-card-title>
+            <v-card-text>
+              {{ compImages[selectedImageIndex].description }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+
         <v-col class="d-flex" cols="12" sm="6">
           <v-select
             v-model="selectedSize"
             :items="productSizesArray"
             label="Produkta izmeeri"
           ></v-select>
-        </v-col>
-      </v-row>
-
-      <v-row align="center">
-        <v-col class="d-flex" cols="12" sm="6">
+          <br />
+          <br />
+          <br />
+          <br />
+          <v-spacer></v-spacer>
           <v-select
             v-model="selectedType"
             :items="productTypesArray"
@@ -38,11 +128,7 @@
           <!-- @change="resetSelectedSubtype()" -->
           <!-- Perhaps I can find the time to make this keep the previous subtype arround when the user has switched to another type and immedietly display the previously selected subtype when the user reverts to the type for which he already had selected the subtype -->
           <!-- The resetter doesn't seem to be working correctly -->
-        </v-col>
-      </v-row>
 
-      <v-row align="center">
-        <v-col class="d-flex" cols="12" sm="6">
           <v-select
             v-model="selectedSubtypeName"
             :items="productSubtypesArray"
@@ -65,24 +151,41 @@ export default {
       selectedSize: 0,
       selectedType: 0,
       selectedSubtypeName: null,
+      selectedImageIndex: 0,
+      fullscreenImage: false,
       product: {
-        types: [
-          {
-            typeName: null,
-            typePrice: null,
-            typeSecondary: [null],
-          },
-        ],
-        sizes: [
-          {
-            size: null,
-            sizePrice: null,
-          },
+        user_id: null,
+        title: '',
+        mainCategory: '',
+        subcategory: '',
+        description: '',
+        is_new: false,
+        base_price: null,
+        sale_price: null,
+        on_sale: false,
+        operatorIsMultiply: false,
+        taggs: [null],
+        gender: null,
+        types: [{ typeName: null, typePrice: null, typeSecondary: [null] }],
+        sizes: [{ sizeName: null, sizePrice: null }],
+        taggs: [null],
+        images: [
+          { fileName: null, title: null, description: null, order: null },
         ],
       },
     }
   },
   computed: {
+    compImages() {
+      const arr = []
+      this.product.images.forEach((image) => {
+        arr.push({})
+      })
+      this.product.images.forEach((image) => {
+        arr[image.order - 1] = image
+      })
+      return arr
+    },
     computedDisplayNormalPrice() {
       // The actual price of the order must be calculated server-side
       // Don't pass this into the order as the price
@@ -190,9 +293,8 @@ export default {
       axios
         .get('http://127.0.0.1:8000/api/products/' + this.productId)
         .then((res) => {
-          // console.log(res.data)
+          console.log(res.data)
           this.product = res.data.data
-          this.lastPage = res.data.last_page
         })
         .catch((err) => (this.errors = err.response.data.message))
     },

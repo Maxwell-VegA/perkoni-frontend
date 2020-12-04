@@ -69,7 +69,7 @@ export default {
         {
           icon: 'mdi-chart-bubble',
           title: 'product',
-          to: '/products/15',
+          to: '/products/4',
         },
         {
           icon: 'mdi-chart-bubble',
