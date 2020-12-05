@@ -1,21 +1,12 @@
 <template>
   <div>
-    <h1 class="display-3 mt-8 mb-16">{{ product.title }}</h1>
+    <v-col offset-xl="1">
+      <h1 class="display-3 my-8">{{ product.title }}</h1>
+    </v-col>
     <div>
-      <p>{{ product.description }}</p>
-      <h3 class="font-weight-light">
+      <!-- <h3 class="font-weight-light">
         {{ product.mainCategory }}/{{ product.subcategory }}
-      </h3>
-
-      <div v-if="!product.on_sale">
-        <h2 class="display-1">{{ computedDisplayNormalPrice }}$</h2>
-      </div>
-      <div v-else>
-        <span class="display-1 grey--text text-decoration-line-through">
-          {{ computedDisplayNormalPrice }}
-        </span>
-        <span class="display-1"> {{ computedDisplaySalePrice }}$ </span>
-      </div>
+      </h3> -->
 
       <v-dialog v-model="fullscreenImage" width="80vh" height="100vh">
         <v-card>
@@ -28,11 +19,7 @@
             continuous
             hide-delimiters
           >
-            <v-carousel-item
-              v-for="(image, i) in compImages"
-              :key="i"
-              @click="fullscreenImage = true"
-            >
+            <v-carousel-item v-for="(image, i) in compImages" :key="i">
               <v-sheet height="100%" width="100%">
                 <v-img
                   :src="
@@ -61,80 +48,147 @@
         </v-card>
       </v-dialog>
 
-      <v-row>
-        <v-col cols="12" lg="4">
-          <v-card>
-            <v-carousel
-              v-model="selectedImageIndex"
-              style="width: 100%"
-              height="100%"
-              progress-color="white"
-              progress
-              continuous
-            >
-              <v-carousel-item
-                v-for="(image, i) in compImages"
-                :key="i"
-                @click="fullscreenImage = true"
-              >
-                <v-sheet height="100%" width="100%">
-                  <v-img
-                    :src="
-                      'http://127.0.0.1:8000/storage/product_images/temp/' +
-                      image.fileName
-                    "
-                    aspect-ratio="1"
+      <v-row no-gutters>
+        <v-spacer></v-spacer>
+        <v-col cols="12" lg="9" xl="8">
+          <v-row>
+            <v-col cols="12" md="6" xl="5">
+              <v-card>
+                <v-carousel
+                  v-model="selectedImageIndex"
+                  style="width: 100%"
+                  height="100%"
+                  progress-color="white"
+                  progress
+                  continuous
+                >
+                  <v-carousel-item
+                    v-for="(image, i) in compImages"
+                    :key="i"
+                    @click="fullscreenImage = true"
                   >
-                    <!-- <v-card-title primary-title>
+                    <v-sheet height="100%" width="100%">
+                      <v-img
+                        :src="
+                          'http://127.0.0.1:8000/storage/product_images/temp/' +
+                          image.fileName
+                        "
+                        aspect-ratio="1"
+                      >
+                        <!-- <v-card-title primary-title>
                       {{ compImages[selectedImageIndex].title }}
                     </v-card-title> -->
-                    <template #placeholder>
-                      <v-img
-                        aspect-ratio="1"
-                        src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
-                      >
+                        <template #placeholder>
+                          <v-img
+                            aspect-ratio="1"
+                            src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                          >
+                          </v-img>
+                        </template>
                       </v-img>
-                    </template>
-                  </v-img>
-                </v-sheet>
-              </v-carousel-item>
-            </v-carousel>
+                    </v-sheet>
+                  </v-carousel-item>
+                </v-carousel>
+                <v-card-title primary-title>
+                  {{ compImages[selectedImageIndex].title }}
+                </v-card-title>
+                <v-card-text>
+                  {{ compImages[selectedImageIndex].description }}
+                </v-card-text>
+              </v-card>
+            </v-col>
+
+            <v-col cols="12" md="6" xl="7">
+              <v-row align-content="center">
+                <v-col offset="1" cols="10" offset-md="0" md="11">
+                  <p>{{ product.description }}</p>
+                </v-col>
+
+                <v-col offset="1" cols="10" offset-md="0" md="8">
+                  <v-select
+                    v-model="selectedSize"
+                    :items="productSizesArray"
+                    label="Produkta izmeeri"
+                  ></v-select>
+
+                  <v-select
+                    v-model="selectedType"
+                    :items="productTypesArray"
+                    label="Produkta tipi"
+                    @change="selectedSubtypeName = null"
+                  ></v-select>
+
+                  <v-select
+                    v-model="selectedSubtypeName"
+                    :items="productSubtypesArray"
+                    label="Produkta subtipi"
+                  ></v-select>
+                </v-col>
+
+                <v-col
+                  v-if="
+                    computedDisplayNormalPrice !== null &&
+                    computedDisplaySalePrice !== null
+                  "
+                  class="text-h4"
+                  offset="1"
+                  offset-md="0"
+                  cols="12"
+                >
+                  <v-row>
+                    <v-col cols="12" md="5" xl="4">
+                      <div v-show="!product.on_sale">
+                        <p class="header">
+                          {{ computedDisplayNormalPrice.toFixed(2) }}$
+                          <v-icon>mdi-currency-eur</v-icon>
+                        </p>
+                      </div>
+                      <div v-show="product.on_sale">
+                        <p class="text-h4">
+                          {{ computedDisplaySalePrice.toFixed(2) }}
+                          <v-icon size="26">mdi-currency-eur</v-icon>
+                        </p>
+                        <p class="text-h5">
+                          <span class="text-decoration-line-through grey--text">
+                            {{ computedDisplayNormalPrice.toFixed(2) }}
+                          </span>
+                          <v-icon dense disabled>mdi-currency-eur</v-icon>
+                        </p>
+                      </div>
+                    </v-col>
+                    <v-col md="3">
+                      <v-btn color="primary">Add to cart</v-btn>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
+        <v-col cols="12" lg="3" xl="2">
+          <v-card>
+            <v-img
+              aspect-ratio="1"
+              :src="
+                'http://127.0.0.1:8000/storage/product_images/' +
+                product.brand_logo
+              "
+            >
+            </v-img>
+            <v-card-subtitle class="mb-n8" primary-title>
+              Razotajs:
+            </v-card-subtitle>
             <v-card-title primary-title>
-              {{ compImages[selectedImageIndex].title }}
+              {{ product.brand_name }}
             </v-card-title>
+
             <v-card-text>
-              {{ compImages[selectedImageIndex].description }}
+              {{ product.brand_description }}
             </v-card-text>
+            <v-card-subtitle> {{ product.user_username }} </v-card-subtitle>
           </v-card>
         </v-col>
-
-        <v-col class="d-flex" cols="12" sm="6">
-          <v-select
-            v-model="selectedSize"
-            :items="productSizesArray"
-            label="Produkta izmeeri"
-          ></v-select>
-          <br />
-          <br />
-          <br />
-          <br />
-          <v-spacer></v-spacer>
-          <v-select
-            v-model="selectedType"
-            :items="productTypesArray"
-            label="Produkta tipi"
-            @change="selectedSubtypeName = null"
-          ></v-select>
-          <!-- @change="resetSelectedSubtype()" -->
-          <!-- Perhaps I can find the time to make this keep the previous subtype arround when the user has switched to another type and immedietly display the previously selected subtype when the user reverts to the type for which he already had selected the subtype -->
-          <!-- The resetter doesn't seem to be working correctly -->
-
-          <v-select
-            v-model="selectedSubtypeName"
-            :items="productSubtypesArray"
-            label="Produkta subtipi"
-          ></v-select>
-        </v-col>
+        <v-spacer></v-spacer>
       </v-row>
     </div>
     <p>{{ errors }}</p>
@@ -154,7 +208,9 @@ export default {
       selectedImageIndex: 0,
       fullscreenImage: false,
       product: {
-        user_id: null,
+        brand_id: null,
+        brand_name: null,
+        brand_logo: null,
         title: '',
         mainCategory: '',
         subcategory: '',
@@ -230,11 +286,12 @@ export default {
       const arr = []
       this.product.sizes.forEach((size, i) => {
         arr.push({
-          text: size.size,
+          text: size.sizeName,
           price: size.sizePrice,
           value: i,
         })
       })
+      console.log(arr)
       return arr
     },
     selectedSizeName() {
@@ -245,15 +302,15 @@ export default {
     },
     productTypesArray() {
       const arr = []
-      // console.log(this.product.types)
       this.product.types.forEach((type, i) => {
         arr.push({
           text: type.typeName,
-          value: i,
           price: type.typePrice,
           subtypes: type.typeSecondary,
+          value: i,
         })
       })
+      // console.log(arr)
       return arr
     },
     productSubtypesArray() {
@@ -276,7 +333,6 @@ export default {
     this.getProduct()
   },
   methods: {
-    createOrder() {},
     addToCart() {},
     // resetSelectedSubtype() {
     //   let match = false
@@ -293,7 +349,7 @@ export default {
       axios
         .get('http://127.0.0.1:8000/api/products/' + this.productId)
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data.data)
           this.product = res.data.data
         })
         .catch((err) => (this.errors = err.response.data.message))

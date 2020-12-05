@@ -58,13 +58,13 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire',
+          title: 'products',
+          to: '/products',
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'products',
-          to: '/products',
+          title: 'product create',
+          to: '/products/create',
         },
         {
           icon: 'mdi-chart-bubble',
@@ -73,13 +73,8 @@ export default {
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'product edit',
-          to: '/products/15/edit',
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'create',
-          to: '/products/create',
+          title: 'dashboard',
+          to: '/dashboard',
         },
       ],
       miniVariant: true,
