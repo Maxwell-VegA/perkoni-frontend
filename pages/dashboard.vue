@@ -89,6 +89,7 @@
 
 <script>
 export default {
+  middleware: 'auth',
   data: () => ({
     expanded: [],
     dialog: false,

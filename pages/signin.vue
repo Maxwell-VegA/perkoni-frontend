@@ -1,44 +1,27 @@
 <template>
-  <v-form ref="form" v-model="valid" lazy-validation>
-    <v-text-field
-      v-model="email"
-      label="E-pasts"
-      :rules="emailRules"
-      required
-    ></v-text-field>
-    <v-text-field
-      v-model="password"
-      :rules="passwordRules"
-      label="Parole"
-      required
-    ></v-text-field>
-    <v-checkbox v-model="remember" label="Remember me"></v-checkbox>
-
-    <v-btn :disabled="!valid" @click="submit"> submit </v-btn>
-  </v-form>
+  <v-container>
+    <h1>Sign in</h1>
+    <user-auth-form button-text="Sign in" :submit-form="submit" />
+  </v-container>
 </template>
 
 <script>
+import UserAuthForm from '@/components/UserAuthForm'
 export default {
-  data: () => ({
-    valid: true,
-    password: '',
-    passwordRules: [(v) => !!v || 'Password is required'],
-    email: '',
-    emailRules: [(v) => !!v || 'E-mail is required'],
-    select: null,
-    items: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
-    remember: false,
-  }),
-
+  components: { UserAuthForm },
   methods: {
-    //   if (this.$refs.form.validate()) {
-    //       password: this.password,
-    //       email: this.email,
-    //       remember: this.remember
-    //   }
+    async submit(logininfo) {
+      try {
+        await this.$auth.loginWith('local', {
+          data: logininfo,
+        })
+        console.log('success ' + this.$auth.user.username)
+        // make these into nice looking snackbar messages
+      } catch (error) {
+        console.log('failed to authenticate')
+        // make these into nice looking snackbar messages
+      }
+    },
   },
 }
 </script>
-
-<style></style>

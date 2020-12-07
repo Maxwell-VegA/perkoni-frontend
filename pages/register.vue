@@ -1,55 +1,81 @@
 <template>
-  <v-form ref="form" v-model="valid" lazy-validation>
-    <v-text-field
-      v-model="Username"
-      label="Username"
-      :rules="usernameRules"
-      :counter="10"
-      required
-    ></v-text-field>
-    <v-text-field
-      v-model="email"
-      label="E-mail"
-      :rules="emailRules"
-      required
-    ></v-text-field>
-    <v-checkbox
-      v-model="checkbox"
-      label="Do you agree?"
-      :rules="[(v) => !!v || 'You must agree to continue!']"
-      required
-    ></v-checkbox>
+  <v-container>
+    <h1>Register</h1>
 
-    <v-btn :disabled="!valid" @click="submit"> submit </v-btn>
-  </v-form>
+    <v-text-field
+      v-model="userInfo.username"
+      :rules="[
+        required('username'),
+        minLength('username', 3),
+        maxLength('username', 20),
+      ]"
+      validate-on-blur
+      label="Username"
+    ></v-text-field>
+
+    <v-text-field
+      v-model="userInfo.email"
+      label="Email"
+      :rules="[required('email'), emailFormat()]"
+      validate-on-blur
+    />
+
+    <v-text-field
+      v-model="userInfo.password"
+      label="Password"
+      :type="showPassword ? 'text' : 'password'"
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      counter="true"
+      :rules="[required('password'), minLength('password', 7)]"
+      validate-on-blur
+      @click:append="showPassword = !showPassword"
+    />
+
+    <!-- <v-text-field
+      v-model="confirmPassword"
+      label="Confirm password"
+      :type="showPassword2 ? 'text' : 'password'"
+      :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
+      :rules="[required('password'), minLength('password', 7)]"
+      validate-on-blur
+      @click:append="showPassword2 = !showPassword2"
+    /> -->
+
+    <!-- <v-btn :disabled="!valid" @click="submitForm(userInfo)"> Register </v-btn> -->
+    <v-btn @click="submit(userInfo)"> Register </v-btn>
+  </v-container>
 </template>
 
 <script>
-import axios from 'axios'
-
+import validations from '@/utils/validations'
 export default {
-  data: () => ({
-    valid: true,
-    username: '',
-    usernameRules: [
-      (v) => !!v || 'Name is required',
-      (v) => (v && v.length <= 10) || 'Name must be less than 10 characters',
-    ],
-    email: '',
-    emailRules: [
-      (v) => !!v || 'E-mail is required',
-      (v) =>
-        /^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$/.test(v) ||
-        'E-mail must be valid',
-    ],
-    checkbox: false,
-  }),
+  data() {
+    return {
+      valid: false,
+      showPassword: false,
+      //   showPassword2: false,
+      confirmPassword: '',
+      userInfo: {
+        password: '',
+        username: '',
+        email: '',
+      },
+      ...validations,
+    }
+  },
   methods: {
-    submit() {
-      if (this.$refs.form.validate()) {
-      }
-      console.log(1)
+    submit(registrationInfo) {
+      this.$axios
+        .post('auth/register', registrationInfo)
+        .catch((err) => console.log(err.message))
+      this.$auth.loginWith('local', {
+        data: registrationInfo,
+      })
     },
   },
 }
 </script>
+
+<style>
+/* Add a confirm password field. Somehow need to check if email is unique and display the error if its not. As well as display the errors thrown by the laravel validation. */
+</style>

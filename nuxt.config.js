@@ -32,10 +32,10 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     // https://go.nuxtjs.dev/content
-    '@nuxt/content',
+    // '@nuxt/content',
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
@@ -67,4 +67,30 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  auth: {
+    redirect: {
+      home: '/dashboard',
+      logout: '/products',
+      login: '/signin'
+    },
+  strategies: {
+    local: {
+      token: {
+        property: 'token',
+        // required: true,
+        // type: 'Bearer'
+      },
+      user: {
+        property: 'user',
+        // autoFetch: true
+      },
+      endpoints: {
+        login: { url: '/auth/signin', method: 'post', propertyName: 'token'},
+        logout: { url: '/auth/signout', method: 'post', propertyName: 'token'},
+        user: { url: '/auth/user', method: 'get'}
+      }
+    }
+  }
+}
 }
