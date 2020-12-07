@@ -4,9 +4,7 @@
 
     <v-tabs v-model="currentCategory" grow>
       <v-tab v-for="cat in categories" :key="cat.tab">
-        <!-- <v-tab> -->
         {{ cat }}
-        <!-- </v-tab> -->
       </v-tab>
     </v-tabs>
 

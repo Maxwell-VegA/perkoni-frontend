@@ -31,6 +31,10 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-breadcrumbs :items="currentPathArray" divider="/"> </v-breadcrumbs>
+      <v-spacer></v-spacer>
+      <NuxtLink to="/signin"> <v-btn>Sign In</v-btn> </NuxtLink>
+      <NuxtLink to="/register"><v-btn>Register</v-btn></NuxtLink>
+      <a href="#"><v-btn>Sign Out</v-btn></a>
     </v-app-bar>
     <v-main>
       <v-container>

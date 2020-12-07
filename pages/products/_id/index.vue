@@ -167,25 +167,38 @@
         </v-col>
         <v-col cols="12" lg="3" xl="2">
           <v-card>
-            <v-img
-              aspect-ratio="1"
-              :src="
-                'http://127.0.0.1:8000/storage/product_images/' +
-                product.brand_logo
-              "
-            >
-            </v-img>
             <v-card-subtitle class="mb-n8" primary-title>
               Razotajs:
             </v-card-subtitle>
-            <v-card-title primary-title>
+            <v-card-title>
               {{ product.brand_name }}
+              <v-spacer></v-spacer>
+              <v-btn icon @click="brandCardExpanded = !brandCardExpanded">
+                <v-icon>{{
+                  brandCardExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
+                }}</v-icon>
+              </v-btn>
             </v-card-title>
-
-            <v-card-text>
-              {{ product.brand_description }}
-            </v-card-text>
-            <v-card-subtitle> {{ product.user_username }} </v-card-subtitle>
+            <v-expand-transition>
+              <div v-show="brandCardExpanded">
+                <v-divider></v-divider>
+                <v-img
+                  aspect-ratio="1"
+                  :src="
+                    'http://127.0.0.1:8000/storage/product_images/' +
+                    product.brand_logo
+                  "
+                >
+                </v-img>
+                <v-card-text>
+                  {{ product.brand_description }}
+                </v-card-text>
+                <v-card-actions>
+                  <v-btn> Citi produkti no {{ product.brand_name }} </v-btn>
+                </v-card-actions>
+                <v-card-subtitle> {{ product.user_username }} </v-card-subtitle>
+              </div>
+            </v-expand-transition>
           </v-card>
         </v-col>
         <v-spacer></v-spacer>
@@ -207,6 +220,7 @@ export default {
       selectedSubtypeName: null,
       selectedImageIndex: 0,
       fullscreenImage: false,
+      brandCardExpanded: false,
       product: {
         brand_id: null,
         brand_name: null,
