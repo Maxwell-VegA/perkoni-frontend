@@ -7,7 +7,6 @@
         {{ cat }}
       </v-tab>
     </v-tabs>
-
     <!-- <v-tabs v-model="value" vertical>
       <v-tab
         v-for="cat in categoriesMore"

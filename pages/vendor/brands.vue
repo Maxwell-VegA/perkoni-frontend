@@ -2,7 +2,15 @@
   <div>
     <div>
       <v-row>
-        <v-col v-for="(brand, i) in brands" :key="brand.id" cols="3">
+        <v-col
+          v-for="(brand, i) in brands"
+          :key="brand.id"
+          cols="6"
+          sm="4"
+          md="4"
+          lg="3"
+          xl="2"
+        >
           <v-card height="100%">
             <v-img
               aspect-ratio="1"
@@ -14,7 +22,9 @@
                 {{ brand.name }}
               </span>
               <v-spacer></v-spacer>
-              <v-icon @click="edit(i)">mdi-pen</v-icon>
+              <v-btn icon @click="edit(i)">
+                <v-icon>mdi-pen</v-icon>
+              </v-btn>
             </v-card-title>
             <v-card-text>
               {{ brand.description }}
@@ -49,7 +59,7 @@
 
 <script>
 export default {
-  layout: 'vendor',
+  // middleware: 'auth-vendor',
   data() {
     return {
       selectedFile: null,
@@ -105,6 +115,8 @@ export default {
 hint: to change logo upload a new image otherwise the logo will remain unchanged
 
 Place rules on the input fields as well as limit the characters
+
+Warning: deleting a brand will also delete all products listed under this brand *list out the products* else *this brand has no products* / or maybe allow deleting only when a brand has no products 
 
  */
 </style>
