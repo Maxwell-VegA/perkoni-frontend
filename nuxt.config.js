@@ -70,7 +70,7 @@ export default {
 
   auth: {
     redirect: {
-      home: '/dashboard',
+      home: '/vendor',
       logout: '/products',
       login: '/signin'
     },

@@ -19,7 +19,7 @@
       :type="showPassword ? 'text' : 'password'"
       :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
       counter="true"
-      :rules="[required('password'), minLength('password', 3)]"
+      :rules="[required('password'), minLength('password', 7)]"
       @click:append="showPassword = !showPassword"
     />
 
@@ -39,7 +39,7 @@ export default {
       showPassword: false,
       userInfo: {
         email: 'asd@asd.com',
-        password: 'asd',
+        password: 'password',
       },
       ...validations,
     }

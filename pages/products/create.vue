@@ -353,6 +353,15 @@
           </p>
         </div>
       </v-col>
+      <v-col cols="12" md="12" lg="3" xl="6">
+        <div>
+          <v-select v-model="product.brand_id" :items="brands" label="Razotajs">
+            <!-- I need to be able to store things like userBrands in vuex so that they don't have to be grabbed every time the user goes to a different page -->
+            <!-- the value of this needs to be set to the brand id -->
+            <!-- this can be done by giving each brand object a value property equal to it's id in the db. -->
+          </v-select>
+        </div>
+      </v-col>
     </v-row>
 
     <!-- secondary properties -->
@@ -400,6 +409,7 @@
 import axios from 'axios'
 
 export default {
+  layout: 'vendor',
   data() {
     return {
       devMode: false,
@@ -564,9 +574,9 @@ export default {
           // was it not possible to just for loop through this crap?
         })
         .then((res) => console.log(res))
+        .catch((err) => this.errors.push(err.response.data.message))
         .catch((err) => this.errors.push(err.response.data.errors))
         .catch((err) => console.log(err.response.data.errors))
-        .catch((err) => this.errors.push(err.response.data.message))
     },
     setTable() {
       this.tableSizes.push({

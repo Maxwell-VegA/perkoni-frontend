@@ -1,14 +1,11 @@
-// import Vue from 'vue'
-// import Vuex from 'vuex'
-
-// Vue.use(Vuex)
-
 export const state = () => ({
-
+    userBrands: []
 })
 
 export const mutations = {
-
+    getUserBrands() {
+        
+    }
 }
 
 export const actions = {

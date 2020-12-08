@@ -148,8 +148,4 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-// .invisible-category-name
-//   color: red
-//   display: none
-</style>
+<style></style>

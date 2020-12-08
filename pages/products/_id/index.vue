@@ -205,6 +205,7 @@
       </v-row>
     </div>
     <p>{{ errors }}</p>
+    <p>{{ product.base_price }}</p>
   </div>
 </template>
 
