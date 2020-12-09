@@ -2,12 +2,11 @@
   <div>
     <v-col offset-xl="1">
       <h1 class="display-3 my-8">{{ product.title }}</h1>
-    </v-col>
-    <div>
       <!-- <h3 class="font-weight-light">
         {{ product.mainCategory }}/{{ product.subcategory }}
       </h3> -->
-
+    </v-col>
+    <div>
       <v-dialog v-model="fullscreenImage" width="80vh" height="100vh">
         <v-card>
           <v-carousel
@@ -119,6 +118,7 @@
                   ></v-select>
 
                   <v-select
+                    v-show="productSubtypesArray[0] != undefined"
                     v-model="selectedSubtypeName"
                     :items="productSubtypesArray"
                     label="Produkta subtipi"
@@ -126,10 +126,7 @@
                 </v-col>
 
                 <v-col
-                  v-if="
-                    computedDisplayNormalPrice !== null &&
-                    computedDisplaySalePrice !== null
-                  "
+                  v-if="computedDisplayNormalPrice !== null"
                   class="text-h4"
                   offset="1"
                   offset-md="0"
@@ -139,25 +136,40 @@
                     <v-col cols="12" md="5" xl="4">
                       <div v-show="!product.on_sale">
                         <p class="header">
-                          {{ computedDisplayNormalPrice.toFixed(2) }}$
-                          <v-icon>mdi-currency-eur</v-icon>
+                          {{ computedDisplayNormalPrice }}$
+                          <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
                       </div>
                       <div v-show="product.on_sale">
                         <p class="text-h4">
-                          {{ computedDisplaySalePrice.toFixed(2) }}
+                          {{ computedDisplaySalePrice }}
                           <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
                         <p class="text-h5">
                           <span class="text-decoration-line-through grey--text">
-                            {{ computedDisplayNormalPrice.toFixed(2) }}
+                            {{ computedDisplayNormalPrice }}
                           </span>
                           <v-icon dense disabled>mdi-currency-eur</v-icon>
                         </p>
                       </div>
                     </v-col>
                     <v-col md="3">
-                      <v-btn color="primary">Add to cart</v-btn>
+                      <v-btn color="primary">
+                        pievienot grozam
+                        <v-icon>mdi-cart-plus</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        color="primary"
+                        @click="bookmarked = !bookmarked"
+                      >
+                        <v-icon v-if="!bookmarked" large>
+                          mdi-bookmark-outline
+                        </v-icon>
+                        <v-icon v-else large>
+                          mdi-bookmark-check-outline
+                        </v-icon>
+                      </v-btn>
                     </v-col>
                   </v-row>
                 </v-col>
@@ -185,8 +197,7 @@
                 <v-img
                   aspect-ratio="1"
                   :src="
-                    'http://127.0.0.1:8000/storage/product_images/' +
-                    product.brand_logo
+                    'http://127.0.0.1:8000/storage/logos/' + product.brand_logo
                   "
                 >
                 </v-img>
@@ -194,9 +205,23 @@
                   {{ product.brand_description }}
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn> Citi produkti no {{ product.brand_name }} </v-btn>
+                  <v-btn> Citi produkti </v-btn>
+                  <v-spacer></v-spacer>
+                  <a
+                    v-show="product.brand_facebook"
+                    target="_blank"
+                    class="pr-2"
+                    :href="product.brand_facebook"
+                    ><v-icon size="30">mdi-facebook</v-icon>
+                  </a>
+                  <a
+                    v-show="product.brand_instagram"
+                    target="_blank"
+                    class="pr-4"
+                    :href="product.brand_instagram"
+                    ><v-icon size="30">mdi-instagram</v-icon>
+                  </a>
                 </v-card-actions>
-                <v-card-subtitle> {{ product.user_username }} </v-card-subtitle>
               </div>
             </v-expand-transition>
           </v-card>
@@ -205,7 +230,6 @@
       </v-row>
     </div>
     <p>{{ errors }}</p>
-    <p>{{ product.base_price }}</p>
   </div>
 </template>
 
@@ -222,10 +246,13 @@ export default {
       selectedImageIndex: 0,
       fullscreenImage: false,
       brandCardExpanded: false,
+      bookmarked: false,
       product: {
         brand_id: null,
         brand_name: null,
         brand_logo: null,
+        brand_facebook: null,
+        brand_instagram: null,
         title: '',
         mainCategory: '',
         subcategory: '',
@@ -261,37 +288,39 @@ export default {
       // The actual price of the order must be calculated server-side
       // Don't pass this into the order as the price
       // This is for display only
-      // Seems like there is a problem with the database not supporting floats in base_price and likely sale_price as well
-      if (this.product.operator == false) {
-        // multiplication
-        return (
-          this.product.base_price +
-          parseFloat(this.productTypesArray[this.selectedType].price) *
+      if (this.product.base_price != null) {
+        if (this.product.operatorIsMultiply == false) {
+          // multiplication
+          return (
+            this.product.base_price +
+            parseFloat(this.productTypesArray[this.selectedType].price) *
+              parseFloat(this.productSizesArray[this.selectedSize].price)
+          ).toFixed(2)
+        } else {
+          return (
+            this.product.base_price +
+            parseFloat(this.productTypesArray[this.selectedType].price) +
             parseFloat(this.productSizesArray[this.selectedSize].price)
-        )
+          ).toFixed(2)
+        }
       } else {
-        return (
-          this.product.base_price +
-          parseFloat(this.productTypesArray[this.selectedType].price) +
-          parseFloat(this.productSizesArray[this.selectedSize].price)
-        )
+        return null
       }
     },
     computedDisplaySalePrice() {
-      if (this.product.on_sale == true) {
-        if (this.product.operator == false) {
-          // multiplication
+      if (this.product.on_sale == true && this.product.sale_price != null) {
+        if (this.product.operatorIsMultiply == false) {
           return (
             this.product.sale_price +
             parseFloat(this.productTypesArray[this.selectedType].price) *
               parseFloat(this.productSizesArray[this.selectedSize].price)
-          )
+          ).toFixed(2)
         } else {
           return (
             this.product.sale_price +
             parseFloat(this.productTypesArray[this.selectedType].price) +
             parseFloat(this.productSizesArray[this.selectedSize].price)
-          )
+          ).toFixed(2)
         }
       } else {
         return null
@@ -372,3 +401,14 @@ export default {
   },
 }
 </script>
+<style>
+/* 
+
+when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
+
+need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
+
+MUST add some link for sharing
+
+ */
+</style>

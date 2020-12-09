@@ -2,12 +2,12 @@
   <v-app>
     <vendor-nav />
     <!-- Could add a background image to this app bar -->
+    <!-- Could place both sign in and register under the same profile icon next to the cart which would really clean up that section -->
     <v-app-bar elevate-on-scroll clipped-left fixed app clipped-right>
       <v-col md="3">
         <v-toolbar-title v-text="title" />
+        <!-- <v-breadcrumbs :items="currentPathArray" divider="/"> </v-breadcrumbs> -->
       </v-col>
-      <!-- <v-breadcrumbs :items="currentPathArray" divider="/">
-        </v-breadcrumbs> -->
       <v-spacer />
       <v-col md="5">
         <v-row justify="center">
@@ -44,39 +44,37 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <div v-if="$auth.loggedIn">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon size="30">mdi-account-circle-outline</v-icon>
-                  <v-badge content="7"></v-badge>
-                </v-btn>
-              </template>
-              <v-list dense>
-                <v-list-item>
-                  <v-list-item-title>Zinas</v-list-item-title>
-                  <!-- Notifications for new orders (vendors), publication requests (admins), updates on order progress (buyers) -->
-                  <v-list-item-action>
-                    <v-icon>mdi-android-messages</v-icon>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title>Pirkumu vesture</v-list-item-title>
-                  <v-list-item-action>
-                    <v-icon>mdi-format-list-bulleted</v-icon>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title> Saglabatie produkti</v-list-item-title>
-                  <v-icon>mdi-bookmark-check-outline</v-icon>
-                </v-list-item>
-                <v-list-item @click="$auth.logout()">
-                  <v-list-item-title> Sign out </v-list-item-title>
-                  <v-icon>mdi-exit-to-app</v-icon>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
+          <v-menu v-if="$auth.loggedIn" open-on-hover offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn icon v-bind="attrs" v-on="on">
+                <v-icon size="30">mdi-account-circle-outline</v-icon>
+                <v-badge content="7"></v-badge>
+              </v-btn>
+            </template>
+            <v-list dense>
+              <v-list-item>
+                <v-list-item-title>Zinas</v-list-item-title>
+                <!-- Notifications for new orders (vendors), publication requests (admins), updates on order progress (buyers) -->
+                <v-list-item-action>
+                  <v-icon>mdi-android-messages</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>Pirkumu vesture</v-list-item-title>
+                <v-list-item-action>
+                  <v-icon>mdi-format-list-bulleted</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title> Saglabatie produkti</v-list-item-title>
+                <v-icon>mdi-bookmark-check-outline</v-icon>
+              </v-list-item>
+              <v-list-item @click="$auth.logout()">
+                <v-list-item-title> Sign out </v-list-item-title>
+                <v-icon>mdi-exit-to-app</v-icon>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <div v-else class="float-right">
             <v-btn to="/signin">Sign In</v-btn>
             <v-btn to="/register">Register</v-btn>
@@ -156,3 +154,8 @@ export default {
   },
 }
 </script>
+
+<style lang="sass">
+a
+  text-decoration: none
+</style>

@@ -47,8 +47,9 @@
             :rules="[rules.required]"
             validate-on-blur
             outlined
-            rows="8"
+            rows="4"
             no-resize
+            counter="255"
           ></v-textarea>
           <br />
         </div>
@@ -288,7 +289,7 @@
                           <v-textarea
                             v-model="image.description"
                             label="Attela apraksts"
-                            counter="255"
+                            counter="86"
                             dense
                             outlined
                             no-resize
@@ -355,7 +356,11 @@
       </v-col>
       <v-col cols="12" md="12" lg="3" xl="6">
         <div>
-          <v-select v-model="product.brand_id" :items="brands" label="Razotajs">
+          <v-select
+            v-model="product.brand_id"
+            :items="compUserBrands"
+            label="Razotajs"
+          >
             <!-- I need to be able to store things like userBrands in vuex so that they don't have to be grabbed every time the user goes to a different page -->
             <!-- the value of this needs to be set to the brand id -->
             <!-- this can be done by giving each brand object a value property equal to it's id in the db. -->
@@ -406,8 +411,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   layout: 'vendor',
   data() {
@@ -415,18 +418,19 @@ export default {
       devMode: false,
       errors: [],
       showErrorsSnackbar: false,
+      userBrands: [],
       files: [],
       selectedImages: [null],
       product: {
         // user_id: 1,
-        brand_id: 1,
+        brand_id: 0,
         title: 'Hoodie "Latvia"',
         isPublic: false,
         // isConfirmed: true,
         mainCategory: 'Apgerbi',
         subcategory: 'Džemperi',
         description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
+          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
         is_new: true,
         base_price: 30,
         sale_price: 20,
@@ -498,6 +502,16 @@ export default {
     }
   },
   computed: {
+    compUserBrands() {
+      const arr = []
+      this.userBrands.forEach((brand) => {
+        arr.push({
+          text: brand.name,
+          value: brand.id,
+        })
+      })
+      return arr
+    },
     activePrice() {
       if (this.product.on_sale) {
         return this.product.sale_price
@@ -536,22 +550,23 @@ export default {
   },
   mounted() {
     // this.getProduct()
+    this.getUserBrands()
     this.setTable()
   },
   methods: {
-    getProduct() {
-      axios
-        .get('http://127.0.0.1:8000/api/products/' + this.productId)
-        .then((res) => {
-          // console.log(res.data)
-          this.product = res.data.data
-        })
-        .catch((err) => (this.errors = err.response.data.message))
-    },
+    // getProduct() {
+    //   this.$axios
+    //     .get('http://127.0.0.1:8000/api/products/' + this.productId)
+    //     .then((res) => {
+    //       // console.log(res.data)
+    //       this.product = res.data.data
+    //     })
+    //     .catch((err) => (this.errors = err.response.data.message))
+    // },
     storeProduct() {
       console.log(this.product)
       this.errors = []
-      axios
+      this.$axios
         .post('http://127.0.0.1:8000/api/products', {
           // user_id: this.product.user_id,
           brand_id: this.product.brand_id,
@@ -617,7 +632,7 @@ export default {
           description: '',
           order: index + 1,
         })
-        axios
+        this.$axios
           .post('http://127.0.0.1:8000/api/img', fd)
           .then((res) => (this.selectedImages[index].fileName = res.data))
           .catch((err) => (this.errors = JSON.stringify(err)))
@@ -630,6 +645,13 @@ export default {
         return imgObject !== objectToDelete
       })
       this.selectedImages = removed
+    },
+    getUserBrands() {
+      this.$axios
+        .get('brand', {
+          headers: { Authorization: this.$auth.getToken('local') },
+        })
+        .then((res) => (this.userBrands = res.data))
     },
   },
 }
@@ -655,6 +677,10 @@ Product shipping (Weight, Size, Available shipping options) Ability to set speci
 What about shipping quantities? 
 
 Product image order is assigned in the array by the number given in image.order. if this number however is outside the array an error will likely occur.
+
+Add optional long description and shorten limits on the main description
+
+Perhaps after a product has been created the user should be asked where he would like to be redirected to - the product/id page of his new product or the product/id/edit page. If he closes out he simply gets back to a clean create product page.
 
 */
 </style>

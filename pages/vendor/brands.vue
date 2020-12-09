@@ -29,30 +29,64 @@
             <v-card-text>
               {{ brand.description }}
             </v-card-text>
+            <v-card-subtitle>
+              <a :href="brand.facebook">
+                <v-icon v-if="brand.facebook">mdi-facebook</v-icon>
+              </a>
+              <a :href="brand.instagram">
+                <v-icon v-if="brand.instagram">mdi-instagram</v-icon>
+              </a>
+            </v-card-subtitle>
           </v-card>
         </v-col>
+        <v-col cols="6" sm="4" md="4" lg="3" xl="2">
+          <v-text-field
+            v-model="brand.name"
+            outlined
+            label="Nosaukums:"
+            counter="20"
+          ></v-text-field>
+          <v-textarea
+            v-model="brand.description"
+            label="Apraksts:"
+            outlined
+            dense
+            no-resize
+            counter="86"
+          ></v-textarea>
+          <v-text-field
+            v-model="brand.facebook"
+            outlined
+            dense
+            placeholder="https://www.facebook.com/deviniperkoni"
+            label="Facebook"
+            hint="Pievieno linku uz razotaja facebook profilu (nav obligati)"
+            prepend-inner-icon="mdi-facebook"
+          ></v-text-field>
+          <!-- Links must be full (include the https://www. part) so I'll need some validation for that -->
+          <!-- Perhaps I should force prepend the site links and only allow sublinks to their profiles to be added so as to prevent anything else than facebook and instagram links being placed in there -->
+          <v-text-field
+            v-model="brand.instagram"
+            aria-autocomplete="off"
+            outlined
+            dense
+            placeholder="https://www.instagram.com/deviniperkoni"
+            label="Instagram"
+            hint="Pievieno linku uz razotaja instagram profilu (nav obligati)"
+            prepend-inner-icon="mdi-instagram"
+          ></v-text-field>
+          <v-file-input
+            filled
+            label="File input"
+            placeholder="Razotaja logo"
+            prepend-icon=""
+            dense
+            @change="onImageSelected"
+          >
+          </v-file-input>
+          <v-btn width="100%" @click="createBrand">Create brand</v-btn>
+        </v-col>
       </v-row>
-    </div>
-    <div>
-      <v-text-field
-        v-model="brand.name"
-        outlined
-        label="Nosaukums:"
-      ></v-text-field>
-      <v-textarea
-        v-model="brand.description"
-        label="Apraksts:"
-        outlined
-      ></v-textarea>
-      <v-file-input
-        filled
-        label="File input"
-        placeholder="Logo"
-        prepend-icon=""
-        @change="onImageSelected"
-      >
-      </v-file-input>
-      <v-btn @click="createBrand">Create brand</v-btn>
     </div>
   </div>
 </template>
@@ -68,6 +102,8 @@ export default {
         logo: '',
         name: '',
         description: '',
+        facebook: '',
+        instagram: '',
       },
       brands: [],
     }
@@ -89,6 +125,8 @@ export default {
       fd.append('user_id', this.$auth.user.id)
       fd.append('name', this.brand.name)
       fd.append('description', this.brand.description)
+      fd.append('facebook', this.brand.facebook)
+      fd.append('instagram', this.brand.instagram)
       this.$axios.post('brand', fd).catch((err) => console.log(err))
       this.getUserBrands()
     },
