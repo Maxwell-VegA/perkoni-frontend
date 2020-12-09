@@ -2,12 +2,13 @@
   <div>
     <h1 class="display-4 mt-8 mb-16">{{ title }}</h1>
 
-    <v-tabs v-model="currentCategory" grow>
-      <v-tab v-for="cat in categories" :key="cat.tab">
-        {{ cat }}
-      </v-tab>
-    </v-tabs>
-    <!-- <v-tabs v-model="value" vertical>
+    <v-row>
+      <v-tabs v-model="currentCategory" grow>
+        <v-tab v-for="cat in categories" :key="cat.tab">
+          {{ cat }}
+        </v-tab>
+      </v-tabs>
+      <!-- <v-tabs v-model="value" vertical>
       <v-tab
         v-for="cat in categoriesMore"
         v-show="showCategoriesMore"
@@ -18,8 +19,8 @@
       >
         {{ cat }}</v-tab
       >
-    </v-tabs> -->
-    <!-- <v-tab>
+    </v-tabs>
+    <v-tab>
         <b class="invisible-category-name"> Citi </b>
         <v-menu>
           <template v-slot:activator="{ on, attrs }">
@@ -46,6 +47,20 @@
         </v-menu>
       </v-tab> -->
 
+      <v-col md="3"> hey </v-col>
+      <v-col md="9">
+        <v-tabs-items v-model="currentCategory">
+          <v-tab-item v-for="cat in categories" :key="cat.tab">
+            <div v-for="(prod, i) in products" :key="i">
+              <NuxtLink :to="'/products/' + prod.id">
+                <h2 class="">{{ prod.title }}</h2>
+              </NuxtLink>
+            </div>
+          </v-tab-item>
+        </v-tabs-items>
+      </v-col>
+    </v-row>
+
     <v-pagination
       v-model="currentPage"
       class="my-4"
@@ -53,24 +68,11 @@
       total-visible="7"
       :length="lastPage"
     ></v-pagination>
-
-    <v-tabs-items v-model="currentCategory">
-      <v-tab-item v-for="cat in categories" :key="cat.tab">
-        <div v-for="(prod, i) in products" :key="i">
-          <NuxtLink :to="'/products/' + prod.id">
-            <h2 class="">{{ prod.title }}</h2>
-          </NuxtLink>
-        </div>
-      </v-tab-item>
-    </v-tabs-items>
-    <!-- <p>{{ categoryName }}</p> -->
     <p>{{ errors }}</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -112,7 +114,7 @@ export default {
   methods: {
     getProducts() {
       this.categoryName = this.categories[this.currentCategory]
-      axios
+      this.$axios
         .get('http://127.0.0.1:8000/api/products', {
           params: {
             page: this.currentPage,

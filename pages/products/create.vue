@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row>
+    <v-row style="border-bottom: white solid 2px">
+      <!-- Basic properties -->
       <v-col cols="12" md="6">
-        <!-- Basic properties -->
         <div>
           <v-text-field
             v-model="product.title"
@@ -47,57 +47,70 @@
             :rules="[rules.required]"
             validate-on-blur
             outlined
-            rows="4"
+            rows="5"
             no-resize
             counter="255"
+          ></v-textarea>
+          <v-textarea
+            v-model="product.longDescription"
+            label="Garais apraksts (opcionals)"
+            validate-on-blur
+            outlined
+            rows="6"
+            no-resize
+            counter="16000"
           ></v-textarea>
           <br />
         </div>
       </v-col>
-
+      <!-- pricing -->
       <v-col cols="12" md="6">
-        <!-- pricing -->
         <div>
-          <v-text-field
-            v-model="product.base_price"
-            :rules="[rules.required]"
-            validate-on-blur
-            hide-details
-            prepend-icon="mdi-currency-eur"
-            filled
-            label="Pamatcena"
-            type="number"
-          />
-          <br />
-          <v-text-field
-            v-model="product.sale_price"
-            validate-on-blur
-            hide-details
-            filled
-            prepend-icon="mdi-sale"
-            label="Akcijas cena"
-            type="number"
-          />
+          <v-row no-gutters class="mb-3">
+            <v-col cols="6">
+              <v-text-field
+                v-model="product.base_price"
+                :rules="[rules.required]"
+                validate-on-blur
+                hide-details
+                append-icon="mdi-currency-eur"
+                filled
+                label="Pamatcena"
+                type="number"
+              />
+              <v-checkbox
+                v-model="product.operatorIsMultiply"
+                label="Reizinat izmeru un tipu cenas"
+              ></v-checkbox>
+              <p v-if="devMode" class="text--disabled">
+                product.operatorIsMultiply - {{ product.operatorIsMultiply }}
+              </p>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col cols="5">
+              <v-text-field
+                v-model="product.sale_price"
+                validate-on-blur
+                hide-details
+                filled
+                append-icon="mdi-sale"
+                label="Akcijas cena"
+                type="number"
+              />
+              <v-checkbox
+                v-model="product.on_sale"
+                :disabled="!product.sale_price"
+                label="Izmantot akcijas cenu"
+              ></v-checkbox>
+              <p v-if="devMode" class="text--disabled">
+                product.on_sale - {{ product.on_sale }}
+              </p>
+            </v-col>
+          </v-row>
           <p v-if="devMode" class="text--disabled">
             product.sale_price - {{ product.sale_price }}
             <!-- Btw currently it is possible to set a sale price which is higher than the base price -->
           </p>
-          <v-checkbox
-            v-model="product.on_sale"
-            :disabled="!product.sale_price"
-            label="Akcijas cena"
-          ></v-checkbox>
-          <p v-if="devMode" class="text--disabled">
-            product.on_sale - {{ product.on_sale }}
-          </p>
-          <v-checkbox
-            v-model="product.operatorIsMultiply"
-            label="Multiply"
-          ></v-checkbox>
-          <p v-if="devMode" class="text--disabled">
-            product.operatorIsMultiply - {{ product.operatorIsMultiply }}
-          </p>
-          <br />
           <v-data-table
             :headers="tableSizes"
             :items="tableTypes"
@@ -217,181 +230,238 @@
           <p v-if="devMode" class="text--disabled">
             product.operatorIsMultiply - {{ product.operatorIsMultiply }}
           </p>
-          <br />
-          <br />
         </div>
       </v-col>
+    </v-row>
+
+    <v-row style="border-bottom: white solid 2px">
+      <!-- types -->
+      <v-col md="12" xl="6">
+        <p v-if="product.types[0] == null">Beztipu produkts</p>
+        <v-row v-else>
+          <v-col v-for="(type, i) in product.types" :key="i" md="4">
+            <v-row dense>
+              <v-col cols="8">
+                <v-text-field
+                  v-model="type.typeName"
+                  outlined
+                  dense
+                  label="Nosaukums"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  v-model="type.typePrice"
+                  type="number"
+                  outlined
+                  dense
+                  label="Koeficents"
+                ></v-text-field>
+              </v-col>
+              <v-col class="ml-n2" cols="1">
+                <v-btn icon @click="removeType(i)">
+                  <v-icon color="error">mdi-close</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-combobox
+              v-model="type.typeSecondary"
+              label="Subtipi"
+              hint="Spied 'enter' lai atdalitu "
+              clearable
+              dense
+              outlined
+              multiple
+              chips
+              :items="allSubtypes"
+            >
+            </v-combobox>
+          </v-col>
+        </v-row>
+        <v-btn @click="addType">Pievienot tipu</v-btn>
+      </v-col>
+      <!-- sizes -->
+      <v-col md="6"> </v-col>
+    </v-row>
+
+    <v-row style="border-bottom: white solid 2px">
+      <!-- Images -->
+      <v-col cols="12" md="12" lg="9" xl="6">
+        <div v-if="selectedImages[0] != null">
+          <v-expansion-panels focusable>
+            <v-expansion-panel v-for="(image, i) in selectedImages" :key="i">
+              <v-expansion-panel-header ripple>
+                <v-btn
+                  depressed
+                  outlined
+                  left
+                  elevation="2"
+                  max-width="2"
+                  @click="removeImage(image)"
+                >
+                  <v-icon size="26" color="white">mdi-close</v-icon>
+                </v-btn>
+                <span class="ml-10">
+                  {{ image.title }}
+                </span>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-img
+                      aspect-ratio="1"
+                      :src="
+                        'http://127.0.0.1:8000/storage/product_images/temp/' +
+                        image.fileName
+                      "
+                    >
+                      <template #placeholder>
+                        <!-- <v-img src="https://source.unsplash.com/random"> </v-img> -->
+                        <v-img
+                          aspect-ratio="1"
+                          src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                        >
+                        </v-img>
+                      </template>
+                    </v-img>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="8">
+                    <v-row>
+                      <v-col cols="12" md="8">
+                        <v-text-field
+                          v-model="image.title"
+                          outlined
+                          label="Attela nosaukums"
+                          autofocus
+                          counter="50"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-text-field
+                          v-model="image.order"
+                          type="number"
+                          label="Kartas nummurs"
+                          filled
+                          persistent-hint
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="12">
+                        <v-textarea
+                          v-model="image.description"
+                          label="Attela apraksts"
+                          counter="86"
+                          dense
+                          outlined
+                          no-resize
+                        ></v-textarea>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+          <br />
+        </div>
+        <v-file-input
+          v-model="files"
+          counter
+          filled
+          label="File input"
+          multiple
+          persistent-hint
+          hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser"
+          placeholder="Pievieno produkta fotografijas"
+          prepend-icon=""
+          prepend-inner-icon="mdi-camera"
+          :show-size="1000"
+          @change="onImagesSelected"
+        >
+          <!-- make this accept immages only -->
+          <template #selection="{ index, text }">
+            <v-chip v-if="index < 3" outlined text-color="white" label small>
+              {{ text }}
+            </v-chip>
+            <span
+              v-else-if="index === 3"
+              class="overline grey--text text--darken-3 mx-2"
+              >+{{ files.length - 3 }} File(s)
+            </span>
+          </template>
+        </v-file-input>
+        <!-- @event - loading : while loading images display this dialog -->
+        <!-- <v-dialog
+          v-model="dialog"
+          hide-overlay
+          persistent
+          width="300"
+          >
+          <v-card
+            color="primary"
+            dark
+          >
+            <v-card-text>
+              Please stand by
+              <v-progress-linear
+                indeterminate
+                color="white"
+                class="mb-0"
+              ></v-progress-linear>
+            </v-card-text>
+        <v-combobox
+          v-model="product.taggs"
+          label="Produkta tagi"
+          clearable
+          chips
+          multiple
+          :items="taggs"
+          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
+        >
+        </v-combobox>
+          </v-card>
+          </v-dialog> -->
+        <p v-if="devMode" class="text--disabled">
+          {{ selectedImages }}
+        </p>
+      </v-col>
+      <!-- I could use this fourth quarter to display a preview carousel showing how things are going to look on the product page -->
     </v-row>
 
     <v-row>
-      <v-col cols="12" md="12" lg="9" xl="6">
-        <!-- Images -->
-        <div>
-          <div v-if="selectedImages[0] != null">
-            <v-expansion-panels focusable>
-              <v-expansion-panel v-for="(image, i) in selectedImages" :key="i">
-                <v-expansion-panel-header ripple>
-                  <v-btn
-                    depressed
-                    outlined
-                    left
-                    elevation="2"
-                    max-width="2"
-                    @click="removeImage(image)"
-                  >
-                    <v-icon size="26" color="white">mdi-close</v-icon>
-                  </v-btn>
-                  <span class="ml-10">
-                    {{ image.title }}
-                  </span>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-img
-                        aspect-ratio="1"
-                        :src="
-                          'http://127.0.0.1:8000/storage/product_images/temp/' +
-                          image.fileName
-                        "
-                      >
-                        <template #placeholder>
-                          <!-- <v-img src="https://source.unsplash.com/random"> </v-img> -->
-                          <v-img
-                            aspect-ratio="1"
-                            src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
-                          >
-                          </v-img>
-                        </template>
-                      </v-img>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="8">
-                      <v-row>
-                        <v-col cols="12" md="8">
-                          <v-text-field
-                            v-model="image.title"
-                            outlined
-                            label="Attela nosaukums"
-                            autofocus
-                            counter="50"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="4">
-                          <v-text-field
-                            v-model="image.order"
-                            type="number"
-                            label="Kartas nummurs"
-                            filled
-                            persistent-hint
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="12">
-                          <v-textarea
-                            v-model="image.description"
-                            label="Attela apraksts"
-                            counter="86"
-                            dense
-                            outlined
-                            no-resize
-                          ></v-textarea>
-                        </v-col>
-                      </v-row>
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-            <br />
-          </div>
-          <v-file-input
-            v-model="files"
-            counter
-            filled
-            label="File input"
-            multiple
-            persistent-hint
-            hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser"
-            placeholder="Pievieno produkta fotografijas"
-            prepend-icon="mdi-camera"
-            :show-size="1000"
-            @change="onImagesSelected"
-          >
-            <!-- make this accept immages only -->
-            <template #selection="{ index, text }">
-              <v-chip v-if="index < 3" outlined text-color="white" label small>
-                {{ text }}
-              </v-chip>
-              <span
-                v-else-if="index === 3"
-                class="overline grey--text text--darken-3 mx-2"
-                >+{{ files.length - 3 }} File(s)
-              </span>
-            </template>
-          </v-file-input>
-          <!-- @event - loading : while loading images display this dialog -->
-          <!-- <v-dialog
-      v-model="dialog"
-      hide-overlay
-      persistent
-      width="300"
-    >
-      <v-card
-        color="primary"
-        dark
-      >
-        <v-card-text>
-          Please stand by
-          <v-progress-linear
-            indeterminate
-            color="white"
-            class="mb-0"
-          ></v-progress-linear>
-        </v-card-text>
-      </v-card>
-    </v-dialog> -->
-          <p v-if="devMode" class="text--disabled">
-            {{ selectedImages }}
-          </p>
-        </div>
-      </v-col>
-      <v-col cols="12" md="12" lg="3" xl="6">
-        <div>
-          <v-select
-            v-model="product.brand_id"
-            :items="compUserBrands"
-            label="Razotajs"
-          >
-            <!-- I need to be able to store things like userBrands in vuex so that they don't have to be grabbed every time the user goes to a different page -->
-            <!-- the value of this needs to be set to the brand id -->
-            <!-- this can be done by giving each brand object a value property equal to it's id in the db. -->
-          </v-select>
-        </div>
+      <!-- secondary properties -->
+      <v-col md="6">
+        <v-select
+          v-model="product.brand_id"
+          :items="compUserBrands"
+          label="razotajs"
+        >
+          <!-- i need to be able to store things like userbrands in vuex so that they don't have to be grabbed every time the user goes to a different page -->
+          <!-- the value of this needs to be set to the brand id -->
+          <!-- this can be done by giving each brand object a value property equal to it's id in the db. -->
+        </v-select>
+
+        <v-combobox
+          v-model="product.taggs"
+          label="Produkta tagi"
+          clearable
+          chips
+          multiple
+          :items="taggs"
+          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
+        >
+        </v-combobox>
+        <p v-if="devMode" class="text--disabled">
+          product.taggs - {{ product.taggs }}
+        </p>
+
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
       </v-col>
     </v-row>
-
-    <!-- secondary properties -->
-    <div>
-      <v-combobox
-        v-model="product.taggs"
-        label="Add product taggs"
-        clearable
-        chips
-        multiple
-        persistent-hint
-        :items="taggs"
-        hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
-      >
-      </v-combobox>
-      <p v-if="devMode" class="text--disabled">
-        product.taggs - {{ product.taggs }}
-      </p>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-    </div>
 
     <div>
       <!-- controlls -->
@@ -412,7 +482,6 @@
 
 <script>
 export default {
-  layout: 'vendor',
   data() {
     return {
       devMode: false,
@@ -431,6 +500,7 @@ export default {
         subcategory: 'Džemperi',
         description:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
+        longDescription: '',
         is_new: true,
         base_price: 30,
         sale_price: 20,
@@ -440,11 +510,11 @@ export default {
         gender: 'unisex',
         // likely if the gender is set with the product as clothing then the category changed to something else it doesn't reset to genderless
         types: [
-          { typeName: 'Basic', typePrice: 0, typeSecondary: [null] },
-          { typeName: 'Cool', typePrice: 2, typeSecondary: [null] },
-          { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [null] },
-          { typeName: 'Super Cool', typePrice: 5, typeSecondary: [null] },
-          { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [null] },
+          { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
+          // { typeName: 'Cool', typePrice: 2, typeSecondary: [] },
+          // { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [] },
+          { typeName: 'Super Cool', typePrice: 5, typeSecondary: [] },
+          { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [] },
         ],
         sizes: [
           { sizeName: 'S', sizePrice: 0 },
@@ -502,8 +572,17 @@ export default {
     }
   },
   computed: {
-    compUserBrands() {
+    allSubtypes() {
       const arr = []
+      this.product.types.forEach((type) => {
+        type.typeSecondary.forEach((subtype) => {
+          arr.push(subtype)
+        })
+      })
+      return arr
+    },
+    compUserBrands() {
+      let arr = []
       this.userBrands.forEach((brand) => {
         arr.push({
           text: brand.name,
@@ -576,6 +655,7 @@ export default {
           mainCategory: this.product.mainCategory,
           subcategory: this.product.subcategory,
           description: this.product.description,
+          longDescription: this.product.longDescription,
           is_new: this.product.is_new,
           base_price: this.product.base_price,
           sale_price: this.product.sale_price,
@@ -647,11 +727,24 @@ export default {
       this.selectedImages = removed
     },
     getUserBrands() {
+      console.log(1)
       this.$axios
         .get('brand', {
           headers: { Authorization: this.$auth.getToken('local') },
         })
         .then((res) => (this.userBrands = res.data))
+    },
+    addType() {
+      this.product.types.push({
+        typeName: 'New Type',
+        typePrice: 0,
+        typeSecondary: [],
+      })
+    },
+    removeType(i) {
+      this.product.types = this.product.types.filter(function (value, index) {
+        return index != i
+      })
     },
   },
 }
@@ -681,6 +774,8 @@ Product image order is assigned in the array by the number given in image.order.
 Add optional long description and shorten limits on the main description
 
 Perhaps after a product has been created the user should be asked where he would like to be redirected to - the product/id page of his new product or the product/id/edit page. If he closes out he simply gets back to a clean create product page.
+
+Non mvp: add the ability to make the pricing table manually editable
 
 */
 </style>
