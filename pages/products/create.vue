@@ -525,8 +525,18 @@ export default {
       },
       categories: [
         {
-          text: 'Apgerbi',
-          index: 0,
+          text: 'Jaunumi',
+          value: 0,
+          subcategories: [],
+        },
+        {
+          text: 'Akcijas',
+          value: 1,
+          subcategories: [],
+        },
+        {
+          text: 'Apģērbi',
+          value: 2,
           subcategories: [
             'Krekli',
             'Džemperi',
@@ -538,19 +548,35 @@ export default {
           ],
         },
         {
-          text: 'Termouzlimes',
-          index: 1,
-          subcategories: ['Speka zimes', 'Rakstu joslas', 'Teksti'],
+          text: 'Termouzlīmes',
+          value: 3,
+          subcategories: [
+            'Spēka zīmes',
+            'Rakstu joslas',
+            'Latvija / Rīga / latvietis',
+            'Teksti',
+            'Citas',
+          ],
         },
         {
-          text: 'Uzlimes',
-          index: 2,
-          subcategories: ['Speka zimes', 'Rakstu joslas', 'Teksti'],
+          text: 'Uzlīmes',
+          value: 4,
+          subcategories: [
+            'Spēka zīmes',
+            'Rakstu joslas',
+            'Latvija / Rīga / latvietis',
+            'Citas',
+          ],
         },
         {
-          text: 'Tetovejumi',
-          index: 3,
-          subcategories: ['Speka zimes', 'Rakstu joslas', 'Teksti'],
+          text: 'Tetovējumi',
+          value: 5,
+          subcategories: [],
+        },
+        {
+          text: 'Citi',
+          value: 6,
+          subcategories: ['Rotas', 'Somas', 'Lietussargi'],
         },
       ],
       taggs: [

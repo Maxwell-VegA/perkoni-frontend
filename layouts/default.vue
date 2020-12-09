@@ -156,6 +156,8 @@ export default {
 </script>
 
 <style lang="sass">
+.v-card__text, .v-card__title
+  word-break: normal !important
 a
   text-decoration: none
 </style>
