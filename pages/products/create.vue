@@ -11,7 +11,6 @@
             :rules="[rules.required]"
             validate-on-blur
           ></v-text-field>
-          <!--  -->
           <v-select
             v-model="product.mainCategory"
             :items="categories"
@@ -20,10 +19,6 @@
           <p v-if="devMode" class="text--disabled">
             product.mainCategory - {{ product.mainCategory }}
           </p>
-          <p v-if="devMode" class="text--disabled">
-            product.mainCategoryIndex - {{ product.mainCategoryIndex }}
-          </p>
-          <!--  -->
           <v-select
             v-model="compSubcategory"
             :items="compSubcategories"
@@ -31,16 +26,6 @@
             :rules="[rules.required]"
           >
           </v-select>
-          <p v-if="devMode" class="text--disabled">
-            product.subcategory - {{ product.subcategory }}
-          </p>
-          <p v-if="devMode" class="text--disabled">
-            compSubcategories - {{ compSubcategories }}
-          </p>
-          <p v-if="devMode" class="text--disabled">
-            compSubcategory - {{ compSubcategory }}
-          </p>
-          <!--  -->
           <v-textarea
             v-model="product.description"
             label="Apraksts"
@@ -65,181 +50,82 @@
       </v-col>
       <!-- pricing -->
       <v-col cols="12" md="6">
-        <div>
-          <v-row no-gutters class="mb-3">
-            <v-col cols="6">
-              <v-text-field
-                v-model="product.base_price"
-                :rules="[rules.required]"
-                validate-on-blur
-                hide-details
-                append-icon="mdi-currency-eur"
-                filled
-                label="Pamatcena"
-                type="number"
-              />
-              <v-checkbox
-                v-model="product.operatorIsMultiply"
-                label="Reizinat izmeru un tipu cenas"
-              ></v-checkbox>
-              <p v-if="devMode" class="text--disabled">
-                product.operatorIsMultiply - {{ product.operatorIsMultiply }}
-              </p>
-            </v-col>
-            <v-spacer></v-spacer>
-            <v-col cols="5">
-              <v-text-field
-                v-model="product.sale_price"
-                validate-on-blur
-                hide-details
-                filled
-                append-icon="mdi-sale"
-                label="Akcijas cena"
-                type="number"
-              />
-              <v-checkbox
-                v-model="product.on_sale"
-                :disabled="!product.sale_price"
-                label="Izmantot akcijas cenu"
-              ></v-checkbox>
-              <p v-if="devMode" class="text--disabled">
-                product.on_sale - {{ product.on_sale }}
-              </p>
-            </v-col>
-          </v-row>
-          <p v-if="devMode" class="text--disabled">
-            product.sale_price - {{ product.sale_price }}
-            <!-- Btw currently it is possible to set a sale price which is higher than the base price -->
-          </p>
-          <v-data-table
-            :headers="tableSizes"
-            :items="tableTypes"
-            no-data-text="No data generated"
-            disable-filtering
-            disable-pagination
-            disable-sort
-            hide-default-footer
-            class="elevation-1"
-          >
-            <template
-              v-if="product.operatorIsMultiply"
-              #item.0="{ item, header }"
-            >
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price * header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template v-else #item.0="{ item, header }">
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price + header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template
-              v-if="product.operatorIsMultiply"
-              #item.1="{ item, header }"
-            >
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price * header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template v-else #item.1="{ item, header }">
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price + header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template
-              v-if="product.operatorIsMultiply"
-              #item.2="{ item, header }"
-            >
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price * header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template v-else #item.2="{ item, header }">
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price + header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template
-              v-if="product.operatorIsMultiply"
-              #item.3="{ item, header }"
-            >
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price * header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template v-else #item.3="{ item, header }">
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price + header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template
-              v-if="product.operatorIsMultiply"
-              #item.4="{ item, header }"
-            >
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price * header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-            <template v-else #item.4="{ item, header }">
-              <b v-if="activePrice">
-                {{
-                  (parseFloat(activePrice) + item.price + header.price).toFixed(
-                    2
-                  )
-                }}
-              </b>
-            </template>
-          </v-data-table>
-          <p v-if="devMode" class="text--disabled">
-            product.operatorIsMultiply - {{ product.operatorIsMultiply }}
-          </p>
-        </div>
+        <v-row no-gutters class="mb-3">
+          <v-col cols="6">
+            <v-text-field
+              v-model="product.base_price"
+              class="pr-4"
+              :rules="[rules.required]"
+              validate-on-blur
+              hide-details
+              outlined
+              append-icon="mdi-currency-eur"
+              label="Pamatcena"
+              type="number"
+            />
+            <v-checkbox
+              v-model="product.operatorIsMultiply"
+              label="Reizinat izmeru un tipu cenas"
+            ></v-checkbox>
+            <p v-if="devMode" class="text--disabled">
+              product.operatorIsMultiply - {{ product.operatorIsMultiply }}
+            </p>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="6">
+            <v-text-field
+              v-model="product.sale_price"
+              class="pl-4"
+              validate-on-blur
+              hide-details
+              outlined
+              append-icon="mdi-sale"
+              label="Akcijas cena"
+              type="number"
+            />
+            <v-checkbox
+              v-model="product.on_sale"
+              :disabled="!product.sale_price"
+              class="pl-4"
+              label="Izmantot akcijas cenu"
+            ></v-checkbox>
+            <p v-if="devMode" class="text--disabled">
+              product.on_sale - {{ product.on_sale }}
+            </p>
+          </v-col>
+        </v-row>
+        <p v-if="devMode" class="text--disabled">
+          product.sale_price - {{ product.sale_price }}
+          <!-- Btw currently it is possible to set a sale price which is higher than the base price -->
+        </p>
+        <v-data-table
+          class="product-createpage-table"
+          style="background: transparent"
+          :headers="tableSizes"
+          :items="tableTypes"
+          no-data-text="No pricing data generated"
+          disable-filtering
+          disable-sort
+          :items-per-page="7"
+        >
+        </v-data-table>
+        <p v-if="devMode" class="text--disabled">
+          product.operatorIsMultiply - {{ product.operatorIsMultiply }}
+        </p>
       </v-col>
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
       <!-- types -->
-      <v-col md="12" xl="6">
+      <v-col md="12" xl="6" class="px-8">
         <p v-if="product.types[0] == null">Beztipu produkts</p>
         <v-row v-else>
-          <v-col v-for="(type, i) in product.types" :key="i" md="4">
+          <v-col
+            v-for="(type, i) in product.types"
+            :key="i"
+            style="height: 150px"
+            md="4"
+          >
             <v-row dense>
               <v-col cols="8">
                 <v-text-field
@@ -270,6 +156,8 @@
               hint="Spied 'enter' lai atdalitu "
               clearable
               dense
+              small-chips
+              deletable-chips
               outlined
               multiple
               chips
@@ -281,7 +169,43 @@
         <v-btn @click="addType">Pievienot tipu</v-btn>
       </v-col>
       <!-- sizes -->
-      <v-col md="6"> </v-col>
+      <v-col md="12" xl="6" class="px-8">
+        <p v-if="product.sizes[0] == null">Viena izmera produkts</p>
+        <v-row v-else>
+          <v-col
+            v-for="(size, i) in product.sizes"
+            :key="i"
+            :style="compSizeCardHeight"
+            md="4"
+          >
+            <v-row dense>
+              <v-col cols="8">
+                <v-text-field
+                  v-model="size.sizeName"
+                  outlined
+                  dense
+                  label="Nosaukums"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field
+                  v-model="size.sizePrice"
+                  type="number"
+                  outlined
+                  dense
+                  label="Koeficents"
+                ></v-text-field>
+              </v-col>
+              <v-col class="ml-n2" cols="1">
+                <v-btn icon @click="removeSize(i)">
+                  <v-icon color="error">mdi-close</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+        <v-btn @click="addSize">Pievienot izmeru</v-btn>
+      </v-col>
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
@@ -434,12 +358,21 @@
           v-model="product.brand_id"
           :items="compUserBrands"
           label="razotajs"
+          @change="getUserProducts"
         >
-          <!-- i need to be able to store things like userbrands in vuex so that they don't have to be grabbed every time the user goes to a different page -->
-          <!-- the value of this needs to be set to the brand id -->
-          <!-- this can be done by giving each brand object a value property equal to it's id in the db. -->
         </v-select>
-
+        <v-combobox
+          v-model="compRelatedProducts"
+          v-bind="{ disabled: !product.brand_id }"
+          label="Lidzgie produkti"
+          clearable
+          deletable-chips
+          chips
+          multiple
+          counter="9"
+          :items="relatedProducts"
+        >
+        </v-combobox>
         <v-combobox
           v-model="product.taggs"
           label="Produkta tagi"
@@ -450,9 +383,6 @@
           hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
         >
         </v-combobox>
-        <p v-if="devMode" class="text--disabled">
-          product.taggs - {{ product.taggs }}
-        </p>
 
         <br />
         <br />
@@ -467,6 +397,7 @@
       <!-- controlls -->
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
+      <v-btn @click="getUserProducts">Get related</v-btn>
       <v-checkbox
         v-model="product.isPublic"
         label="Make product publically visable"
@@ -507,7 +438,7 @@ export default {
         on_sale: false,
         operatorIsMultiply: false,
         taggs: ['Latvia', 'November', 'Autumn'],
-        gender: 'unisex',
+        gender: 'Unisex',
         // likely if the gender is set with the product as clothing then the category changed to something else it doesn't reset to genderless
         types: [
           { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
@@ -520,37 +451,13 @@ export default {
           { sizeName: 'S', sizePrice: 0 },
           { sizeName: 'M', sizePrice: 2 },
           { sizeName: 'L', sizePrice: 5 },
-          { sizeName: 'XL', sizePrice: 8 },
+          // { sizeName: 'XL', sizePrice: 8 },
         ],
+        related: [],
       },
       categories: [
         {
-          text: 'Jaunumi',
-          value: 0,
-          subcategories: [],
-          genders: [
-            'Bezdzimuma',
-            'Unisex',
-            'Vīriešiem',
-            'Sievietēm',
-            'Bērniem',
-          ],
-        },
-        {
-          text: 'Akcijas',
-          value: 1,
-          subcategories: [],
-          genders: [
-            'Bezdzimuma',
-            'Unisex',
-            'Vīriešiem',
-            'Sievietēm',
-            'Bērniem',
-          ],
-        },
-        {
           text: 'Apģērbi',
-          value: 2,
           subcategories: [
             'Krekli',
             'Džemperi',
@@ -564,7 +471,6 @@ export default {
         },
         {
           text: 'Termouzlīmes',
-          value: 3,
           subcategories: [
             'Spēka zīmes',
             'Rakstu joslas',
@@ -576,7 +482,6 @@ export default {
         },
         {
           text: 'Uzlīmes',
-          value: 4,
           subcategories: [
             'Spēka zīmes',
             'Rakstu joslas',
@@ -587,13 +492,11 @@ export default {
         },
         {
           text: 'Tetovējumi',
-          value: 5,
           subcategories: [],
           genders: [],
         },
         {
           text: 'Citi',
-          value: 6,
           subcategories: ['Rotas', 'Somas', 'Lietussargi'],
           genders: [],
         },
@@ -609,14 +512,26 @@ export default {
         'Cool',
         'DIY',
       ],
-      tableSizes: [],
-      tableTypes: [],
+      relatedProducts: [],
       rules: {
         required: (value) => !!value || 'Field is required / can not be empty.',
       },
     }
   },
   computed: {
+    compRelatedProducts: {
+      get() {
+        return []
+      },
+      set(input) {
+        const arr = []
+        input.forEach((element) => {
+          arr.push(element.value)
+        })
+        this.product.related = arr
+        return input
+      },
+    },
     allSubtypes() {
       const arr = []
       this.product.types.forEach((type) => {
@@ -671,13 +586,74 @@ export default {
       const arr = this.$route.path.split('/')
       return arr[arr.length - 2]
     },
+    compSizeCardHeight() {
+      if (
+        this.product.types.length > 3
+        // && viewport is less than xl
+      ) {
+        return 'height: 150px'
+      } else {
+        return ''
+      }
+    },
+    tableTypes() {
+      const arr = []
+      this.product.types.forEach((i) => arr.push({}))
+      this.product.types.forEach(
+        (type, i) => (
+          (arr[i].name = type.typeName),
+          this.product.sizes.forEach(
+            (size, idx) =>
+              (arr[i]['price' + idx] = this.product.types[i].typePrice)
+          )
+        )
+      )
+      this.product.types.forEach((type, i) =>
+        this.product.sizes.forEach(
+          (size, idx) =>
+            (arr[i]['price' + idx] = this.calculate(
+              arr[i]['price' + idx],
+              size.sizePrice
+            ))
+        )
+      )
+      return arr
+    },
+    tableSizes() {
+      const arr = [
+        {
+          text: 'Tipu / izmeeru cenas',
+          value: 'name',
+          align: 'start',
+        },
+      ]
+      this.product.sizes.forEach((size, i) =>
+        arr.push({
+          text: size.sizeName,
+          price: size.sizePrice,
+          value: 'price' + i,
+        })
+      )
+      return arr
+    },
   },
+  watch: {},
   mounted() {
     // this.getProduct()
     this.getUserBrands()
-    this.setTable()
   },
   methods: {
+    calculate(type, size) {
+      if (this.product.operatorIsMultiply === true) {
+        return (parseFloat(type) * parseFloat(size) + this.activePrice).toFixed(
+          2
+        )
+      } else {
+        return (parseFloat(type) + parseFloat(size) + this.activePrice).toFixed(
+          2
+        )
+      }
+    },
     // getProduct() {
     //   this.$axios
     //     .get('http://127.0.0.1:8000/api/products/' + this.productId)
@@ -691,7 +667,7 @@ export default {
       console.log(this.product)
       this.errors = []
       this.$axios
-        .post('http://127.0.0.1:8000/api/products', {
+        .post('products', {
           // user_id: this.product.user_id,
           brand_id: this.product.brand_id,
           title: this.product.title,
@@ -711,36 +687,13 @@ export default {
           taggs: this.product.taggs,
           gender: this.product.gender,
           images: this.selectedImages,
-          // was it not possible to just for loop through this crap?
+          related: this.product.related,
+          // add related products to database
         })
         .then((res) => console.log(res))
         .catch((err) => this.errors.push(err.response.data.message))
         .catch((err) => this.errors.push(err.response.data.errors))
         .catch((err) => console.log(err.response.data.errors))
-    },
-    setTable() {
-      this.tableSizes.push({
-        text: 'Tipu / izmeeru cenas',
-        value: 'name',
-        align: 'start',
-      })
-
-      this.product.sizes.forEach((size, i) => {
-        this.tableSizes.push({
-          text: size.sizeName,
-          price: size.sizePrice,
-          value: i,
-        })
-      })
-
-      this.product.types.forEach((type, i) => {
-        this.tableTypes.push({
-          name: type.typeName,
-          price: type.typePrice,
-          subtypes: type.secondary,
-          //   ['column' + 1]: this.product.types[i].typePrice,
-        })
-      })
     },
     onImagesSelected(event) {
       if (this.selectedImages[0] == null) {
@@ -758,7 +711,7 @@ export default {
           order: index + 1,
         })
         this.$axios
-          .post('http://127.0.0.1:8000/api/img', fd)
+          .post('img', fd)
           .then((res) => (this.selectedImages[index].fileName = res.data))
           .catch((err) => (this.errors = JSON.stringify(err)))
       })
@@ -772,12 +725,37 @@ export default {
       this.selectedImages = removed
     },
     getUserBrands() {
-      console.log(1)
       this.$axios
         .get('brand', {
           headers: { Authorization: this.$auth.getToken('local') },
         })
         .then((res) => (this.userBrands = res.data))
+    },
+    getUserProducts() {
+      this.$axios
+        .get('products/related', {
+          headers: { Authorization: this.$auth.getToken('local') },
+        })
+        .then((res) => {
+          res.data.forEach((product) => {
+            if (product.brand_id === this.product.brand_id) {
+              this.relatedProducts.push({
+                text: product.title,
+                value: product.id,
+              })
+            }
+          })
+          res.data.forEach((product) => {
+            if (product.brand_id !== this.product.brand_id) {
+              this.relatedProducts.push({
+                text: product.title,
+                value: product.id,
+              })
+            }
+          })
+        })
+        // .then((res) => console.log(res))
+        .catch((err) => (this.errors = err.response.data.message))
     },
     addType() {
       this.product.types.push({
@@ -791,11 +769,28 @@ export default {
         return index != i
       })
     },
+    addSize() {
+      this.product.sizes.push({
+        sizeName: 'New Size',
+        sizePrice: 0,
+      })
+    },
+    removeSize(i) {
+      this.product.sizes = this.product.sizes.filter(function (value, index) {
+        return index != i
+      })
+    },
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss">
+.product-createpage-table {
+  .v-data-footer__select {
+    visibility: hidden !important;
+    z-index: -1000 !important;
+  }
+}
 /* 
 
 Taggs will be used for - this should be explained in some hoverable info
@@ -806,8 +801,6 @@ It will be possible to create a product have it approved and then edit it into a
 Confirm deleting the product by typing its name. Product will be deleted in 24 hours. If you want to prevent this you will still be able to access this page from your products dasboard. New changes will not be saved. Or maybe they should be changes (person tries to edit a product figures he should delete it then changes his mind but the changes haven't been saved). 
 
 Display loading progress when uploading images
-
-Product brand
 
 Related products
 

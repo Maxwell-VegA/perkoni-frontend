@@ -247,7 +247,7 @@ export default {
         this.currentGender
       ]
       this.$axios
-        .get('http://127.0.0.1:8000/api/products', {
+        .get('products', {
           params: {
             page: this.currentPage,
             category: categoryName,
