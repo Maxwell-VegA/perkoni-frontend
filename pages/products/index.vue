@@ -25,8 +25,9 @@
 
           <v-col sm="12" md="3">
             <v-col cols="12" class="ml-n3">
-              <v-card>
-                <v-list>
+              <v-card class="transparent">
+                <v-list nav>
+                  <v-subheader>Subkategorija</v-subheader>
                   <v-list-item-group v-model="currentSubcategory">
                     <v-list-item
                       v-for="(subcategory, i) in categories[currentCategory]
@@ -36,9 +37,16 @@
                       {{ subcategory }}
                     </v-list-item>
                   </v-list-item-group>
-                  <v-list-item-group>
-                    <v-list-item> men </v-list-item>
-                    <v-list-item> women </v-list-item>
+                </v-list>
+                <v-list nav class="mt-6">
+                  <v-subheader>Dzimums</v-subheader>
+                  <v-list-item-group v-model="currentGender">
+                    <v-list-item
+                      v-for="(gender, i) in categories[currentCategory].genders"
+                      :key="i"
+                    >
+                      {{ gender }}
+                    </v-list-item>
                   </v-list-item-group>
                 </v-list>
               </v-card>
@@ -56,7 +64,7 @@
                           style="z-index: -1"
                           class="mb-n7"
                           aspect-ratio="1"
-                          gradient="#1e1e1e00 70%,  #1e1e1e"
+                          gradient="#1e1e1e00 65%,  #1e1e1e"
                           :src="
                             'http://127.0.0.1:8000/storage/product_images/temp/' +
                             prod.images
@@ -66,7 +74,7 @@
                           <template #placeholder>
                             <v-img
                               aspect-ratio="1"
-                              gradient="#1e1e1e00 70%,  #1e1e1e"
+                              gradient="#1e1e1e00 65%,  #1e1e1e"
                               src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
                             >
                             </v-img>
@@ -128,7 +136,7 @@ export default {
       currentPage: 1,
       currentCategory: 2,
       currentSubcategory: null,
-      // categoryName: '',
+      currentGender: null,
       errors: {},
       lastPage: 1,
       products: [],
@@ -137,11 +145,25 @@ export default {
           text: 'Jaunumi',
           value: 0,
           subcategories: [],
+          genders: [
+            'Bezdzimuma',
+            'Unisex',
+            'Vīriešiem',
+            'Sievietēm',
+            'Bērniem',
+          ],
         },
         {
           text: 'Akcijas',
           value: 1,
           subcategories: [],
+          genders: [
+            'Bezdzimuma',
+            'Unisex',
+            'Vīriešiem',
+            'Sievietēm',
+            'Bērniem',
+          ],
         },
         {
           text: 'Apģērbi',
@@ -155,6 +177,7 @@ export default {
             'Šalles',
             'Bez apdrukas',
           ],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
         },
         {
           text: 'Termouzlīmes',
@@ -166,6 +189,7 @@ export default {
             'Teksti',
             'Citas',
           ],
+          genders: [],
         },
         {
           text: 'Uzlīmes',
@@ -176,16 +200,19 @@ export default {
             'Latvija / Rīga / latvietis',
             'Citas',
           ],
+          genders: [],
         },
         {
           text: 'Tetovējumi',
           value: 5,
           subcategories: [],
+          genders: [],
         },
         {
           text: 'Citi',
           value: 6,
           subcategories: ['Rotas', 'Somas', 'Lietussargi'],
+          genders: [],
         },
       ],
     }
@@ -197,8 +224,13 @@ export default {
     },
     currentCategory() {
       this.getProducts()
+      this.currentSubcategory = null
+      this.currentGender = null
     },
     currentSubcategory() {
+      this.getProducts()
+    },
+    currentGender() {
       this.getProducts()
     },
   },
@@ -211,12 +243,16 @@ export default {
       const categoryName = this.categories[this.currentCategory].text
       const subcategoryName = this.categories[this.currentCategory]
         .subcategories[this.currentSubcategory]
+      const genderName = this.categories[this.currentCategory].genders[
+        this.currentGender
+      ]
       this.$axios
         .get('http://127.0.0.1:8000/api/products', {
           params: {
             page: this.currentPage,
             category: categoryName,
             subcategory: subcategoryName,
+            gender: genderName,
           },
         })
         .then((res) => {

@@ -528,11 +528,25 @@ export default {
           text: 'Jaunumi',
           value: 0,
           subcategories: [],
+          genders: [
+            'Bezdzimuma',
+            'Unisex',
+            'Vīriešiem',
+            'Sievietēm',
+            'Bērniem',
+          ],
         },
         {
           text: 'Akcijas',
           value: 1,
           subcategories: [],
+          genders: [
+            'Bezdzimuma',
+            'Unisex',
+            'Vīriešiem',
+            'Sievietēm',
+            'Bērniem',
+          ],
         },
         {
           text: 'Apģērbi',
@@ -546,6 +560,7 @@ export default {
             'Šalles',
             'Bez apdrukas',
           ],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
         },
         {
           text: 'Termouzlīmes',
@@ -557,6 +572,7 @@ export default {
             'Teksti',
             'Citas',
           ],
+          genders: [],
         },
         {
           text: 'Uzlīmes',
@@ -567,16 +583,19 @@ export default {
             'Latvija / Rīga / latvietis',
             'Citas',
           ],
+          genders: [],
         },
         {
           text: 'Tetovējumi',
           value: 5,
           subcategories: [],
+          genders: [],
         },
         {
           text: 'Citi',
           value: 6,
           subcategories: ['Rotas', 'Somas', 'Lietussargi'],
+          genders: [],
         },
       ],
       taggs: [
@@ -608,7 +627,7 @@ export default {
       return arr
     },
     compUserBrands() {
-      let arr = []
+      const arr = []
       this.userBrands.forEach((brand) => {
         arr.push({
           text: brand.name,
