@@ -397,7 +397,6 @@
       <!-- controlls -->
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
-      <v-btn @click="getUserProducts">Get related</v-btn>
       <v-checkbox
         v-model="product.isPublic"
         label="Make product publically visable"

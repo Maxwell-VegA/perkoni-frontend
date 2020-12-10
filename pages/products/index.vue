@@ -1,5 +1,6 @@
 <template>
   <div>
+    <call-to-action />
     <v-row no-gutters>
       <v-spacer></v-spacer>
       <v-col cols="12" xl="9">
@@ -129,7 +130,9 @@
 </template>
 
 <script>
+import callToAction from '~/components/callToAction.vue'
 export default {
+  components: { callToAction },
   data() {
     return {
       title: 'Products page',

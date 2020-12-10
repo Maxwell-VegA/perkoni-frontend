@@ -42,7 +42,12 @@ export default {
         {
           icon: 'mdi-view-dashboard-variant',
           title: 'Dashbord',
-          to: '/admin',
+          to: '/admin/dashboard',
+        },
+        {
+          icon: 'mdi-view-dashboard-variant',
+          title: 'Customize CTA',
+          to: '/admin/customize/cta',
         },
         // mdi-truck-outline - for shipping
         // mdi-badge-account-horizontal-outline - driver's license

@@ -114,7 +114,7 @@
 
 <script>
 import VendorNav from '@/components/VendorNav'
-import AdminNav from '~/components/AdminNav.vue'
+import AdminNav from '@/components/AdminNav'
 export default {
   components: { VendorNav, AdminNav },
   data() {
