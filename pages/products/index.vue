@@ -1,6 +1,7 @@
 <template>
   <div>
     <call-to-action />
+
     <v-row no-gutters>
       <v-spacer></v-spacer>
       <v-col cols="12" xl="9">
@@ -27,7 +28,11 @@
           <v-col sm="12" md="3">
             <v-col cols="12" class="ml-n3">
               <v-card class="transparent">
-                <v-list nav>
+                <v-list
+                  v-show="categories[currentCategory].subcategories.length > 0"
+                  class="mb-6"
+                  nav
+                >
                   <v-subheader>Subkategorija</v-subheader>
                   <v-list-item-group v-model="currentSubcategory">
                     <v-list-item
@@ -39,7 +44,10 @@
                     </v-list-item>
                   </v-list-item-group>
                 </v-list>
-                <v-list nav class="mt-6">
+                <v-list
+                  v-show="categories[currentCategory].genders.length > 0"
+                  nav
+                >
                   <v-subheader>Dzimums</v-subheader>
                   <v-list-item-group v-model="currentGender">
                     <v-list-item
@@ -81,28 +89,40 @@
                             </v-img>
                           </template>
                         </v-img>
-                        <v-card-title>
-                          {{ prod.title }}
-                        </v-card-title>
-                        <v-card-subtitle
-                          class="white--text text-h5 font-weight-light"
+                        <v-row
+                          no-gutters
+                          align-content="space-between"
+                          style="height: 115px"
+                          class=""
                         >
-                          <p v-show="prod.on_sale">
-                            {{ prod.sale_price.toFixed(2) }}
-                            <v-icon dense>mdi-currency-eur</v-icon>
-                          </p>
-                          <p
-                            :class="{
-                              'text-decoration-line-through red--text mt-n5 text-h6 font-weight-light':
-                                prod.on_sale,
-                            }"
-                          >
-                            {{ prod.base_price.toFixed(2) }}
-                            <v-icon v-show="!prod.on_sale" dense>
-                              mdi-currency-eur
-                            </v-icon>
-                          </p>
-                        </v-card-subtitle>
+                          <v-col cols="12">
+                            <v-card-title style="line-height: 1.1" class="py-0">
+                              {{ prod.title }}
+                            </v-card-title>
+                          </v-col>
+                          <v-col cols="12" class="mb-n2">
+                            <v-card-subtitle
+                              class="white--text text-h5 py-0 font-weight-light"
+                            >
+                              <p v-show="prod.on_sale" class="mb-3">
+                                {{ prod.sale_price.toFixed(2) }}
+                                <v-icon dense>mdi-currency-eur</v-icon>
+                              </p>
+                              <p
+                                :class="{
+                                  'text-decoration-line-through red--text mt-n5 text-h6 font-weight-light':
+                                    prod.on_sale,
+                                }"
+                              >
+                                {{ prod.base_price.toFixed(2) }}
+                                <v-icon v-show="!prod.on_sale" dense>
+                                  mdi-currency-eur
+                                </v-icon>
+                              </p>
+                              <br v-show="!prod.on_sale" />
+                            </v-card-subtitle>
+                          </v-col>
+                        </v-row>
                       </v-card>
                     </NuxtLink>
                   </v-col>
@@ -110,8 +130,8 @@
               </v-tab-item>
             </v-tabs-items>
           </v-col>
-          <v-col sm="12" md="3"></v-col>
-          <v-col sm="12" md="9">
+          <v-col v-show="lastPage != 1" sm="12" md="3"></v-col>
+          <v-col v-show="lastPage != 1" sm="12" md="9">
             <v-pagination
               v-model="currentPage"
               class="my-4"

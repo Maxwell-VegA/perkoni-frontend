@@ -177,6 +177,8 @@
             :key="i"
             :style="compSizeCardHeight"
             md="4"
+            lg="3"
+            xl="4"
           >
             <v-row dense>
               <v-col cols="8">
@@ -387,9 +389,6 @@
         <br />
         <br />
         <br />
-        <br />
-        <br />
-        <br />
       </v-col>
     </v-row>
 
@@ -397,6 +396,11 @@
       <!-- controlls -->
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
+      <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
+      <v-btn>Submit for review</v-btn>
+
+      <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn
+      ><!-- Only visible on edit page -->
       <v-checkbox
         v-model="product.isPublic"
         label="Make product publically visable"
@@ -421,7 +425,6 @@ export default {
       files: [],
       selectedImages: [null],
       product: {
-        // user_id: 1,
         brand_id: 0,
         title: 'Hoodie "Latvia"',
         isPublic: false,
@@ -644,13 +647,16 @@ export default {
   methods: {
     calculate(type, size) {
       if (this.product.operatorIsMultiply === true) {
-        return (parseFloat(type) * parseFloat(size) + this.activePrice).toFixed(
-          2
-        )
+        return (
+          parseFloat(type) * parseFloat(size) +
+          parseFloat(this.activePrice)
+        ).toFixed(2)
       } else {
-        return (parseFloat(type) + parseFloat(size) + this.activePrice).toFixed(
-          2
-        )
+        return (
+          parseFloat(type) +
+          parseFloat(size) +
+          parseFloat(this.activePrice)
+        ).toFixed(2)
       }
     },
     // getProduct() {
@@ -812,7 +818,11 @@ Add optional long description and shorten limits on the main description
 
 Perhaps after a product has been created the user should be asked where he would like to be redirected to - the product/id page of his new product or the product/id/edit page. If he closes out he simply gets back to a clean create product page.
 
-Non mvp: add the ability to make the pricing table manually editable
+Non mvp: 
+  add the ability to make the pricing table manually editable
+  add the ability to express the discounted price as a percentage of the total price (size and type multipliers included)
+
+Should it be possible to have products pre-approved?
 
 */
 </style>

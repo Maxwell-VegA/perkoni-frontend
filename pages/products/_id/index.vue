@@ -136,7 +136,7 @@
                     <v-col cols="12" md="5" xl="4">
                       <div v-show="!product.on_sale">
                         <p class="header">
-                          {{ computedDisplayNormalPrice }}$
+                          {{ computedDisplayNormalPrice }}
                           <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
                       </div>
@@ -154,7 +154,7 @@
                       </div>
                     </v-col>
                     <v-col md="3">
-                      <v-btn color="primary">
+                      <v-btn color="primary" @click="addToCart">
                         pievienot grozam
                         <v-icon>mdi-cart-plus</v-icon>
                       </v-btn>
@@ -230,12 +230,14 @@
       </v-row>
     </div>
     <p>{{ errors }}</p>
+    <p>{{ selectedType }}</p>
+    <p>{{ selectedSubtypeName }}</p>
+    <p>{{ selectedSubtypeIndex }} the index</p>
+    <p>{{ selectedSize }}</p>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   data() {
     return {
@@ -248,6 +250,7 @@ export default {
       brandCardExpanded: false,
       bookmarked: false,
       product: {
+        id: null,
         brand_id: null,
         brand_name: null,
         brand_logo: null,
@@ -289,7 +292,7 @@ export default {
       // Don't pass this into the order as the price
       // This is for display only
       if (this.product.base_price != null) {
-        if (this.product.operatorIsMultiply == false) {
+        if (this.product.operatorIsMultiply == true) {
           // multiplication
           return (
             this.product.base_price +
@@ -309,7 +312,7 @@ export default {
     },
     computedDisplaySalePrice() {
       if (this.product.on_sale == true && this.product.sale_price != null) {
-        if (this.product.operatorIsMultiply == false) {
+        if (this.product.operatorIsMultiply == true) {
           return (
             this.product.sale_price +
             parseFloat(this.productTypesArray[this.selectedType].price) *
@@ -337,12 +340,6 @@ export default {
       })
       console.log(arr)
       return arr
-    },
-    selectedSizeName() {
-      return this.product.sizes[this.selectedSize].size
-    },
-    selectedTypeName() {
-      return this.product.types[this.selectedType].typeName
     },
     productTypesArray() {
       const arr = []
@@ -372,12 +369,32 @@ export default {
       const arr = this.$route.path.split('/')
       return arr[arr.length - 1]
     },
+    selectedSubtypeIndex() {
+      let returnThis
+      this.product.types[this.selectedType].typeSecondary.forEach(
+        (subtype, i) => {
+          if (subtype == this.selectedSubtypeName) {
+            returnThis = i
+          }
+        }
+      )
+      return returnThis
+    },
   },
   mounted() {
     this.getProduct()
   },
   methods: {
-    addToCart() {},
+    addToCart() {
+      this.$axios.post('cart', {
+        productId: this.productId,
+        selectedType: this.selectedType,
+        selectedSubtype: this.selectedSubtypeIndex,
+        selectedSize: this.selectedSize,
+      })
+      // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
+      // Might be I can use a snackbar here
+    },
     // resetSelectedSubtype() {
     //   let match = false
     //   this.product.types[this.selectedType].typeSecondary.forEach((subtype) => {
@@ -390,8 +407,8 @@ export default {
     //   })
     // },
     getProduct() {
-      axios
-        .get('http://127.0.0.1:8000/api/products/' + this.productId)
+      this.$axios
+        .get('products/' + this.productId)
         .then((res) => {
           console.log(res.data.data)
           this.product = res.data.data
@@ -404,7 +421,6 @@ export default {
 <style>
 /* 
 
-when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
 
 need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
 
