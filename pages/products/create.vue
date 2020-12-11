@@ -428,7 +428,7 @@ export default {
         brand_id: 0,
         title: 'Hoodie "Latvia"',
         isPublic: false,
-        // isConfirmed: true,
+        isConfirmed: true,
         mainCategory: 'Apgerbi',
         subcategory: 'Džemperi',
         description:
@@ -661,7 +661,7 @@ export default {
     },
     // getProduct() {
     //   this.$axios
-    //     .get('http://127.0.0.1:8000/api/products/' + this.productId)
+    //     .get('http://127.0.0.1:8000/api/products/' + this.productId + '/edit)
     //     .then((res) => {
     //       // console.log(res.data)
     //       this.product = res.data.data
@@ -671,6 +671,23 @@ export default {
     storeProduct() {
       console.log(this.product)
       this.errors = []
+      let typesFound = this.product.types
+      let sizesFound = this.product.sizes
+
+      if (typesFound[0] == undefined) {
+        typesFound = [
+          {
+            typeName: 'singleTypeProduct',
+            typePrice: 0,
+            typeSecondary: [null],
+          },
+        ]
+      }
+      if (sizesFound[0] == undefined) {
+        sizesFound = [{ sizeName: 'singleSizeProduct', sizePrice: 0 }]
+      }
+      // console.log(this.product.types)
+      // console.log(this.product.sizes)
       this.$axios
         .post('products', {
           // user_id: this.product.user_id,
@@ -687,13 +704,12 @@ export default {
           sale_price: this.product.sale_price,
           on_sale: this.product.on_sale,
           operatorIsMultiply: this.product.operatorIsMultiply,
-          types: this.product.types,
-          sizes: this.product.sizes,
+          types: typesFound,
+          sizes: sizesFound,
           taggs: this.product.taggs,
           gender: this.product.gender,
           images: this.selectedImages,
           related: this.product.related,
-          // add related products to database
         })
         .then((res) => console.log(res))
         .catch((err) => this.errors.push(err.response.data.message))
@@ -823,6 +839,8 @@ Non mvp:
   add the ability to express the discounted price as a percentage of the total price (size and type multipliers included)
 
 Should it be possible to have products pre-approved?
+
+In the admin dashboard by default delete marked products will have to be manually removed by the admin however it should be possible to set an autodelete which will delete any products that have been marked for deletion but haven't been updated since then for a day.
 
 */
 </style>

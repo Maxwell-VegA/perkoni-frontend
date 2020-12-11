@@ -105,12 +105,14 @@
 
                 <v-col offset="1" cols="10" offset-md="0" md="8">
                   <v-select
+                    v-show="productSizesArray[0].text != 'singleSizeProduct'"
                     v-model="selectedSize"
                     :items="productSizesArray"
                     label="Produkta izmeeri"
                   ></v-select>
 
                   <v-select
+                    v-show="productTypesArray[0].text != 'singleTypeProduct'"
                     v-model="selectedType"
                     :items="productTypesArray"
                     label="Produkta tipi"
@@ -126,7 +128,7 @@
                 </v-col>
 
                 <v-col
-                  v-if="computedDisplayNormalPrice !== null"
+                  v-if="product.base_price !== null"
                   class="text-h4"
                   offset="1"
                   offset-md="0"
@@ -136,18 +138,18 @@
                     <v-col cols="12" md="5" xl="4">
                       <div v-show="!product.on_sale">
                         <p class="header">
-                          {{ computedDisplayNormalPrice }}
+                          {{ displayPrice(product.base_price) }}
                           <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
                       </div>
                       <div v-show="product.on_sale">
                         <p class="text-h4">
-                          {{ computedDisplaySalePrice }}
+                          {{ displayPrice(product.sale_price) }}
                           <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
                         <p class="text-h5">
                           <span class="text-decoration-line-through grey--text">
-                            {{ computedDisplayNormalPrice }}
+                            {{ displayPrice(product.base_price) }}
                           </span>
                           <v-icon dense disabled>mdi-currency-eur</v-icon>
                         </p>
@@ -230,10 +232,6 @@
       </v-row>
     </div>
     <p>{{ errors }}</p>
-    <p>{{ selectedType }}</p>
-    <p>{{ selectedSubtypeName }}</p>
-    <p>{{ selectedSubtypeIndex }} the index</p>
-    <p>{{ selectedSize }}</p>
   </div>
 </template>
 
@@ -277,6 +275,15 @@ export default {
     }
   },
   computed: {
+    activePrice() {
+      let returnThis = 0
+      if (this.product.on_sale) {
+        returnThis = this.product.sale_price
+      } else {
+        returnThis = this.product.base_price
+      }
+      return returnThis
+    },
     compImages() {
       const arr = []
       this.product.images.forEach((image) => {
@@ -286,48 +293,6 @@ export default {
         arr[image.order - 1] = image
       })
       return arr
-    },
-    computedDisplayNormalPrice() {
-      // The actual price of the order must be calculated server-side
-      // Don't pass this into the order as the price
-      // This is for display only
-      if (this.product.base_price != null) {
-        if (this.product.operatorIsMultiply == true) {
-          // multiplication
-          return (
-            this.product.base_price +
-            parseFloat(this.productTypesArray[this.selectedType].price) *
-              parseFloat(this.productSizesArray[this.selectedSize].price)
-          ).toFixed(2)
-        } else {
-          return (
-            this.product.base_price +
-            parseFloat(this.productTypesArray[this.selectedType].price) +
-            parseFloat(this.productSizesArray[this.selectedSize].price)
-          ).toFixed(2)
-        }
-      } else {
-        return null
-      }
-    },
-    computedDisplaySalePrice() {
-      if (this.product.on_sale == true && this.product.sale_price != null) {
-        if (this.product.operatorIsMultiply == true) {
-          return (
-            this.product.sale_price +
-            parseFloat(this.productTypesArray[this.selectedType].price) *
-              parseFloat(this.productSizesArray[this.selectedSize].price)
-          ).toFixed(2)
-        } else {
-          return (
-            this.product.sale_price +
-            parseFloat(this.productTypesArray[this.selectedType].price) +
-            parseFloat(this.productSizesArray[this.selectedSize].price)
-          ).toFixed(2)
-        }
-      } else {
-        return null
-      }
     },
     productSizesArray() {
       const arr = []
@@ -385,13 +350,45 @@ export default {
     this.getProduct()
   },
   methods: {
+    displayPrice(price) {
+      const typePrice = 0
+      const sizePrice = 0
+      if (this.product.types[0] != undefined) {
+        const typePrice = parseFloat(
+          this.productTypesArray[this.selectedType].price
+        )
+      }
+      if (this.product.sizes[0] != undefined) {
+        const sizePrice = parseFloat(
+          this.productSizesArray[this.selectedSize].price
+        )
+      }
+      if (price != null) {
+        if (this.product.operatorIsMultiply == true) {
+          return (price + typePrice * sizePrice).toFixed(2)
+        } else {
+          return (price + typePrice + sizePrice).toFixed(2)
+        }
+      } else {
+        return null
+      }
+    },
     addToCart() {
-      this.$axios.post('cart', {
-        productId: this.productId,
-        selectedType: this.selectedType,
-        selectedSubtype: this.selectedSubtypeIndex,
-        selectedSize: this.selectedSize,
-      })
+      this.$axios
+        .post('cart', {
+          productId: parseInt(this.productId),
+          title: this.product.title,
+          price: this.displayPrice(this.activePrice),
+          selectedType: this.selectedType,
+          selectedSubtype: this.selectedSubtypeIndex,
+          selectedSize: this.selectedSize,
+          quantity: 1,
+        })
+        .then((res) => console.log(res.data))
+        .catch((err) =>
+          console.log(err.response.data.message, err.response.data.exception)
+        )
+        .catch((err) => console.log(err.message))
       // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
       // Might be I can use a snackbar here
     },
@@ -425,6 +422,8 @@ export default {
 need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
 
 MUST add some link for sharing
+
+Verify that product options have been chosen before the product is added to cart
 
  */
 </style>

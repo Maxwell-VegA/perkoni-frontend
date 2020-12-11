@@ -25,7 +25,7 @@
       <v-spacer />
       <v-col md="3">
         <div class="float-right">
-          <v-menu open-on-hover offset-y>
+          <v-menu open-on-hover close-delay="500" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" class="mr-3" v-on="on">
                 <v-icon size="30">mdi-cart-outline</v-icon>
@@ -34,6 +34,20 @@
               </v-btn>
             </template>
             <v-list dense>
+              <v-list-item v-for="(item, i) in cartItems" :key="i" :to="'/products/' + item.product_id">
+                <v-list-item-title>
+                  <span>
+                    <span v-show="item.quantity > 1">
+                      {{ item.quantity }}&times
+                    </span>
+                    {{ item.title }}
+                  </span>
+                  <p>
+                    {{ (parseFloat(item.price) * item.quantity).toFixed(2) }}
+                    &#8364
+                  </p>
+                </v-list-item-title>
+              </v-list-item>
               <!-- for item in cart echo them all here with some minor details, perhaps calculate a total price -->
               <!-- item quantity, price, total price, (on click go to product/id),  -->
               <v-list-item>
@@ -44,7 +58,7 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <v-menu v-if="$auth.loggedIn" open-on-hover offset-y>
+          <v-menu v-if="$auth.loggedIn" open-on-hover close-delay="500" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon size="30">mdi-account-circle-outline</v-icon>
@@ -121,6 +135,7 @@ export default {
     return {
       title: 'DEVINI X PERKONI',
       searchActive: false,
+      cartItems: [],
     }
   },
   computed: {
@@ -150,6 +165,25 @@ export default {
         },
       ]
       return array
+    },
+  },
+  mounted() {
+    this.updateCart()
+  },
+  methods: {
+    updateCart() {
+      this.$axios
+        .get('cart')
+        .then((res) =>
+          res.data.forEach((item) => {
+            this.cartItems.push(item)
+          })
+        )
+        // .then((res) => console.log('hey', res.data))
+        .catch((err) =>
+          console.log(err.response.data.message, err.response.data.exception)
+        )
+      console.log(this.cartItems, 'asdasdasda')
     },
   },
 }
