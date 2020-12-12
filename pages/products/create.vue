@@ -213,8 +213,9 @@
     <v-row style="border-bottom: white solid 2px">
       <!-- Images -->
       <v-col cols="12" md="12" lg="9" xl="6">
+        {{ currentExpandedImage }}
         <div v-if="selectedImages[0] != null">
-          <v-expansion-panels focusable>
+          <v-expansion-panels v-model="currentExpandedImage" focusable>
             <v-expansion-panel v-for="(image, i) in selectedImages" :key="i">
               <v-expansion-panel-header ripple>
                 <v-btn
@@ -242,10 +243,9 @@
                       "
                     >
                       <template #placeholder>
-                        <!-- <v-img src="https://source.unsplash.com/random"> </v-img> -->
                         <v-img
                           aspect-ratio="1"
-                          src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                          src="http://127.0.0.1:8000/notfound.jpg"
                         >
                         </v-img>
                       </template>
@@ -423,6 +423,7 @@ export default {
       showErrorsSnackbar: false,
       userBrands: [],
       files: [],
+      currentExpandedImage: null,
       selectedImages: [null],
       product: {
         brand_id: 0,
@@ -645,6 +646,12 @@ export default {
     this.getUserBrands()
   },
   methods: {
+    sortSelectedImages() {
+      alert('sorting')
+      this.selectedImages.sort((a, b) => {
+        return a.order - b.order
+      })
+    },
     calculate(type, size) {
       if (this.product.operatorIsMultiply === true) {
         return (
@@ -669,7 +676,9 @@ export default {
     //     .catch((err) => (this.errors = err.response.data.message))
     // },
     storeProduct() {
+      this.sortSelectedImages()
       console.log(this.product)
+      alert(1)
       this.errors = []
       let typesFound = this.product.types
       let sizesFound = this.product.sizes
@@ -729,7 +738,7 @@ export default {
           fileName: null,
           title: imageNameNoExt[0],
           description: '',
-          order: index + 1,
+          order: (index + 1) * 10,
         })
         this.$axios
           .post('img', fd)

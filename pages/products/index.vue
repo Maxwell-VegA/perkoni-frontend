@@ -74,7 +74,9 @@
                           class="mb-n7"
                           aspect-ratio="1"
                           gradient="#1e1e1e00 65%,  #1e1e1e"
-                          :src="'http://127.0.0.1:8000/' + prod.images"
+                          :src="
+                            'http://127.0.0.1:8000/' + getImage(prod.images)
+                          "
                         >
                           <!-- somehow you will need to get the image that was ordered as number one. There was some kind of sorting algo that you used in the product/id page. Perhaps you shold apply it before you submit to the db instead of afterwards -->
                           <template #placeholder>
@@ -260,6 +262,10 @@ export default {
     this.getProducts()
   },
   methods: {
+    getImage(images) {
+      const img = JSON.parse(images)
+      return img[0].fileName
+    },
     getProducts() {
       const categoryName = this.categories[this.currentCategory].text
       const subcategoryName = this.categories[this.currentCategory]
@@ -277,11 +283,13 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res.data.data)
+          console.log(res.data)
           this.products = res.data.data
-          this.lastPage = res.data.last_page
+          this.lastPage = res.data.total
         })
-        .catch((err) => (this.errors = err.response.data.message))
+        .catch((err) =>
+          console.log(err.response.data.message, err.response.data.exception)
+        )
     },
   },
   head() {
