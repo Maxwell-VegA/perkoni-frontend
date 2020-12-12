@@ -275,16 +275,6 @@ export default {
       }
       return returnThis
     },
-    compImages() {
-      const arr = []
-      this.product.images.forEach((image) => {
-        arr.push({})
-      })
-      this.product.images.forEach((image) => {
-        arr[image.order - 1] = image
-      })
-      return arr
-    },
     productSizesArray() {
       const arr = []
       this.product.sizes.forEach((size, i) => {

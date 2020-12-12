@@ -14,14 +14,14 @@
         </v-row>
 
         <v-row no-gutters>
-          <v-col v-show="lastPage != 1" sm="12" md="3"></v-col>
-          <v-col v-show="lastPage != 1" sm="12" md="9">
+          <v-col v-show="totalPages != 1" sm="12" md="3"></v-col>
+          <v-col v-show="totalPages != 1" sm="12" md="9">
             <v-pagination
               v-model="currentPage"
               class="my-4"
               circle
               total-visible="7"
-              :length="lastPage"
+              :length="totalPages"
             ></v-pagination>
           </v-col>
 
@@ -68,27 +68,49 @@
                 <v-row>
                   <v-col v-for="(prod, i) in products" :key="i" cols="4">
                     <NuxtLink :to="'/products/' + prod.id">
-                      <v-card height="100%" style="z-index: 0">
-                        <v-img
+                      <v-card
+                        height="100%"
+                        style="z-index: 0"
+                        @mouseenter=";(prod.hover = true), (prod.cPage += 1)"
+                        @mouseleave="prod.hover = false"
+                      >
+                        <v-carousel
+                          v-model="prod.cPage"
+                          height="315px"
+                          width="100%"
                           style="z-index: -1"
-                          class="mb-n7"
-                          aspect-ratio="1"
-                          gradient="#1e1e1e00 65%,  #1e1e1e"
-                          :src="
-                            'http://127.0.0.1:8000/' + getImage(prod.images)
-                          "
+                          hide-delimiters
+                          interval="3000"
+                          :cycle="prod.hover"
+                          continuous
+                          class="mb-n8"
+                          :show-arrows="false"
                         >
-                          <!-- somehow you will need to get the image that was ordered as number one. There was some kind of sorting algo that you used in the product/id page. Perhaps you shold apply it before you submit to the db instead of afterwards -->
-                          <template #placeholder>
+                          <v-carousel-item
+                            v-for="(image, idx) in prod.images"
+                            :key="idx"
+                          >
+                            <!-- gradient="#1e1e1e00 60%,  #1e1e1e 90%" -->
                             <v-img
-                              style="z-index: -1"
+                              gradient="#1e1e1e00 65%,  #1e1e1e 95%"
+                              height="100%"
                               aspect-ratio="1"
-                              gradient="#1e1e1e00 65%,  #1e1e1e"
-                              src="http://127.0.0.1:8000/notfound.jpg"
+                              :src="
+                                'http://127.0.0.1:8000/' +
+                                prod.images[idx].fileName
+                              "
                             >
+                              <template #placeholder>
+                                <v-img
+                                  aspect-ratio="1"
+                                  gradient="#1e1e1e00 65%,  #1e1e1e"
+                                  src="http://127.0.0.1:8000/notfound.jpg"
+                                >
+                                </v-img>
+                              </template>
                             </v-img>
-                          </template>
-                        </v-img>
+                          </v-carousel-item>
+                        </v-carousel>
                         <v-row
                           no-gutters
                           align-content="space-between"
@@ -130,14 +152,14 @@
               </v-tab-item>
             </v-tabs-items>
           </v-col>
-          <v-col v-show="lastPage != 1" sm="12" md="3"></v-col>
-          <v-col v-show="lastPage != 1" sm="12" md="9">
+          <v-col v-show="totalPages != 1" sm="12" md="3"></v-col>
+          <v-col v-show="totalPages != 1" sm="12" md="9">
             <v-pagination
               v-model="currentPage"
               class="my-4"
               circle
               total-visible="7"
-              :length="lastPage"
+              :length="totalPages"
             ></v-pagination>
           </v-col>
         </v-row>
@@ -161,7 +183,7 @@ export default {
       currentSubcategory: null,
       currentGender: null,
       errors: {},
-      lastPage: 1,
+      totalPages: 1,
       products: [],
       categories: [
         {
@@ -262,10 +284,22 @@ export default {
     this.getProducts()
   },
   methods: {
-    getImage(images) {
-      const img = JSON.parse(images)
-      return img[0].fileName
-    },
+    // cycleImages(productIndex) {
+    //   this.products[productIndex].currentImage =
+    //     'http://127.0.0.1:8000/notfound.jpg'
+    //   console.log(this.products[productIndex])
+    //   // if (this.products[0].images[0] != undefined) {
+    //   //   // 'http://127.0.0.1:8000/' + product.images[1].fileName
+    //   //   this.products[0].currentImage =
+    //   // } else {
+    //   //   this.products[productIndex].currentImage =
+    //   //     'http://127.0.0.1:8000/notfound.jpg'
+    //   //   // product.currentImage =
+    //   //   // 'http://127.0.0.1:8000/' + product.images[0].fileName
+    //   //   console.log('else')
+    //   // }
+    //   // console.log(this.product[productIndex].currentImage)
+    // },
     getProducts() {
       const categoryName = this.categories[this.currentCategory].text
       const subcategoryName = this.categories[this.currentCategory]
@@ -283,13 +317,13 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data.data[0])
           this.products = res.data.data
-          this.lastPage = res.data.total
+          this.totalPages = res.data.meta.total
         })
-        .catch((err) =>
-          console.log(err.response.data.message, err.response.data.exception)
-        )
+      // .catch((err) =>
+      // console.log(err.response.data.message, err.response.data.exception)
+      // )
     },
   },
   head() {
@@ -306,3 +340,13 @@ export default {
   },
 }
 </script>
+
+<style>
+/* 
+
+Tag sorting could be done client side instead of server. We'll just need to figure out how to deal with pagination.
+
+Perhaps instead of returning only those products that match selected taggs return all but sort those that match first if that's possible then on client side simply highlight them.
+
+ */
+</style>
