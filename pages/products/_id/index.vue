@@ -18,22 +18,19 @@
             continuous
             hide-delimiters
           >
-            <v-carousel-item v-for="(image, i) in compImages" :key="i">
+            <v-carousel-item v-for="(image, i) in product.images" :key="i">
               <v-sheet height="100%" width="100%">
                 <v-img
-                  :src="
-                    'http://127.0.0.1:8000/storage/product_images/temp/' +
-                    image.fileName
-                  "
+                  :src="'http://127.0.0.1:8000/' + image.fileName"
                   aspect-ratio="1"
                 >
                   <v-card-title primary-title>
-                    {{ compImages[selectedImageIndex].title }}
+                    {{ product.images[selectedImageIndex].title }}
                   </v-card-title>
                   <template #placeholder>
                     <v-img
                       aspect-ratio="1"
-                      src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                      src="http://127.0.0.1:8000/notfound.jpg"
                     >
                     </v-img>
                   </template>
@@ -42,7 +39,7 @@
             </v-carousel-item>
           </v-carousel>
           <v-card-text>
-            {{ compImages[selectedImageIndex].description }}
+            {{ product.images[selectedImageIndex].description }}
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -62,25 +59,19 @@
                   continuous
                 >
                   <v-carousel-item
-                    v-for="(image, i) in compImages"
+                    v-for="(image, i) in product.images"
                     :key="i"
                     @click="fullscreenImage = true"
                   >
                     <v-sheet height="100%" width="100%">
                       <v-img
-                        :src="
-                          'http://127.0.0.1:8000/storage/product_images/temp/' +
-                          image.fileName
-                        "
+                        :src="'http://127.0.0.1:8000/' + image.fileName"
                         aspect-ratio="1"
                       >
-                        <!-- <v-card-title primary-title>
-                      {{ compImages[selectedImageIndex].title }}
-                    </v-card-title> -->
                         <template #placeholder>
                           <v-img
                             aspect-ratio="1"
-                            src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                            src="http://127.0.0.1:8000/notfound.jpg"
                           >
                           </v-img>
                         </template>
@@ -89,10 +80,10 @@
                   </v-carousel-item>
                 </v-carousel>
                 <v-card-title primary-title>
-                  {{ compImages[selectedImageIndex].title }}
+                  {{ product.images[selectedImageIndex].title }}
                 </v-card-title>
                 <v-card-text>
-                  {{ compImages[selectedImageIndex].description }}
+                  {{ product.images[selectedImageIndex].description }}
                 </v-card-text>
               </v-card>
             </v-col>
@@ -417,7 +408,6 @@ export default {
 </script>
 <style>
 /* 
-
 
 need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
 

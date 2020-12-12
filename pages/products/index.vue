@@ -74,17 +74,15 @@
                           class="mb-n7"
                           aspect-ratio="1"
                           gradient="#1e1e1e00 65%,  #1e1e1e"
-                          :src="
-                            'http://127.0.0.1:8000/storage/product_images/temp/' +
-                            prod.images
-                          "
+                          :src="'http://127.0.0.1:8000/' + prod.images"
                         >
                           <!-- somehow you will need to get the image that was ordered as number one. There was some kind of sorting algo that you used in the product/id page. Perhaps you shold apply it before you submit to the db instead of afterwards -->
                           <template #placeholder>
                             <v-img
+                              style="z-index: -1"
                               aspect-ratio="1"
                               gradient="#1e1e1e00 65%,  #1e1e1e"
-                              src="http://127.0.0.1:8000/storage/product_images/temp/photo_1607002086.jpg"
+                              src="http://127.0.0.1:8000/notfound.jpg"
                             >
                             </v-img>
                           </template>
@@ -157,7 +155,7 @@ export default {
     return {
       title: 'Products page',
       currentPage: 1,
-      currentCategory: 2,
+      currentCategory: 3,
       currentSubcategory: null,
       currentGender: null,
       errors: {},
@@ -279,7 +277,7 @@ export default {
           },
         })
         .then((res) => {
-          // console.log(res.data.data)
+          console.log(res.data.data)
           this.products = res.data.data
           this.lastPage = res.data.last_page
         })
