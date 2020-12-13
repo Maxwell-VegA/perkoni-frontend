@@ -373,7 +373,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+//
+
 export default {
+  async fetch({ store, params }) {
+    await store.dispatch('getProduct', { productId: params.id })
+    await store.dispatch('getRelated')
+  },
   data() {
     return {
       errors: {},
@@ -387,37 +394,16 @@ export default {
       brandCardExpanded: false,
       shippingCardExpanded: false,
       bookmarked: false,
-      relatedProducts: [],
-      product: {
-        id: null,
-        brand_id: null,
-        brand_name: null,
-        brand_logo: null,
-        brand_facebook: null,
-        brand_instagram: null,
-        title: '',
-        mainCategory: '',
-        subcategory: '',
-        description: '',
-        longDescription: '',
-        is_new: false,
-        base_price: null,
-        sale_price: null,
-        on_sale: false,
-        operatorIsMultiply: false,
-        taggs: [null],
-        gender: null,
-        types: [{ typeName: null, typePrice: null, typeSecondary: [null] }],
-        sizes: [{ sizeName: null, sizePrice: null }],
-        taggs: [null],
-        images: [
-          { fileName: null, title: null, description: null, order: null },
-        ],
-        related: [null],
-      },
+      // relatedProducts: [],
     }
   },
   computed: {
+    ...mapState(['product', 'relatedProducts']),
+    // product() {
+    //   return this.products.find(
+    //     (product) => product.id == this.$route.params.id
+    //   )
+    // },
     activePrice() {
       let returnThis = 0
       if (this.product.on_sale) {
@@ -463,10 +449,10 @@ export default {
       })
       return arr
     },
-    productId() {
-      const arr = this.$route.path.split('/')
-      return arr[arr.length - 1]
-    },
+    // productId() {
+    //   const arr = this.$route.path.split('/')
+    //   return arr[arr.length - 1]
+    // },
     selectedSubtypeIndex: {
       get() {
         let returnThis
@@ -487,7 +473,7 @@ export default {
     },
   },
   mounted() {
-    this.getProduct()
+    // this.getProduct()
     this.isInCart()
   },
   methods: {
@@ -571,25 +557,15 @@ export default {
           console.log(err.response.data.message, err.response.data.exception)
         )
     },
-    getProduct() {
-      this.$axios
-        .get('products/' + this.productId)
-        .then((res) => {
-          console.log(res.data.data)
-          this.product = res.data.data
-          this.getRelated()
-        })
-        .catch((err) => (this.errors = err.response.data.message))
-    },
-    getRelated() {
-      this.relatedProducts = []
-      this.product.related.forEach((id) => {
-        this.$axios
-          .get('products/' + id)
-          .then((res) => this.relatedProducts.push(res.data.data))
-      })
-      console.log(this.relatedProducts)
-    },
+    // getRelated() {
+    //   this.relatedProducts = []
+    //   this.product.related.forEach((id) => {
+    //     this.$axios
+    //       .get('products/' + id)
+    //       .then((res) => this.relatedProducts.push(res.data.data))
+    //   })
+    //   console.log(this.relatedProducts)
+    // },
   },
 }
 </script>

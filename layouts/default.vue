@@ -34,17 +34,21 @@
               </v-btn>
             </template>
             <v-list dense>
-              <v-list-item v-for="(item, i) in cartItems" :key="i" :to="'/products/' + item.product_id">
+              <v-list-item
+                v-for="(item, i) in cart"
+                :key="i"
+                :to="'/products/' + item.product_id"
+              >
                 <v-list-item-title>
                   <span>
                     <span v-show="item.quantity > 1">
-                      {{ item.quantity }}&times
+                      {{ item.quantity }}&times;
                     </span>
                     {{ item.title }}
                   </span>
                   <p>
                     {{ (parseFloat(item.price) * item.quantity).toFixed(2) }}
-                    &#8364
+                    &#8364;
                   </p>
                 </v-list-item-title>
               </v-list-item>
@@ -58,7 +62,12 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <v-menu v-if="$auth.loggedIn" open-on-hover close-delay="500" offset-y>
+          <v-menu
+            v-if="$auth.loggedIn"
+            open-on-hover
+            close-delay="500"
+            offset-y
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon size="30">mdi-account-circle-outline</v-icon>
@@ -99,10 +108,9 @@
     <!--  -->
     <v-main>
       <v-container>
-        <div style="width: 100%; height: 50%" >
+        <div style="width: 100%; height: 50%">
           <v-overlay z-index="4" :value="searchActive">
-            <v-card @keydown.esc="searchActive = false"
-            >
+            <v-card @keydown.esc="searchActive = false">
               <v-card-title primary-title>
                 <v-text-field
                   outlined
@@ -128,21 +136,25 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
+//
+
 export default {
   components: { VendorNav, AdminNav },
+  async fetch({ store }) {
+    await store.dispatch('getCart')
+  },
   data() {
     return {
       title: 'DEVINI X PERKONI',
       searchActive: false,
-      cartItems: [],
+      // cartItems: [],
     }
   },
-  created() {
-    this.$nuxt.$on('refreshCart', this.refreshCart)
-  },
   computed: {
+    ...mapState(['cart']),
     currentPathArray() {
       const arr = this.$route.path.split('/')
       const array = [
@@ -171,26 +183,30 @@ export default {
       return array
     },
   },
+  created() {
+    // this.$nuxt.$on('refreshCart', this.refreshCart)
+  },
   mounted() {
-    this.refreshCart()
+    // this.refreshCart()
   },
   methods: {
-    refreshCart() {
-      this.$axios
-        .get('cart')
-        .then((res) => ( 
-          this.cartItems = [],
-          res.data.forEach((item) => {
-            this.cartItems.push(item)
-          })
-        )
-        )
-        // .then((res) => console.log('hey', res.data))
-        .catch((err) =>
-          console.log(err.response.data.message, err.response.data.exception)
-        )
-      // console.log(this.cartItems, 'asdasdasda')
-    },
+    // refreshCart() {
+    //   this.$axios
+    //     .get('cart')
+    //     .then(
+    //       (res) => (
+    //         (this.cartItems = []),
+    //         res.data.forEach((item) => {
+    //           this.cartItems.push(item)
+    //         })
+    //       )
+    //     )
+    //     // .then((res) => console.log('hey', res.data))
+    //     .catch((err) =>
+    //       console.log(err.response.data.message, err.response.data.exception)
+    //     )
+    //   // console.log(this.cartItems, 'asdasdasda')
+    // },
   },
 }
 </script>
