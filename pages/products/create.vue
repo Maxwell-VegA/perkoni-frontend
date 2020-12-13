@@ -45,7 +45,6 @@
             no-resize
             counter="16000"
           ></v-textarea>
-          <br />
         </div>
       </v-col>
       <!-- pricing -->
@@ -645,8 +644,11 @@ export default {
     this.getUserBrands()
   },
   methods: {
+    multilined(string) {
+      const split = string.split('\n')
+      return split.join('<br />')
+    },
     sortSelectedImages() {
-      alert('sorting')
       this.selectedImages.sort((a, b) => {
         return a.order - b.order
       })
@@ -677,7 +679,6 @@ export default {
     storeProduct() {
       this.sortSelectedImages()
       console.log(this.product)
-      alert(1)
       this.errors = []
       let typesFound = this.product.types
       let sizesFound = this.product.sizes
@@ -706,7 +707,7 @@ export default {
           mainCategory: this.product.mainCategory,
           subcategory: this.product.subcategory,
           description: this.product.description,
-          longDescription: this.product.longDescription,
+          longDescription: this.multilined(this.product.longDescription),
           is_new: this.product.is_new,
           base_price: this.product.base_price,
           sale_price: this.product.sale_price,

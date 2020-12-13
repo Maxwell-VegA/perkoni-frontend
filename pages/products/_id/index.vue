@@ -90,7 +90,14 @@
 
             <v-col cols="12" md="6" xl="7">
               <v-row align-content="center">
-                <v-col offset="1" cols="10" offset-md="0" md="11">
+                <v-col
+                  offset="1"
+                  cols="10"
+                  offset-md="0"
+                  md="11"
+                  lg="11"
+                  xl="9"
+                >
                   <p>{{ product.description }}</p>
                 </v-col>
 
@@ -126,7 +133,7 @@
                   cols="12"
                 >
                   <v-row>
-                    <v-col cols="12" md="5" xl="4">
+                    <v-col cols="12" md="5" xl="4" class="pa-0 pl-4">
                       <div v-show="!product.on_sale">
                         <p class="header">
                           {{ displayPrice(product.base_price) }}
@@ -134,7 +141,7 @@
                         </p>
                       </div>
                       <div v-show="product.on_sale">
-                        <p class="text-h4">
+                        <p class="text-h4 mb-0">
                           {{ displayPrice(product.sale_price) }}
                           <v-icon size="26">mdi-currency-eur</v-icon>
                         </p>
@@ -148,171 +155,220 @@
                     </v-col>
                   </v-row>
                 </v-col>
+
+                <v-col cols="12" class="pr-8 ml-n1 mt-n3">
+                  <!-- <v-card class="mb-2">
+                    <v-card-actions> -->
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <input
+                        v-model="quantity"
+                        v-bind="attrs"
+                        type="number"
+                        class="white--text px-2 py-2 ml-2 accent"
+                        style="width: 60px; border-radius: 3px"
+                        v-on="on"
+                      />
+                    </template>
+                    <span>Daudzums</span>
+                  </v-tooltip>
+                  <v-btn
+                    v-if="!inCart"
+                    color="primary"
+                    style="margin-top: -2px"
+                    class="py-5 ml-1"
+                    @click="addToCart"
+                  >
+                    pievienot grozam
+                    <v-icon>mdi-cart-plus</v-icon>
+                  </v-btn>
+                  <v-btn v-else color="success">
+                    produkts ir groza
+                    <v-icon>mdi-check-circle-outline</v-icon>
+                  </v-btn>
+                  <!-- </v-card-actions>
+                  </v-card> -->
+                </v-col>
               </v-row>
+            </v-col>
+
+            <v-col cols="6" xl="5">
+              <v-card>
+                <v-card-title>Apraksts:</v-card-title>
+                <v-card-text>
+                  <p v-html="product.longDescription"></p>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="6" xl="7" class="pr-9">
+              <v-card>
+                <v-card-title> Lidzigie produkti </v-card-title>
+                <v-card-text>
+                  <v-row>
+                    <v-col v-for="(prod, i) in relatedProducts" :key="i" md="4">
+                      <v-card>
+                        <v-card-title class="">
+                          {{ prod.title }}
+                        </v-card-title>
+                        <v-img
+                          aspect-ratio="1"
+                          :src="
+                            'http://localhost:8000/' + prod.images[0].fileName
+                          "
+                        >
+                        </v-img>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-card-text>
+              </v-card>
             </v-col>
           </v-row>
         </v-col>
         <v-col cols="12" lg="3" xl="2">
-          <v-card class="mb-2">
-            <v-card-subtitle class="mb-n8" primary-title>
-              Razotajs:
-            </v-card-subtitle>
-            <v-card-title>
-              {{ product.brand_name }}
-              <v-spacer></v-spacer>
-              <v-btn icon @click="brandCardExpanded = !brandCardExpanded">
-                <v-icon>{{
-                  brandCardExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
-                }}</v-icon>
-              </v-btn>
-            </v-card-title>
-            <v-expand-transition>
-              <div v-show="brandCardExpanded">
-                <v-divider></v-divider>
-                <v-img
-                  aspect-ratio="1"
-                  :src="
-                    'http://127.0.0.1:8000/storage/logos/' + product.brand_logo
-                  "
-                >
-                </v-img>
-                <v-card-text>
-                  {{ product.brand_description }}
-                </v-card-text>
+          <v-row>
+            <v-col>
+              <v-card class="mb-2">
                 <v-card-actions>
-                  <v-btn> Citi produkti </v-btn>
-                  <v-spacer></v-spacer>
-                  <a
-                    v-show="product.brand_facebook"
-                    target="_blank"
-                    class="pr-2"
-                    :href="product.brand_facebook"
-                    ><v-icon size="30">mdi-facebook</v-icon>
-                  </a>
-                  <a
-                    v-show="product.brand_instagram"
-                    target="_blank"
-                    class="pr-4"
-                    :href="product.brand_instagram"
-                    ><v-icon size="30">mdi-instagram</v-icon>
-                  </a>
+                  <v-tooltip bottom close-delay="500">
+                    <template #activator="{ on, attrs }">
+                      <v-btn
+                        v-bind="attrs"
+                        class="ml-2"
+                        icon
+                        color="primary"
+                        v-on="on"
+                        @click="bookmarked = !bookmarked"
+                      >
+                        <v-icon v-if="!bookmarked" large>
+                          mdi-bookmark-outline
+                        </v-icon>
+                        <v-icon v-else large>
+                          mdi-bookmark-check-outline
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <span v-if="!bookmarked">Saglabat produktu</span>
+                    <span v-else>Saglabats!</span>
+                  </v-tooltip>
+                  <v-tooltip right close-delay="500">
+                    <template #activator="{ on, attrs }">
+                      <v-btn
+                        v-bind="attrs"
+                        class="ml-2"
+                        icon
+                        color="primary"
+                        v-on="on"
+                      >
+                        <v-icon large> mdi-share-outline </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Dalities</span>
+                  </v-tooltip>
                 </v-card-actions>
-              </div>
-            </v-expand-transition>
-          </v-card>
+              </v-card>
 
-          <v-card class="mb-2">
-            <v-card-actions>
-              <v-tooltip top close-delay="500">
-                <template #activator="{ on, attrs }">
-                  <input
-                    v-model="quantity"
-                    v-bind="attrs"
-                    type="number"
-                    class="white--text px-2 py-1 ml-2 accent"
-                    style="width: 60px; border-radius: 3px"
-                    v-on="on"
-                  />
-                </template>
-                <span>Daudzums</span>
-              </v-tooltip>
-              <v-spacer></v-spacer>
-              <v-btn
-                v-if="!inCart"
-                color="primary"
-                class="mr-2"
-                @click="addToCart"
-              >
-                pievienot grozam
-                <v-icon>mdi-cart-plus</v-icon>
-              </v-btn>
-              <v-btn v-else color="success">
-                produkts ir groza
-                <v-icon>mdi-check-circle-outline</v-icon>
-              </v-btn>
-            </v-card-actions>
-
-            <v-card-actions>
-              <v-tooltip bottom close-delay="500">
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs"
-                    class="ml-2"
-                    icon
-                    color="primary"
-                    v-on="on"
-                    @click="bookmarked = !bookmarked"
-                  >
-                    <v-icon v-if="!bookmarked" large>
-                      mdi-bookmark-outline
-                    </v-icon>
-                    <v-icon v-else large> mdi-bookmark-check-outline </v-icon>
+              <v-card class="mb-2">
+                <v-card-subtitle class="mb-n8" primary-title>
+                  Razotajs:
+                </v-card-subtitle>
+                <v-card-title>
+                  {{ product.brand_name }}
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="brandCardExpanded = !brandCardExpanded">
+                    <v-icon>{{
+                      brandCardExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
+                    }}</v-icon>
                   </v-btn>
-                </template>
-                <span v-if="!bookmarked">Saglabat produktu</span>
-                <span v-else>Saglabats!</span>
-              </v-tooltip>
-              <v-tooltip right close-delay="500">
-                <template #activator="{ on, attrs }">
-                  <v-btn
-                    v-bind="attrs"
-                    class="ml-2"
-                    icon
-                    color="primary"
-                    v-on="on"
-                  >
-                    <v-icon large> mdi-share-outline </v-icon>
-                  </v-btn>
-                </template>
-                <span>Dalities</span>
-              </v-tooltip>
-            </v-card-actions>
-          </v-card>
+                </v-card-title>
+                <v-expand-transition>
+                  <div v-show="brandCardExpanded">
+                    <v-divider></v-divider>
+                    <v-img
+                      aspect-ratio="1"
+                      :src="
+                        'http://127.0.0.1:8000/storage/logos/' +
+                        product.brand_logo
+                      "
+                    >
+                    </v-img>
+                    <v-card-text>
+                      {{ product.brand_description }}
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-btn> Citi produkti </v-btn>
+                      <v-spacer></v-spacer>
+                      <a
+                        v-show="product.brand_facebook"
+                        target="_blank"
+                        class="pr-2"
+                        :href="product.brand_facebook"
+                        ><v-icon size="30">mdi-facebook</v-icon>
+                      </a>
+                      <a
+                        v-show="product.brand_instagram"
+                        target="_blank"
+                        class="pr-4"
+                        :href="product.brand_instagram"
+                        ><v-icon size="30">mdi-instagram</v-icon>
+                      </a>
+                    </v-card-actions>
+                  </div>
+                </v-expand-transition>
+              </v-card>
 
-          <v-card>
-            <v-card-subtitle class="mb-n8" primary-title>
-              Piegades iespejas
-            </v-card-subtitle>
-            <v-card-title>
-              Vestule
-              <v-spacer></v-spacer>
-              <v-btn icon @click="shippingCardExpanded = !shippingCardExpanded">
-                <v-icon>{{
-                  shippingCardExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
-                }}</v-icon>
-              </v-btn>
-            </v-card-title>
-            <v-expand-transition>
-              <div v-show="shippingCardExpanded">
-                <v-divider></v-divider>
-                <v-card-text>
-                  <v-list>
-                    <v-list-item>
-                      <v-list-item-content> Sanemt veikala </v-list-item-content>
-                      <v-list-item-action> 0.00 &#8364 </v-list-item-action>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content>
-                         <v-list-item-title> Vestule </v-list-item-title>
-                         <v-list-item-subtitle> lidz 10 gb </v-list-item-subtitle>
-                         </v-list-item-content>
-                      <v-list-item-action>1.50 &#8364 </v-list-item-action>
-                    </v-list-item>
-                    <v-list-item>
-                      <v-list-item-content> Pakomats </v-list-item-content>
-                      <v-list-item-action>3.00 &#8364 </v-list-item-action>
-                    </v-list-item>
-                  </v-list>
-                </v-card-text>
-              </div>
-            </v-expand-transition>
-          </v-card>
+              <v-card>
+                <v-card-title>
+                  Piegades iespejas
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    icon
+                    @click="shippingCardExpanded = !shippingCardExpanded"
+                  >
+                    <v-icon>{{
+                      shippingCardExpanded
+                        ? 'mdi-chevron-up'
+                        : 'mdi-chevron-down'
+                    }}</v-icon>
+                  </v-btn>
+                </v-card-title>
+                <v-expand-transition>
+                  <div v-show="shippingCardExpanded">
+                    <v-divider></v-divider>
+                    <v-card-text>
+                      <v-list>
+                        <v-list-item>
+                          <v-list-item-content>
+                            Sanemt veikala
+                          </v-list-item-content>
+                          <!-- <v-list-item-action> 0.00 &#8364 </v-list-item-action> -->
+                        </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content>
+                            <v-list-item-title> Vestule </v-list-item-title>
+                            <v-list-item-subtitle>
+                              lidz 10 gb
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                          <!-- <v-list-item-action>1.50 &#8364 </v-list-item-action> -->
+                        </v-list-item>
+                        <v-list-item>
+                          <v-list-item-content> Pakomats </v-list-item-content>
+                          <!-- <v-list-item-action>3.00 &#8364 </v-list-item-action> -->
+                        </v-list-item>
+                      </v-list>
+                    </v-card-text>
+                  </div>
+                </v-expand-transition>
+              </v-card>
+            </v-col>
+          </v-row>
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
     </div>
+    <v-btn @click="getRelated()">text</v-btn>
     <p>{{ errors }}</p>
-    <button @click="isInCart">check cart</button>
   </div>
 </template>
 
@@ -331,6 +387,7 @@ export default {
       brandCardExpanded: false,
       shippingCardExpanded: false,
       bookmarked: false,
+      relatedProducts: [],
       product: {
         id: null,
         brand_id: null,
@@ -342,6 +399,7 @@ export default {
         mainCategory: '',
         subcategory: '',
         description: '',
+        longDescription: '',
         is_new: false,
         base_price: null,
         sale_price: null,
@@ -355,6 +413,7 @@ export default {
         images: [
           { fileName: null, title: null, description: null, order: null },
         ],
+        related: [null],
       },
     }
   },
@@ -433,23 +492,28 @@ export default {
   },
   methods: {
     displayPrice(price) {
-      let typePrice = 0
-      let sizePrice = 0
       if (this.product.types[0] != undefined) {
-        const typePrice = parseFloat(
+        this.product.typePrice = parseFloat(
           this.productTypesArray[this.selectedType].price
         )
       }
       if (this.product.sizes[0] != undefined) {
-        const sizePrice = parseFloat(
+        this.product.sizePrice = parseFloat(
           this.productSizesArray[this.selectedSize].price
         )
       }
       if (price != null) {
         if (this.product.operatorIsMultiply == true) {
-          return (price + typePrice * sizePrice).toFixed(2)
+          return (
+            price +
+            this.product.typePrice * this.product.sizePrice
+          ).toFixed(2)
         } else {
-          return (price + typePrice + sizePrice).toFixed(2)
+          return (
+            price +
+            this.product.typePrice +
+            this.product.sizePrice
+          ).toFixed(2)
         }
       } else {
         return null
@@ -513,8 +577,18 @@ export default {
         .then((res) => {
           console.log(res.data.data)
           this.product = res.data.data
+          this.getRelated()
         })
         .catch((err) => (this.errors = err.response.data.message))
+    },
+    getRelated() {
+      this.relatedProducts = []
+      this.product.related.forEach((id) => {
+        this.$axios
+          .get('products/' + id)
+          .then((res) => this.relatedProducts.push(res.data.data))
+      })
+      console.log(this.relatedProducts)
     },
   },
 }

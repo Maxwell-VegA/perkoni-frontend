@@ -68,13 +68,14 @@
                 <v-row>
                   <v-col v-for="(prod, i) in products" :key="i" cols="4">
                     <NuxtLink :to="'/products/' + prod.id">
+                      <!-- @wheel.prevent="prod.cPage += 1"
+                        @mouseenter.once="prod.cPage += 1" -->
+                      <!-- Perhaps you can show some kind of progress bar indicating the time untill the next image is loaded -->
                       <v-card
                         height="100%"
                         style="z-index: 0"
-                        @wheel.prevent="prod.cPage += 1"
-                        @mouseenter.once="prod.cPage += 1"
                         @mouseenter="
-                          ;(prod.hover = true), (prod.interval = 3000)
+                          ;(prod.hover = true), (prod.interval = 2000)
                         "
                         @mouseleave="
                           ;(prod.hover = false), (prod.interval = 9999999)
@@ -133,7 +134,7 @@
                               class="white--text text-h5 py-0 font-weight-light"
                             >
                               <p v-show="prod.on_sale" class="mb-3">
-                                {{ prod.sale_price.toFixed(2) }}
+                                {{ salePrice(prod.sale_price) }}
                                 <v-icon dense>mdi-currency-eur</v-icon>
                               </p>
                               <p
@@ -306,6 +307,13 @@ export default {
     //   // }
     //   // console.log(this.product[productIndex].currentImage)
     // },
+    salePrice(price) {
+      let returnThis = null
+      if (price != undefined) {
+        returnThis = price.toFixed(2)
+      }
+      return returnThis
+    },
     getProducts() {
       const categoryName = this.categories[this.currentCategory].text
       const subcategoryName = this.categories[this.currentCategory]
@@ -323,7 +331,7 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res.data.data[0])
+          console.log(res.data.data)
           this.products = res.data.data
           this.totalPages = res.data.meta.last_page
         })
