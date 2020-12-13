@@ -99,9 +99,10 @@
     <!--  -->
     <v-main>
       <v-container>
-        <div style="width: 100%; height: 50%">
+        <div style="width: 100%; height: 50%" >
           <v-overlay z-index="4" :value="searchActive">
-            <v-card>
+            <v-card @keydown.esc="searchActive = false"
+            >
               <v-card-title primary-title>
                 <v-text-field
                   outlined
@@ -138,6 +139,9 @@ export default {
       cartItems: [],
     }
   },
+  created() {
+    this.$nuxt.$on('refreshCart', this.refreshCart)
+  },
   computed: {
     currentPathArray() {
       const arr = this.$route.path.split('/')
@@ -168,22 +172,24 @@ export default {
     },
   },
   mounted() {
-    this.updateCart()
+    this.refreshCart()
   },
   methods: {
-    updateCart() {
+    refreshCart() {
       this.$axios
         .get('cart')
-        .then((res) =>
+        .then((res) => ( 
+          this.cartItems = [],
           res.data.forEach((item) => {
             this.cartItems.push(item)
           })
+        )
         )
         // .then((res) => console.log('hey', res.data))
         .catch((err) =>
           console.log(err.response.data.message, err.response.data.exception)
         )
-      console.log(this.cartItems, 'asdasdasda')
+      // console.log(this.cartItems, 'asdasdasda')
     },
   },
 }

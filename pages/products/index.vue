@@ -71,8 +71,14 @@
                       <v-card
                         height="100%"
                         style="z-index: 0"
-                        @mouseenter=";(prod.hover = true), (prod.cPage += 1)"
-                        @mouseleave="prod.hover = false"
+                        @wheel.prevent="prod.cPage += 1"
+                        @mouseenter.once="prod.cPage += 1"
+                        @mouseenter="
+                          ;(prod.hover = true), (prod.interval = 3000)
+                        "
+                        @mouseleave="
+                          ;(prod.hover = false), (prod.interval = 9999999)
+                        "
                       >
                         <v-carousel
                           v-model="prod.cPage"
@@ -80,9 +86,9 @@
                           width="100%"
                           style="z-index: -1"
                           hide-delimiters
-                          interval="3000"
+                          :interval="prod.interval"
                           :cycle="prod.hover"
-                          continuous
+                          vertical
                           class="mb-n8"
                           :show-arrows="false"
                         >
@@ -179,7 +185,7 @@ export default {
     return {
       title: 'Products page',
       currentPage: 1,
-      currentCategory: 3,
+      currentCategory: 2,
       currentSubcategory: null,
       currentGender: null,
       errors: {},
@@ -319,11 +325,11 @@ export default {
         .then((res) => {
           console.log(res.data.data[0])
           this.products = res.data.data
-          this.totalPages = res.data.meta.total
+          this.totalPages = res.data.meta.last_page
         })
-      // .catch((err) =>
-      // console.log(err.response.data.message, err.response.data.exception)
-      // )
+        .catch((err) =>
+          console.log(err.response.data.message, err.response.data.exception)
+        )
     },
   },
   head() {
@@ -347,6 +353,10 @@ export default {
 Tag sorting could be done client side instead of server. We'll just need to figure out how to deal with pagination.
 
 Perhaps instead of returning only those products that match selected taggs return all but sort those that match first if that's possible then on client side simply highlight them.
+
+Add the ability to scroll both up and down on product images sometime
+
+Add a green checkmark on the products page to indicate which items have already been placed in the cart (and also as a reminder for the user that they have commited to buying)
 
  */
 </style>

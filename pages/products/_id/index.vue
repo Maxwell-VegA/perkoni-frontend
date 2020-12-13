@@ -52,7 +52,7 @@
               <v-card>
                 <v-carousel
                   v-model="selectedImageIndex"
-                  style="width: 100%"
+                  style="cursor: pointer; width: 100%"
                   height="100%"
                   progress-color="white"
                   progress
@@ -111,7 +111,7 @@
                   ></v-select>
 
                   <v-select
-                    v-show="productSubtypesArray[0] != undefined"
+                    v-show="productSubtypesArray[selectedType] != undefined"
                     v-model="selectedSubtypeName"
                     :items="productSubtypesArray"
                     label="Produkta subtipi"
@@ -146,24 +146,6 @@
                         </p>
                       </div>
                     </v-col>
-                    <v-col md="3">
-                      <v-btn color="primary" @click="addToCart">
-                        pievienot grozam
-                        <v-icon>mdi-cart-plus</v-icon>
-                      </v-btn>
-                      <v-btn
-                        icon
-                        color="primary"
-                        @click="bookmarked = !bookmarked"
-                      >
-                        <v-icon v-if="!bookmarked" large>
-                          mdi-bookmark-outline
-                        </v-icon>
-                        <v-icon v-else large>
-                          mdi-bookmark-check-outline
-                        </v-icon>
-                      </v-btn>
-                    </v-col>
                   </v-row>
                 </v-col>
               </v-row>
@@ -171,7 +153,7 @@
           </v-row>
         </v-col>
         <v-col cols="12" lg="3" xl="2">
-          <v-card>
+          <v-card class="mb-2">
             <v-card-subtitle class="mb-n8" primary-title>
               Razotajs:
             </v-card-subtitle>
@@ -218,11 +200,119 @@
               </div>
             </v-expand-transition>
           </v-card>
+
+          <v-card class="mb-2">
+            <v-card-actions>
+              <v-tooltip top close-delay="500">
+                <template #activator="{ on, attrs }">
+                  <input
+                    v-model="quantity"
+                    v-bind="attrs"
+                    type="number"
+                    class="white--text px-2 py-1 ml-2 accent"
+                    style="width: 60px; border-radius: 3px"
+                    v-on="on"
+                  />
+                </template>
+                <span>Daudzums</span>
+              </v-tooltip>
+              <v-spacer></v-spacer>
+              <v-btn
+                v-if="!inCart"
+                color="primary"
+                class="mr-2"
+                @click="addToCart"
+              >
+                pievienot grozam
+                <v-icon>mdi-cart-plus</v-icon>
+              </v-btn>
+              <v-btn v-else color="success">
+                produkts ir groza
+                <v-icon>mdi-check-circle-outline</v-icon>
+              </v-btn>
+            </v-card-actions>
+
+            <v-card-actions>
+              <v-tooltip bottom close-delay="500">
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="ml-2"
+                    icon
+                    color="primary"
+                    v-on="on"
+                    @click="bookmarked = !bookmarked"
+                  >
+                    <v-icon v-if="!bookmarked" large>
+                      mdi-bookmark-outline
+                    </v-icon>
+                    <v-icon v-else large> mdi-bookmark-check-outline </v-icon>
+                  </v-btn>
+                </template>
+                <span v-if="!bookmarked">Saglabat produktu</span>
+                <span v-else>Saglabats!</span>
+              </v-tooltip>
+              <v-tooltip right close-delay="500">
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    class="ml-2"
+                    icon
+                    color="primary"
+                    v-on="on"
+                  >
+                    <v-icon large> mdi-share-outline </v-icon>
+                  </v-btn>
+                </template>
+                <span>Dalities</span>
+              </v-tooltip>
+            </v-card-actions>
+          </v-card>
+
+          <v-card>
+            <v-card-subtitle class="mb-n8" primary-title>
+              Piegades iespejas
+            </v-card-subtitle>
+            <v-card-title>
+              Vestule
+              <v-spacer></v-spacer>
+              <v-btn icon @click="shippingCardExpanded = !shippingCardExpanded">
+                <v-icon>{{
+                  shippingCardExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
+                }}</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-expand-transition>
+              <div v-show="shippingCardExpanded">
+                <v-divider></v-divider>
+                <v-card-text>
+                  <v-list>
+                    <v-list-item>
+                      <v-list-item-content> Sanemt veikala </v-list-item-content>
+                      <v-list-item-action> 0.00 &#8364 </v-list-item-action>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content>
+                         <v-list-item-title> Vestule </v-list-item-title>
+                         <v-list-item-subtitle> lidz 10 gb </v-list-item-subtitle>
+                         </v-list-item-content>
+                      <v-list-item-action>1.50 &#8364 </v-list-item-action>
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content> Pakomats </v-list-item-content>
+                      <v-list-item-action>3.00 &#8364 </v-list-item-action>
+                    </v-list-item>
+                  </v-list>
+                </v-card-text>
+              </div>
+            </v-expand-transition>
+          </v-card>
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
     </div>
     <p>{{ errors }}</p>
+    <button @click="isInCart">check cart</button>
   </div>
 </template>
 
@@ -231,12 +321,15 @@ export default {
   data() {
     return {
       errors: {},
+      inCart: false,
+      quantity: 1,
       selectedSize: 0,
       selectedType: 0,
       selectedSubtypeName: null,
       selectedImageIndex: 0,
       fullscreenImage: false,
       brandCardExpanded: false,
+      shippingCardExpanded: false,
       bookmarked: false,
       product: {
         id: null,
@@ -284,7 +377,7 @@ export default {
           value: i,
         })
       })
-      console.log(arr)
+      // console.log(arr)
       return arr
     },
     productTypesArray() {
@@ -315,25 +408,33 @@ export default {
       const arr = this.$route.path.split('/')
       return arr[arr.length - 1]
     },
-    selectedSubtypeIndex() {
-      let returnThis
-      this.product.types[this.selectedType].typeSecondary.forEach(
-        (subtype, i) => {
-          if (subtype == this.selectedSubtypeName) {
-            returnThis = i
+    selectedSubtypeIndex: {
+      get() {
+        let returnThis
+        this.product.types[this.selectedType].typeSecondary.forEach(
+          (subtype, i) => {
+            if (subtype == this.selectedSubtypeName) {
+              returnThis = i
+            }
           }
-        }
-      )
-      return returnThis
+        )
+        return returnThis
+      },
+      set(index) {
+        this.selectedSubtypeName = this.product.types[
+          this.selectedType
+        ].typeSecondary[index]
+      },
     },
   },
   mounted() {
     this.getProduct()
+    this.isInCart()
   },
   methods: {
     displayPrice(price) {
-      const typePrice = 0
-      const sizePrice = 0
+      let typePrice = 0
+      let sizePrice = 0
       if (this.product.types[0] != undefined) {
         const typePrice = parseFloat(
           this.productTypesArray[this.selectedType].price
@@ -357,19 +458,22 @@ export default {
     addToCart() {
       this.$axios
         .post('cart', {
-          productId: parseInt(this.productId),
+          productId: this.productId,
           title: this.product.title,
           price: this.displayPrice(this.activePrice),
           selectedType: this.selectedType,
           selectedSubtype: this.selectedSubtypeIndex,
           selectedSize: this.selectedSize,
-          quantity: 1,
+          quantity: this.quantity,
         })
-        .then((res) => console.log(res.data))
+        .then((res) => {
+          // console.log(res.data)
+          this.inCart = true
+          this.$nuxt.$emit('refreshCart')
+        })
         .catch((err) =>
           console.log(err.response.data.message, err.response.data.exception)
         )
-        .catch((err) => console.log(err.message))
       // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
       // Might be I can use a snackbar here
     },
@@ -384,6 +488,25 @@ export default {
     //     }
     //   })
     // },
+    isInCart() {
+      this.$axios
+        .get('cart')
+        .then((res) => {
+          // console.log(res.data)
+          res.data.forEach((cartItem) => {
+            if (cartItem.product_id == this.productId) {
+              this.quantity = cartItem.quantity
+              this.selectedSize = cartItem.selected_size
+              this.selectedType = cartItem.selected_type
+              this.selectedSubtypeIndex = cartItem.selectedSubtypeIndex
+              this.inCart = true
+            }
+          })
+        })
+        .catch((err) =>
+          console.log(err.response.data.message, err.response.data.exception)
+        )
+    },
     getProduct() {
       this.$axios
         .get('products/' + this.productId)
@@ -404,6 +527,10 @@ need to set up the bookmarking mechanism as well as send out a snackbar saying p
 MUST add some link for sharing
 
 Verify that product options have been chosen before the product is added to cart
+
+If product is already in cart get the quantity of it and change the btn to a success version. Will also need an update method for changing the quantity.
+
+Should add like a cool and gratifying animation for adding a product to the cart
 
  */
 </style>

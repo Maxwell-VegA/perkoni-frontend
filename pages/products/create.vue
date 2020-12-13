@@ -640,7 +640,6 @@ export default {
       return arr
     },
   },
-  watch: {},
   mounted() {
     // this.getProduct()
     this.getUserBrands()
