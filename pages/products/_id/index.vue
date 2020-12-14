@@ -196,7 +196,7 @@
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
                 <v-card-text>
-                  <p v-html="product.longDescription"></p>
+                  <!-- <p v-html="product.longDescription"></p> -->
                 </v-card-text>
               </v-card>
             </v-col>
@@ -379,7 +379,8 @@ import { mapState } from 'vuex'
 export default {
   async fetch({ store, params }) {
     await store.dispatch('getProduct', { productId: params.id })
-    await store.dispatch('getRelated')
+
+    // await store.dispatch('getRelated')
   },
   data() {
     return {
@@ -394,11 +395,11 @@ export default {
       brandCardExpanded: false,
       shippingCardExpanded: false,
       bookmarked: false,
-      // relatedProducts: [],
+      relatedProducts: [],
     }
   },
   computed: {
-    ...mapState(['product', 'relatedProducts']),
+    ...mapState(['product']),
     // product() {
     //   return this.products.find(
     //     (product) => product.id == this.$route.params.id

@@ -14,14 +14,18 @@
         </v-row>
 
         <v-row no-gutters>
-          <v-col v-show="totalPages != 1" sm="12" md="3"></v-col>
-          <v-col v-show="totalPages != 1" sm="12" md="9">
+          <v-col
+            v-show="categories[currentCategory].pages != 1"
+            sm="12"
+            md="3"
+          ></v-col>
+          <v-col v-show="categories[currentCategory].pages != 1" sm="12" md="9">
             <v-pagination
               v-model="currentPage"
               class="my-4"
               circle
               total-visible="7"
-              :length="totalPages"
+              :length="categories[currentCategory].pages"
             ></v-pagination>
           </v-col>
 
@@ -66,7 +70,7 @@
             <v-tabs-items v-model="currentCategory" class="transparent">
               <v-tab-item v-for="cat in categories" :key="cat.value">
                 <v-row>
-                  <v-col v-for="(prod, i) in products" :key="i" cols="4">
+                  <v-col v-for="(prod, i) in cat.products" :key="i" cols="4">
                     <NuxtLink :to="'/products/' + prod.id">
                       <!-- @wheel.prevent="prod.cPage += 1"
                         @mouseenter.once="prod.cPage += 1" -->
@@ -159,14 +163,19 @@
               </v-tab-item>
             </v-tabs-items>
           </v-col>
-          <v-col v-show="totalPages != 1" sm="12" md="3"></v-col>
-          <v-col v-show="totalPages != 1" sm="12" md="9">
+
+          <v-col
+            v-show="categories[currentCategory].pages != 1"
+            sm="12"
+            md="3"
+          ></v-col>
+          <v-col v-show="categories[currentCategory].pages != 1" sm="12" md="9">
             <v-pagination
               v-model="currentPage"
               class="my-4"
               circle
               total-visible="7"
-              :length="totalPages"
+              :length="categories[currentCategory].pages"
             ></v-pagination>
           </v-col>
         </v-row>
@@ -179,116 +188,87 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import callToAction from '~/components/callToAction.vue'
+//
+
 export default {
   components: { callToAction },
+  async fetch({ store }) {
+    await store.dispatch('getProducts')
+  },
   data() {
     return {
-      title: 'Products page',
-      currentPage: 1,
-      currentCategory: 2,
-      currentSubcategory: null,
-      currentGender: null,
       errors: {},
-      totalPages: 1,
       products: [],
-      categories: [
-        {
-          text: 'Jaunumi',
-          value: 0,
-          subcategories: [],
-          genders: [
-            'Bezdzimuma',
-            'Unisex',
-            'Vīriešiem',
-            'Sievietēm',
-            'Bērniem',
-          ],
-        },
-        {
-          text: 'Akcijas',
-          value: 1,
-          subcategories: [],
-          genders: [
-            'Bezdzimuma',
-            'Unisex',
-            'Vīriešiem',
-            'Sievietēm',
-            'Bērniem',
-          ],
-        },
-        {
-          text: 'Apģērbi',
-          value: 2,
-          subcategories: [
-            'Krekli',
-            'Džemperi',
-            'Jakas',
-            'Kleitas',
-            'Cepures',
-            'Šalles',
-            'Bez apdrukas',
-          ],
-          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
-        },
-        {
-          text: 'Termouzlīmes',
-          value: 3,
-          subcategories: [
-            'Spēka zīmes',
-            'Rakstu joslas',
-            'Latvija / Rīga / latvietis',
-            'Teksti',
-            'Citas',
-          ],
-          genders: [],
-        },
-        {
-          text: 'Uzlīmes',
-          value: 4,
-          subcategories: [
-            'Spēka zīmes',
-            'Rakstu joslas',
-            'Latvija / Rīga / latvietis',
-            'Citas',
-          ],
-          genders: [],
-        },
-        {
-          text: 'Tetovējumi',
-          value: 5,
-          subcategories: [],
-          genders: [],
-        },
-        {
-          text: 'Citi',
-          value: 6,
-          subcategories: ['Rotas', 'Somas', 'Lietussargi'],
-          genders: [],
-        },
-      ],
     }
   },
-  computed: {},
+  computed: {
+    ...mapState([
+      'categories',
+      // 'currentPage',
+      // 'currentCategory',
+      // 'currentSubcategory',
+      // 'currentGender',
+    ]),
+    currentPage: {
+      get() {
+        return this.$store.state.currentPage
+      },
+      set(v) {
+        this.$store.commit('UPDATE_PAGE', v)
+      },
+    },
+    currentCategory: {
+      get() {
+        return this.$store.state.currentCategory
+      },
+      set(v) {
+        this.$store.commit('UPDATE_CATEGORY', v)
+      },
+    },
+    currentSubcategory: {
+      get() {
+        return this.$store.state.currentSubcategory
+      },
+      set(v) {
+        this.$store.commit('UPDATE_SUBCATEGORY', v)
+      },
+    },
+    currentGender: {
+      get() {
+        return this.$store.state.currentGender
+      },
+      set(v) {
+        this.$store.commit('UPDATE_GENDER', v)
+      },
+    },
+  },
   watch: {
     currentPage() {
-      this.getProducts()
+      // this.getProducts()
+      this.$store.dispatch('getProducts')
     },
     currentCategory() {
-      this.getProducts()
+      // if (this.categories[this.currentCategory].products[0] === undefined) {
+      //   this.$store.dispatch('getProducts')
+      // }
+      this.$store.dispatch('getProducts')
       this.currentSubcategory = null
       this.currentGender = null
     },
     currentSubcategory() {
-      this.getProducts()
+      // this.getProducts()
+      this.$store.dispatch('getProducts')
     },
     currentGender() {
-      this.getProducts()
+      this.$store.dispatch('getProducts')
+      // this.getProducts()
     },
   },
   created() {
     this.categoryName = this.categories[this.currentCategory]
-    this.getProducts()
+    // this.getProducts()
   },
   methods: {
     // cycleImages(productIndex) {
@@ -314,31 +294,31 @@ export default {
       }
       return returnThis
     },
-    getProducts() {
-      const categoryName = this.categories[this.currentCategory].text
-      const subcategoryName = this.categories[this.currentCategory]
-        .subcategories[this.currentSubcategory]
-      const genderName = this.categories[this.currentCategory].genders[
-        this.currentGender
-      ]
-      this.$axios
-        .get('products', {
-          params: {
-            page: this.currentPage,
-            category: categoryName,
-            subcategory: subcategoryName,
-            gender: genderName,
-          },
-        })
-        .then((res) => {
-          console.log(res.data.data)
-          this.products = res.data.data
-          this.totalPages = res.data.meta.last_page
-        })
-        .catch((err) =>
-          console.log(err.response.data.message, err.response.data.exception)
-        )
-    },
+    // getProducts() {
+    //   const categoryName = this.categories[this.currentCategory].text
+    //   const subcategoryName = this.categories[this.currentCategory]
+    //     .subcategories[this.currentSubcategory]
+    //   const genderName = this.categories[this.currentCategory].genders[
+    //     this.currentGender
+    //   ]
+    //   this.$axios
+    //     .get('products', {
+    //       params: {
+    //         page: this.currentPage,
+    //         category: categoryName,
+    //         subcategory: subcategoryName,
+    //         gender: genderName,
+    //       },
+    //     })
+    //     .then((res) => {
+    //       console.log(res.data.data)
+    //       this.products = res.data.data
+    //       this.totalPages = res.data.meta.last_page
+    //     })
+    //     .catch((err) =>
+    //       console.log(err.response.data.message, err.response.data.exception)
+    //     )
+    // },
   },
   head() {
     return {

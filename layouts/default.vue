@@ -30,7 +30,7 @@
               <v-btn icon v-bind="attrs" class="mr-3" v-on="on">
                 <v-icon size="30">mdi-cart-outline</v-icon>
                 <!-- badge indicates how many items in cart-->
-                <v-badge content="3"></v-badge>
+                <v-badge :content="cart.length"></v-badge>
               </v-btn>
             </template>
             <v-list dense>
@@ -136,21 +136,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
+import { mapState } from 'vuex'
 //
 
 export default {
   components: { VendorNav, AdminNav },
-  async fetch({ store }) {
-    await store.dispatch('getCart')
-  },
+  middleware: 'load-cart',
   data() {
     return {
       title: 'DEVINI X PERKONI',
       searchActive: false,
-      // cartItems: [],
     }
   },
   computed: {
@@ -183,31 +180,9 @@ export default {
       return array
     },
   },
-  created() {
-    // this.$nuxt.$on('refreshCart', this.refreshCart)
-  },
-  mounted() {
-    // this.refreshCart()
-  },
-  methods: {
-    // refreshCart() {
-    //   this.$axios
-    //     .get('cart')
-    //     .then(
-    //       (res) => (
-    //         (this.cartItems = []),
-    //         res.data.forEach((item) => {
-    //           this.cartItems.push(item)
-    //         })
-    //       )
-    //     )
-    //     // .then((res) => console.log('hey', res.data))
-    //     .catch((err) =>
-    //       console.log(err.response.data.message, err.response.data.exception)
-    //     )
-    //   // console.log(this.cartItems, 'asdasdasda')
-    // },
-  },
+  created() {},
+  mounted() {},
+  methods: {},
 }
 </script>
 
