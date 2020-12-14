@@ -153,6 +153,11 @@ export const actions = {
             }
         }
         
+        // if (this.state.categories[1].products[0] == undefined) {
+        //     let akcijas = await this.$axios('products', {params: {category: 'Akcijas'}})
+        //     commit('SET_PRODUCTS', akcijas.data)
+        // }  
+        
         let res = await this.$axios('products', requestName)
         let products = res.data
 

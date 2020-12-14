@@ -11,19 +11,32 @@
             :rules="[rules.required]"
             validate-on-blur
           ></v-text-field>
+          <v-row class="mt-n8">
+            <v-col md="6">
+              <v-select
+                v-model="product.mainCategory"
+                :items="categories"
+                label="Kategorija"
+                return-object
+              ></v-select>
+            </v-col>
+            <v-col md="6">
+              <v-select
+                v-model="product.subcartegory"
+                :items="product.mainCategory.subcategories"
+                label="Subkategorija"
+                :rules="[rules.required]"
+              >
+              </v-select>
+            </v-col>
+          </v-row>
           <v-select
-            v-model="product.mainCategory"
-            :items="categories"
-            label="Kategorija"
-          ></v-select>
-          <p v-if="devMode" class="text--disabled">
-            product.mainCategory - {{ product.mainCategory }}
-          </p>
-          <v-select
-            v-model="compSubcategory"
-            :items="compSubcategories"
-            label="Subkategorija"
-            :rules="[rules.required]"
+            v-model="product.gender"
+            :items="product.mainCategory.genders"
+            multiple
+            label="Dzimumi"
+            hint="Atzimejat vairakus dzimumus tikai ja no produkta dzimuma nav atkariga neviena cita mainiga ipasiba (ja produkts ir pieejams gan bernu gan unisex dzimumos, bet bernu dzimumam nav pieejami XL izmeri kuri ir pieejami unisex dzimumam tad produkts bus jasadala divos atseviskos produktos - viens prieks berniem dzimuma un viens prieks unisex dzimuma"
+            @change="sizeGenders()"
           >
           </v-select>
           <v-textarea
@@ -105,9 +118,14 @@
           no-data-text="No pricing data generated"
           disable-filtering
           disable-sort
-          :items-per-page="7"
+          :items-per-page="6"
         >
         </v-data-table>
+        <!-- <v-select
+          v-model="selectedGender"
+          :items="['Unisex']"
+        ></v-select> -->
+        <v-text-field v-model="selectedGender" type="number"></v-text-field>
         <p v-if="devMode" class="text--disabled">
           product.operatorIsMultiply - {{ product.operatorIsMultiply }}
         </p>
@@ -115,8 +133,63 @@
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
+      <!-- variations -->
+      <v-col md="12" xl="6" class="px-8">
+        <v-row>
+          <v-col md="9">
+            <v-combobox
+              v-model="product.variations"
+              :label="product.variationsName + ':'"
+              clearable
+              deletable-chips
+              chips
+              multiple
+              hide-selected
+            >
+            </v-combobox>
+          </v-col>
+          <v-col md="3">
+            <v-text-field
+              v-model="product.variationsName"
+              placeholder="E.g. Krekla krasa, Uzraksts, Veidi"
+              label="Nosaukums"
+              max="20"
+              min="3"
+              clearable
+            ></v-text-field>
+          </v-col>
+        </v-row>
+      </v-col>
       <!-- types -->
       <v-col md="12" xl="6" class="px-8">
+        <v-row>
+          <v-col md="4">
+            <v-text-field
+              v-model="product.typesName"
+              label="Selekcijas nosaukums"
+              placeholder="E.g. Uzlimes matreali, Fakturas, Modeli"
+              max="20"
+              min="3"
+              clearable
+            ></v-text-field>
+          </v-col>
+          <v-col md="4">
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="product.subtypesName"
+              label="Subselekcijas nosaukums"
+              placeholder="E.g. Uzlimes krasas"
+              max="20"
+              min="3"
+              clearable
+            ></v-text-field>
+          </v-col>
+          <v-col md="4">
+            <v-btn class="float-right" @click="addType">
+              Pievienot "{{ product.typesName }}" tipu
+            </v-btn>
+          </v-col>
+        </v-row>
         <p v-if="product.types[0] == null">Beztipu produkts</p>
         <v-row v-else>
           <v-col
@@ -131,7 +204,7 @@
                   v-model="type.typeName"
                   outlined
                   dense
-                  label="Nosaukums"
+                  :label="product.typesName + ' tips'"
                 ></v-text-field>
               </v-col>
               <v-col cols="3">
@@ -151,7 +224,7 @@
             </v-row>
             <v-combobox
               v-model="type.typeSecondary"
-              label="Subtipi"
+              :label="type.typeName + ' ' + product.subtypesName"
               hint="Spied 'enter' lai atdalitu "
               clearable
               dense
@@ -165,48 +238,118 @@
             </v-combobox>
           </v-col>
         </v-row>
-        <v-btn @click="addType">Pievienot tipu</v-btn>
       </v-col>
       <!-- sizes -->
       <v-col md="12" xl="6" class="px-8">
         <p v-if="product.sizes[0] == null">Viena izmera produkts</p>
-        <v-row v-else>
-          <v-col
-            v-for="(size, i) in product.sizes"
-            :key="i"
-            :style="compSizeCardHeight"
-            md="4"
-            lg="3"
-            xl="4"
-          >
-            <v-row dense>
-              <v-col cols="8">
-                <v-text-field
-                  v-model="size.sizeName"
-                  outlined
-                  dense
-                  label="Nosaukums"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field
-                  v-model="size.sizePrice"
-                  type="number"
-                  outlined
-                  dense
-                  label="Koeficents"
-                ></v-text-field>
-              </v-col>
-              <v-col class="ml-n2" cols="1">
-                <v-btn icon @click="removeSize(i)">
-                  <v-icon color="error">mdi-close</v-icon>
-                </v-btn>
+        <v-row v-for="(gender, i) in product.sizes" v-else :key="i">
+          <v-row>
+            <v-btn @click="addSize(i)">Pievienot izmeru</v-btn>
+            <p>{{ gender.gender }}</p>
+          </v-row>
+          <v-row>
+            <v-col
+              v-for="(size, index) in gender.sizes"
+              :key="index"
+              md="4"
+              lg="4"
+              xl="4"
+            >
+              <v-row dense>
+                <v-col cols="8">
+                  <v-text-field
+                    v-model="size.sizeName"
+                    outlined
+                    dense
+                    label="Nosaukums"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field
+                    v-model="size.sizePrice"
+                    type="number"
+                    outlined
+                    dense
+                    label="Koeficents"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="1">
+                  <v-btn class="ml-n1" icon @click="removeSize(i, index)">
+                    <v-icon color="error">mdi-close</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col v-show="size.customShipping" cols="8">
+                  <v-select
+                    v-model="size.shippingOptions"
+                    outlined
+                    dense
+                    multiple
+                    :items="allShippingOptions"
+                    label="Piegade"
+                  ></v-select>
+                </v-col>
+                <v-col v-show="size.customShipping" cols="3">
+                  <v-text-field
+                    v-model="size.weight"
+                    label="Svars"
+                    outlined
+                    dense
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col v-show="!size.customShipping" cols="8">
+                  <v-text-field
+                    value="Noklusejuma"
+                    disabled
+                    outlined
+                    dense
+                    label="Piegade"
+                  ></v-text-field>
+                </v-col>
+                <v-col v-show="!size.customShipping" cols="3">
+                  <v-text-field
+                    v-model="product.weight"
+                    disabled
+                    label="Svars"
+                    outlined
+                    dense
+                    type="number"
+                  ></v-text-field>
+                </v-col>
+                <v-col class="ml-n1" cols="1">
+                  <v-btn
+                    icon
+                    @click="size.customShipping = !size.customShipping"
+                  >
+                    <v-icon :disabled="!size.customShipping"
+                      >mdi-truck-outline</v-icon
+                    >
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-row>
+      </v-col>
+      <!-- <v-col md="12">
+        <v-row>
+          <v-col v-for="(gender, i) in product.sizes" :key="i" md="12">
+            {{ gender.gender }}
+            <v-row>
+              <v-col v-for="(size, idx) in gender.sizes" :key="idx" md="4">
+                <v-card>
+                  <v-card-title>
+                    {{ size.sizeName }}
+                  </v-card-title>
+                  <v-card-text>
+                    <p>{{ size.customShipping }}</p>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
           </v-col>
         </v-row>
-        <v-btn @click="addSize">Pievienot izmeru</v-btn>
-      </v-col>
+      </v-col> -->
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
@@ -370,6 +513,7 @@
           deletable-chips
           chips
           multiple
+          hide-selected
           counter="9"
           :items="relatedProducts"
         >
@@ -380,6 +524,8 @@
           clearable
           chips
           multiple
+          deletable-chips
+          hide-selected
           :items="taggs"
           hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
         >
@@ -389,12 +535,36 @@
         <br />
         <br />
       </v-col>
+      <!-- shipping -->
+      <v-col md="6">
+        <v-text-field
+          v-model="product.weight"
+          label="Svars"
+          type="number"
+        ></v-text-field>
+        <v-select
+          v-for="(locale, i) in shippingOptions"
+          :key="i"
+          v-model="product.shipping[locale.locale]"
+          :items="locale.options"
+          multiple
+          chips
+          return-object
+          :label="'Iespejamie piegades veidi: ' + locale.locale"
+        ></v-select>
+        <v-spacer></v-spacer>
+        <!-- :disabled="product.shipping != 'Sanemt uz vietas'" -->
+        <v-text-field label="Adrese kur var sanemt produktu"></v-text-field>
+        {{ product.shipping }}
+      </v-col>
     </v-row>
 
     <div>
       <!-- controlls -->
+      <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
+      <v-btn @click="log(product.shipping)">Shipping</v-btn>
       <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
       <v-btn>Submit for review</v-btn>
 
@@ -404,6 +574,7 @@
         v-model="product.isPublic"
         label="Make product publically visable"
       ></v-checkbox>
+      {{ product.shipping.Latvija }}
       {{ errors }}
     </div>
 
@@ -417,6 +588,7 @@
 export default {
   data() {
     return {
+      blankArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       devMode: false,
       errors: [],
       showErrorsSnackbar: false,
@@ -424,6 +596,7 @@ export default {
       files: [],
       currentExpandedImage: null,
       selectedImages: [null],
+      selectedGender: 0,
       product: {
         brand_id: 0,
         title: 'Hoodie "Latvia"',
@@ -440,22 +613,81 @@ export default {
         on_sale: false,
         operatorIsMultiply: false,
         taggs: ['Latvia', 'November', 'Autumn'],
-        gender: 'Unisex',
+        gender: [],
         // likely if the gender is set with the product as clothing then the category changed to something else it doesn't reset to genderless
+        variationsName: 'Variacijas',
+        typesName: 'Matreali',
+        subtypesName: 'Krasas',
+        variations: [],
         types: [
           { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
           // { typeName: 'Cool', typePrice: 2, typeSecondary: [] },
           // { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [] },
-          { typeName: 'Super Cool', typePrice: 5, typeSecondary: [] },
+          {
+            typeName: 'Super Cool',
+            typePrice: 5,
+            typeSecondary: ['black', 'white', 'gray'],
+          },
           { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [] },
         ],
         sizes: [
-          { sizeName: 'S', sizePrice: 0 },
-          { sizeName: 'M', sizePrice: 2 },
-          { sizeName: 'L', sizePrice: 5 },
-          // { sizeName: 'XL', sizePrice: 8 },
+          {
+            gender: 'Unisex',
+            sizes: [
+              {
+                sizeName: 'S',
+                sizePrice: 0,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+              {
+                sizeName: 'M',
+                sizePrice: 2,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+              {
+                sizeName: 'L',
+                sizePrice: 5,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+              // { sizeName: 'XL', sizePrice: 8 },
+            ],
+          },
+          // {
+          //   gender: 'Sievietem',
+          //   sizes: [
+          //     {
+          //       sizeName: 'XS',
+          //       sizePrice: -1,
+          //       weight: 0,
+          //       customShipping: false,
+          //       shippingOptions: [],
+          //     },
+          //     {
+          //       sizeName: 'S',
+          //       sizePrice: 0,
+          //       weight: 0,
+          //       customShipping: false,
+          //       shippingOptions: [],
+          //     },
+          //     {
+          //       sizeName: 'M',
+          //       sizePrice: 2,
+          //       weight: 0,
+          //       customShipping: false,
+          //       shippingOptions: [],
+          //     },
+          //   ],
+          // },
         ],
         related: [],
+        weight: 0,
+        shipping: [],
       },
       categories: [
         {
@@ -503,6 +735,48 @@ export default {
           genders: [],
         },
       ],
+      shippingOptions: [
+        {
+          locale: 'Latvija',
+          options: [
+            {
+              text: 'Vestule',
+              price: 1.5,
+              weight: 100,
+            },
+            {
+              text: 'Izsekojama vestule',
+              price: 2.5,
+              weight: 100,
+            },
+            {
+              text: 'Pasta pacina',
+              price: 4.0,
+              weight: 3000,
+            },
+            {
+              text: 'Pakomats',
+              price: 2.5,
+              weight: 30000,
+            },
+            {
+              text: 'Sanemt uz vietas',
+              price: 0,
+              weight: 1000000,
+            },
+          ],
+        },
+        {
+          locale: 'Baltija',
+          options: [
+            {
+              text: 'Pakomats (Baltija)',
+              price: 5,
+              weight: 30000,
+            },
+          ],
+        },
+      ],
       taggs: [
         //   this should probably be a generated collection of the most popular taggs on the site instead of being a predefined collection
         // Perhaps also try to include the user's previously used taggs for convenience
@@ -521,6 +795,13 @@ export default {
     }
   },
   computed: {
+    allShippingOptions() {
+      const arr = []
+      this.shippingOptions.forEach((locale) =>
+        locale.options.forEach((option) => arr.push(option))
+      )
+      return arr
+    },
     compRelatedProducts: {
       get() {
         return []
@@ -560,30 +841,6 @@ export default {
         return this.product.base_price
       }
     },
-    compSubcategories() {
-      let arr = []
-      this.categories.forEach((category) => {
-        if (category.text === this.product.mainCategory) {
-          arr = category.subcategories
-        }
-      })
-      return arr
-    },
-    compSubcategory: {
-      get() {
-        let returnThis = null
-        this.compSubcategories.forEach((subcategory) => {
-          if (this.product.subcategory === subcategory) {
-            // this.product.subcategory
-            returnThis = this.product.subcategory
-          }
-        })
-        return returnThis
-      },
-      set(input) {
-        this.product.subcategory = input
-      },
-    },
     productId() {
       const arr = this.$route.path.split('/')
       return arr[arr.length - 2]
@@ -604,14 +861,14 @@ export default {
       this.product.types.forEach(
         (type, i) => (
           (arr[i].name = type.typeName),
-          this.product.sizes.forEach(
+          this.product.sizes[this.selectedGender].sizes.forEach(
             (size, idx) =>
               (arr[i]['price' + idx] = this.product.types[i].typePrice)
           )
         )
       )
       this.product.types.forEach((type, i) =>
-        this.product.sizes.forEach(
+        this.product.sizes[this.selectedGender].sizes.forEach(
           (size, idx) =>
             (arr[i]['price' + idx] = this.calculate(
               arr[i]['price' + idx],
@@ -629,7 +886,7 @@ export default {
           align: 'start',
         },
       ]
-      this.product.sizes.forEach((size, i) =>
+      this.product.sizes[this.selectedGender].sizes.forEach((size, i) =>
         arr.push({
           text: size.sizeName,
           price: size.sizePrice,
@@ -639,11 +896,48 @@ export default {
       return arr
     },
   },
+  watch: {},
   mounted() {
     // this.getProduct()
     this.getUserBrands()
   },
   methods: {
+    sizeGenders() {
+      const arr = []
+      if (this.product.gender[0] != undefined) {
+        this.product.gender.forEach((gen, i) => {
+          arr.push({
+            gender: gen,
+            sizes: [
+              {
+                sizeName: 'New Size',
+                sizePrice: 0,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+            ],
+          })
+        })
+      } else {
+        arr.push({
+          gender: 'Bezdzimuma',
+          sizes: [
+            {
+              sizeName: 'New Size',
+              sizePrice: 0,
+              weight: 0,
+              customShipping: false,
+              shippingOptions: [],
+            },
+          ],
+        })
+      }
+      this.product.sizes = arr
+    },
+    log(v) {
+      console.log(v)
+    },
     multilined(string) {
       const split = string.split('\n')
       return split.join('<br />')
@@ -704,7 +998,7 @@ export default {
           title: this.product.title,
           isPublic: this.product.isPublic,
           isConfirmed: this.product.isConfirmed,
-          mainCategory: this.product.mainCategory,
+          mainCategory: this.product.mainCategory.text,
           subcategory: this.product.subcategory,
           description: this.product.description,
           longDescription: this.multilined(this.product.longDescription),
@@ -799,16 +1093,21 @@ export default {
         return index != i
       })
     },
-    addSize() {
-      this.product.sizes.push({
+    addSize(index) {
+      this.product.sizes[index].sizes.push({
         sizeName: 'New Size',
         sizePrice: 0,
+        weight: 0,
+        customShipping: false,
+        shippingOptions: [],
       })
     },
-    removeSize(i) {
-      this.product.sizes = this.product.sizes.filter(function (value, index) {
-        return index != i
-      })
+    removeSize(idx, i) {
+      this.product.sizes[idx].sizes = this.product.sizes[idx].sizes.filter(
+        function (value, index) {
+          return index != i
+        }
+      )
     },
   },
 }
