@@ -3,12 +3,12 @@
     <v-col offset-xl="1">
       <h1 class="display-3 my-8">{{ product.title }}</h1>
       <h3 class="font-weight-light">
-        {{ product.mainCategory }} / {{ product.subcategory }} / {{ product.gender }}
+        {{ product.mainCategory }} / {{ product.subcategory }} /
+        {{ product.gender }}
       </h3>
     </v-col>
     <div>
-
-<!-- Fullscreen carousel -->
+      <!-- Fullscreen carousel -->
       <v-dialog v-model="fullscreenImage" width="80vh" height="100vh">
         <v-card>
           <v-carousel
@@ -49,10 +49,9 @@
       <v-row no-gutters>
         <v-spacer></v-spacer>
         <v-col cols="12" lg="9" xl="8">
-          <v-row >
-
-<!-- Carousel -->
-            <v-col cols="12" md="6" xl="5" >
+          <v-row>
+            <!-- Carousel -->
+            <v-col cols="12" md="6" xl="5">
               <v-card>
                 <v-carousel
                   v-model="selectedImageIndex"
@@ -94,8 +93,8 @@
             </v-col>
 
             <v-col cols="12" md="6" xl="7">
-              <v-row >
-<!-- short description -->
+              <v-row>
+                <!-- short description -->
                 <v-col
                   class="mt-n3"
                   offset="1"
@@ -108,52 +107,52 @@
                   <p>{{ product.description }}</p>
                 </v-col>
 
-<!-- Selects -->
+                <!-- Selects -->
                 <v-col class="mt-n5" offset="1" cols="10" offset-md="0" md="8">
                   <v-select
-                  class="my-n1"
                     v-show="product.gender[1] != undefined"
                     v-model="selectedGender"
+                    class="my-n1"
                     :items="product.gender"
                     label="Modelis"
                   ></v-select>
 
                   <v-select
-                  class="my-n1"
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
-                    :disabled="productSizesArray[0].text == 'Izvelies modeli'"
                     v-model="selectedSize"
+                    class="my-n1"
+                    :disabled="productSizesArray[0].text == 'Izvelies modeli'"
                     :items="productSizesArray"
                     label="Izmers"
                   ></v-select>
 
                   <v-select
-                  class="my-n1"
                     v-show="product.variations[1] != undefined"
                     v-model="selectedVariation"
+                    class="my-n1"
                     :items="product.variations"
                     :label="product.variationsName"
                   ></v-select>
 
                   <v-select
-                  class="my-n1"
                     v-show="productTypesArray[0].text != 'singleTypeProduct'"
                     v-model="selectedType"
+                    class="my-n1"
                     :items="productTypesArray"
                     :label="product.typesName"
                     @change="selectedSubtypeName = null"
                   ></v-select>
 
                   <v-select
-                  class="my-n1"
                     v-show="productSubtypesArray[selectedType] != undefined"
                     v-model="selectedSubtypeName"
+                    class="my-n1"
                     :items="productSubtypesArray"
                     :label="product.subtypesName"
                   ></v-select>
                 </v-col>
 
-<!-- Price -->
+                <!-- Price -->
                 <v-col
                   v-if="product.base_price !== null"
                   class="text-h4 my-n6"
@@ -184,7 +183,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-<!-- Add to cart -->
+                <!-- Add to cart -->
                 <v-col cols="12" class="pr-8 ml-n1">
                   <!-- <v-card class="mb-2">
                     <v-card-actions> -->
@@ -220,7 +219,7 @@
                 </v-col>
               </v-row>
             </v-col>
-<!-- Long description -->
+            <!-- Long description -->
             <v-col cols="6" xl="5">
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
@@ -229,7 +228,7 @@
                 </v-card-text>
               </v-card>
             </v-col>
-<!-- Related products -->
+            <!-- Related products -->
             <v-col cols="6" xl="7" class="pr-9">
               <v-card>
                 <v-card-title> Lidzigie produkti </v-card-title>
@@ -253,14 +252,13 @@
                 </v-card-text>
               </v-card>
             </v-col>
-
           </v-row>
         </v-col>
-<!-- Sidebar --------------------------------------------------- -->
+        <!-- Sidebar --------------------------------------------------- -->
         <v-col cols="12" lg="3" xl="2">
           <v-row>
             <v-col>
-<!-- Bookmark / Share -->
+              <!-- Bookmark / Share -->
               <v-card class="mb-2">
                 <v-card-actions>
                   <v-tooltip bottom close-delay="500">
@@ -300,7 +298,7 @@
                   </v-tooltip>
                 </v-card-actions>
               </v-card>
-<!-- Brand -->
+              <!-- Brand -->
               <v-card class="mb-2">
                 <v-card-subtitle class="mb-n8" primary-title>
                   Razotajs:
@@ -349,7 +347,7 @@
                   </div>
                 </v-expand-transition>
               </v-card>
-<!-- Shipping -->
+              <!-- Shipping -->
               <v-card>
                 <v-card-title>
                   Piegades iespejas
@@ -368,50 +366,122 @@
                 <v-expand-transition>
                   <div v-show="shippingCardExpanded">
                     <v-divider></v-divider>
-                      <v-card-subtitle >
-                        Pirkumiem virs
-                        {{ product.brand_freeShipping }}
-                        &#8364;
-                        no
-                        {{ product.brand_name }}
-                        piegade par brivu.
-                      </v-card-subtitle>
+                    <v-card-subtitle>
+                      Pirkumiem virs
+                      {{ product.brand_freeShipping }}
+                      &#8364; no
+                      {{ product.brand_name }}
+                      piegade par brivu.
+                    </v-card-subtitle>
                     <v-card-text>
-                      <div v-if="!productSizesArray[selectedSize].customShipping">
-                      <v-list v-for="(region, i) in product.shipping" :key="i">
-                        <v-subheader>{{ region.locale }}</v-subheader>
-                        <v-list-item v-for="(opt, idx) in region.options" :key="idx">
-                          <v-list-item-content>
-                            <v-list-item-title> {{ opt.text }} </v-list-item-title>
-                            <v-list-item-subtitle v-if="opt.weight == 1000000">
-                              {{ region.address }} 
-                              <!-- if 100+ show 100+ -->
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle v-else-if="(opt.weight / product.weight) < 51">
-                              Lidz {{ (opt.weight / product.weight).toFixed() }} gb
-                              <!-- if 100+ show 100+ -->
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle v-else>
-                              50+ gb
-                            </v-list-item-subtitle>
-                          </v-list-item-content>
-                          <v-list-item-action> {{ opt.price }} &#8364; </v-list-item-action>
-                        </v-list-item>
-                      </v-list>
+                      <div
+                        v-if="!productSizesArray[selectedSize].customShipping"
+                      >
+                        <v-list v-for="(locale, i) in shippingOptions" :key="i">
+                          <v-subheader>{{ locale.locale }}</v-subheader>
+                          <v-list-item
+                            v-for="(opt, i) in product.shipping"
+                            v-if="
+                              shippingProperties(opt, locale.locale).text !=
+                              undefined
+                            "
+                            :key="i"
+                          >
+                            <v-list-item-content>
+                              <v-list-item-title>
+                                {{
+                                  shippingProperties(opt, locale.locale).text
+                                }}
+                              </v-list-item-title>
+                              <v-list-item-subtitle
+                                v-if="
+                                  shippingProperties(opt, locale.locale)
+                                    .weight == 1000000
+                                "
+                              >
+                                {{ product.address }}
+                              </v-list-item-subtitle>
+                              <v-list-item-subtitle
+                                v-else-if="
+                                  shippingProperties(opt, locale.locale)
+                                    .weight /
+                                    product.weight <
+                                  51
+                                "
+                              >
+                                Lidz
+                                {{
+                                  (
+                                    shippingProperties(opt, locale.locale)
+                                      .weight / product.weight
+                                  ).toFixed()
+                                }}
+                                gb
+                              </v-list-item-subtitle>
+                              <v-list-item-subtitle v-else>
+                                50+ gb
+                              </v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                              {{ shippingProperties(opt, locale.locale).price }}
+                              &#8364;
+                            </v-list-item-action>
+                          </v-list-item>
+                        </v-list>
                       </div>
                       <div v-else>
-                      <v-list >
-                        <v-list-item v-for="(opt, idx) in productSizesArray[selectedSize].shippingOptions" :key="idx">
-                          <v-list-item-content>
-                            <v-list-item-title> {{ opt }} </v-list-item-title>
-                            <v-list-item-subtitle>
-                              Lidz {{ (shippingProperties(opt).weight / product.weight).toFixed() }} gb
-                              <!-- if 100+ show 100+ -->
-                            </v-list-item-subtitle>
-                          </v-list-item-content>
-                          <v-list-item-action> {{ shippingProperties(opt).price }} &#8364; </v-list-item-action>
-                        </v-list-item>
-                      </v-list>
+                        <v-list v-for="(locale, i) in shippingOptions" :key="i">
+                          <v-subheader>{{ locale.locale }}</v-subheader>
+                          <v-list-item
+                            v-for="(opt, i) in productSizesArray[selectedSize]
+                              .shippingOptions"
+                            v-if="
+                              shippingProperties(opt, locale.locale).text !=
+                              undefined
+                            "
+                            :key="i"
+                          >
+                            <v-list-item-content>
+                              <v-list-item-title>
+                                {{
+                                  shippingProperties(opt, locale.locale).text
+                                }}
+                              </v-list-item-title>
+                              <v-list-item-subtitle
+                                v-if="
+                                  shippingProperties(opt, locale.locale)
+                                    .weight == 1000000
+                                "
+                              >
+                                {{ product.address }}
+                              </v-list-item-subtitle>
+                              <v-list-item-subtitle
+                                v-else-if="
+                                  shippingProperties(opt, locale.locale)
+                                    .weight /
+                                    product.weight <
+                                  51
+                                "
+                              >
+                                Lidz
+                                {{
+                                  (
+                                    shippingProperties(opt, locale.locale)
+                                      .weight / product.weight
+                                  ).toFixed()
+                                }}
+                                gb
+                              </v-list-item-subtitle>
+                              <v-list-item-subtitle v-else>
+                                50+ gb
+                              </v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-action>
+                              {{ shippingProperties(opt, locale.locale).price }}
+                              &#8364;
+                            </v-list-item-action>
+                          </v-list-item>
+                        </v-list>
                       </div>
                     </v-card-text>
                   </div>
@@ -442,22 +512,24 @@ export default {
     return {
       errors: {},
       inCart: false,
+      typePrice: 0,
+      sizePrice: 0,
       quantity: 1,
-      selectedGender: "",
+      selectedGender: '',
       selectedSize: 0,
-      selectedVariation: "",
+      selectedVariation: '',
       selectedType: 0,
       selectedSubtypeName: null,
       selectedImageIndex: 0,
       fullscreenImage: false,
       brandCardExpanded: false,
-      shippingCardExpanded: true,
+      shippingCardExpanded: false,
       bookmarked: false,
       relatedProducts: [],
     }
   },
   computed: {
-    ...mapState(['product']),
+    ...mapState(['product', 'shippingOptions']),
     // product() {
     //   return this.products.find(
     //     (product) => product.id == this.$route.params.id
@@ -476,7 +548,7 @@ export default {
       if (this.product.gender[1] == undefined) {
         this.selectedGender = this.product.gender[0]
       }
-      return this.product.sizes.find(gen => gen.gender == this.selectedGender)
+      return this.product.sizes.find((gen) => gen.gender == this.selectedGender)
     },
     productSizesArray() {
       const arr = []
@@ -489,8 +561,8 @@ export default {
             weight: size.weight,
             customShipping: size.customShipping,
             shippingOptions: size.shippingOptions,
+          })
         })
-      })
       } else {
         arr.push({
           text: 'Izvelies modeli',
@@ -550,6 +622,14 @@ export default {
         ].typeSecondary[index]
       },
     },
+    // compShipping() {
+    //   let arr = this.product.shipping
+    //   if (this.productSizesArray[this.selectedSize].customShipping) {
+    //     console.log(this.productSizesArray)
+    //     arr = this.productSizesArray[this.selectedSize].shippingOptions
+    //   }
+    //   return arr
+    // },
   },
   // watch: {
   //   'product': function() {
@@ -563,27 +643,20 @@ export default {
   methods: {
     displayPrice(price) {
       if (this.product.types[0] != undefined) {
-        this.product.typePrice = parseFloat(
+        this.typePrice = parseFloat(
           this.productTypesArray[this.selectedType].price
         )
       }
       if (this.product.sizes[0] != undefined) {
-        this.product.sizePrice = parseFloat(
+        this.sizePrice = parseFloat(
           this.productSizesArray[this.selectedSize].price
         )
       }
       if (price != null) {
         if (this.product.operatorIsMultiply == true) {
-          return (
-            price +
-            this.product.typePrice * this.product.sizePrice
-          ).toFixed(2)
+          return (price + this.typePrice * this.sizePrice).toFixed(2)
         } else {
-          return (
-            price +
-            this.product.typePrice +
-            this.product.sizePrice
-          ).toFixed(2)
+          return (price + this.typePrice + this.sizePrice).toFixed(2)
         }
       } else {
         return null
@@ -622,15 +695,18 @@ export default {
     //     }
     //   })
     // },
-    shippingProperties(name) {
-      let properties = {}
-      this.$store.state.shippingOptions.forEach(locale => {
-        locale.options.forEach(option => {
-          if (option.text == name) {
-            properties.price = option.price
-            properties.weight = option.weight
-          }
-        })
+    shippingProperties(idx, loc) {
+      const properties = {}
+      this.shippingOptions.forEach((locale) => {
+        if (locale.locale === loc) {
+          locale.options.forEach((option) => {
+            if (option.value === idx) {
+              properties.text = option.text
+              properties.price = option.price
+              properties.weight = option.weight
+            }
+          })
+        }
       })
       return properties
     },

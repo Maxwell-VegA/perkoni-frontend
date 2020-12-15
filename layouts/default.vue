@@ -30,7 +30,7 @@
               <v-btn icon v-bind="attrs" class="mr-3" v-on="on">
                 <v-icon size="30">mdi-cart-outline</v-icon>
                 <!-- badge indicates how many items in cart-->
-                <v-badge :content="cart.length"></v-badge>
+                <v-badge v-if="cart.length > 0" :content="cart.length"></v-badge>
               </v-btn>
             </template>
             <v-list dense>

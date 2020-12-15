@@ -563,11 +563,10 @@
         <v-select
           v-for="(locale, i) in shippingOptions"
           :key="i"
-          v-model="product.shipping[locale.locale]"
+          v-model="product.shipping"
           :items="locale.options"
           multiple
           chips
-          return-object
           :label="'Iespejamie piegades veidi: ' + locale.locale"
         ></v-select>
         <v-spacer></v-spacer>
@@ -755,48 +754,6 @@ export default {
           genders: [],
         },
       ],
-      shippingOptions: [
-        {
-          locale: 'Latvija',
-          options: [
-            {
-              text: 'Vestule',
-              price: 1.5,
-              weight: 100,
-            },
-            {
-              text: 'Izsekojama vestule',
-              price: 2.5,
-              weight: 100,
-            },
-            {
-              text: 'Pasta pacina',
-              price: 4.0,
-              weight: 3000,
-            },
-            {
-              text: 'Pakomats',
-              price: 2.5,
-              weight: 30000,
-            },
-            {
-              text: 'Sanemt uz vietas',
-              price: 0,
-              weight: 1000000,
-            },
-          ],
-        },
-        {
-          locale: 'Baltija',
-          options: [
-            {
-              text: 'Pakomats (Baltija)',
-              price: 5,
-              weight: 30000,
-            },
-          ],
-        },
-      ],
       taggs: [
         //   this should probably be a generated collection of the most popular taggs on the site instead of being a predefined collection
         // Perhaps also try to include the user's previously used taggs for convenience
@@ -815,6 +772,9 @@ export default {
     }
   },
   computed: {
+    shippingOptions() {
+      return this.$store.state.shippingOptions
+    },
     categoryHasGenders() {
       let returnThis = false 
       if (this.product.mainCategory.text == "Apģērbi") {
@@ -922,45 +882,45 @@ export default {
       )
       return arr
     },
-    compShipping() {
-      let arr = [
-        {
-          locale: 'Latvija',
-          options: [],
-          address: this.product.address
-        },
-        {
-          locale: 'Baltija',
-          options: [],
-        },
-        {
-          locale: 'Austrumeiropa',
-          options: [],
-        },
-      ]
-      this.product.shipping.Latvija.forEach( opt => 
-        arr[0].options.push({
-          text: opt.text,
-          price: opt.price,
-          weight: opt.weight,
-        })
-      )
-      this.product.shipping.Baltija.forEach( opt => 
-        arr[1].options.push({
-          text: opt.text,
-          price: opt.price,
-          weight: opt.weight,
-        })
-      )
-      // this.product.shipping.Austrumeiropa.forEach( opt => 
-      //   arr[2].options.push({
-      //     text: opt.text,
-      //     price: opt.price,
-      //     weight: opt.weight,
-      //   })
-      // )
-      return arr
-    }
+    // compShipping() {
+    //   let arr = [
+    //     {
+    //       locale: 'Latvija',
+    //       options: [],
+    //       address: this.product.address
+    //     },
+    //     {
+    //       locale: 'Baltija',
+    //       options: [],
+    //     },
+    //     {
+    //       locale: 'Austrumeiropa',
+    //       options: [],
+    //     },
+    //   ]
+    //   this.product.shipping.Latvija.forEach( opt => 
+    //     arr[0].options.push({
+    //       text: opt.text,
+    //       price: opt.price,
+    //       weight: opt.weight,
+    //     })
+    //   )
+    //   this.product.shipping.Baltija.forEach( opt => 
+    //     arr[1].options.push({
+    //       text: opt.text,
+    //       price: opt.price,
+    //       weight: opt.weight,
+    //     })
+    //   )
+    //   // this.product.shipping.Austrumeiropa.forEach( opt => 
+    //   //   arr[2].options.push({
+    //   //     text: opt.text,
+    //   //     price: opt.price,
+    //   //     weight: opt.weight,
+    //   //   })
+    //   // )
+    //   return arr
+    // }
   },
   watch: {},
   mounted() {
@@ -1084,7 +1044,8 @@ export default {
           images: this.selectedImages,
           related: this.product.related,
           weight: this.product.weight,
-          shipping: this.compShipping
+          shipping: this.product.shipping,
+          address: this.product.address
           // shipping: {
           //   Latvija: this.product.shipping.Latvija,
           //   Baltija: this.product.shipping.Baltija,

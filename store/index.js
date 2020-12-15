@@ -104,29 +104,34 @@ export const state = () => ({
           locale: 'Latvija',
           options: [
             {
+              text: 'Sanemt uz vietas',
+              price: 0,
+              weight: 1000000,
+              value: 0,
+            },
+            {
               text: 'Vestule',
               price: 1.5,
               weight: 100,
+              value: 1,
             },
             {
               text: 'Izsekojama vestule',
               price: 2.5,
               weight: 100,
+              value: 2,
             },
             {
               text: 'Pasta pacina',
               price: 4.0,
               weight: 3000,
+              value: 3,
             },
             {
               text: 'Pakomats',
               price: 2.5,
               weight: 30000,
-            },
-            {
-              text: 'Sanemt uz vietas',
-              price: 0,
-              weight: 1000000,
+              value: 4,
             },
           ],
         },
@@ -137,6 +142,7 @@ export const state = () => ({
               text: 'Pakomats (Baltija)',
               price: 5,
               weight: 30000,
+              value: 5,
             },
           ],
         },
