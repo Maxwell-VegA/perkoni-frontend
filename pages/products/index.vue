@@ -204,13 +204,7 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'categories',
-      // 'currentPage',
-      // 'currentCategory',
-      // 'currentSubcategory',
-      // 'currentGender',
-    ]),
+    ...mapState(['categories']),
     currentPage: {
       get() {
         return this.$store.state.currentPage
@@ -246,7 +240,6 @@ export default {
   },
   watch: {
     currentPage() {
-      // this.getProducts()
       this.$store.dispatch('getProducts')
     },
     currentCategory() {
@@ -258,12 +251,10 @@ export default {
       this.currentGender = null
     },
     currentSubcategory() {
-      // this.getProducts()
       this.$store.dispatch('getProducts')
     },
     currentGender() {
       this.$store.dispatch('getProducts')
-      // this.getProducts()
     },
   },
   created() {

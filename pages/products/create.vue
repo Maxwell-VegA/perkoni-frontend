@@ -15,6 +15,7 @@
             <v-col md="6">
               <v-select
                 v-model="product.mainCategory"
+                @change="product.gender = []"
                 :items="categories"
                 label="Kategorija"
                 return-object
@@ -33,9 +34,9 @@
           <v-select
             v-model="product.gender"
             :items="product.mainCategory.genders"
+            :disabled="!categoryHasGenders"
             multiple
             label="Dzimumi"
-            hint="Atzimejat vairakus dzimumus tikai ja no produkta dzimuma nav atkariga neviena cita mainiga ipasiba (ja produkts ir pieejams gan bernu gan unisex dzimumos, bet bernu dzimumam nav pieejami XL izmeri kuri ir pieejami unisex dzimumam tad produkts bus jasadala divos atseviskos produktos - viens prieks berniem dzimuma un viens prieks unisex dzimuma"
             @change="sizeGenders()"
           >
           </v-select>
@@ -133,37 +134,130 @@
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
-      <!-- variations -->
-      <v-col md="12" xl="6" class="px-8">
-        <v-row>
-          <v-col md="9">
-            <v-combobox
-              v-model="product.variations"
-              :label="product.variationsName + ':'"
-              clearable
-              deletable-chips
-              chips
-              multiple
-              hide-selected
-            >
-            </v-combobox>
-          </v-col>
-          <v-col md="3">
-            <v-text-field
-              v-model="product.variationsName"
-              placeholder="E.g. Krekla krasa, Uzraksts, Veidi"
-              label="Nosaukums"
-              max="20"
-              min="3"
-              clearable
-            ></v-text-field>
+      <!-- sizes -->
+      <v-col md="12" class="px-8">
+        <v-checkbox
+          label=" Radit svara-specifiskas piegades iespejas "
+          @click="showCustomShipping = !showCustomShipping"
+        >
+        </v-checkbox>
+        <p v-if="product.sizes[0] == null">Viena izmera produkts</p>
+        <v-row v-for="(gender, i) in product.sizes" v-else :key="i">
+          <v-col>
+            <v-row>
+              <v-col cols="4">
+                <h3>{{ gender.gender }}</h3>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-col cols="4">
+                <v-btn class="mr-8" absolute right @click="addSize(i)"
+                  >Pievienot izmeru</v-btn
+                >
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col
+                v-for="(size, index) in gender.sizes"
+                :key="index"
+                md="4"
+                lg="3"
+                xl="2"
+              >
+                <v-row dense>
+                  <v-col cols="8">
+                    <v-text-field
+                      v-model="size.sizeName"
+                      outlined
+                      dense
+                      label="Nosaukums"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="3">
+                    <v-text-field
+                      v-model="size.sizePrice"
+                      type="number"
+                      outlined
+                      dense
+                      label="Koeficents"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="1">
+                    <v-btn class="ml-n1" icon @click="removeSize(i, index)">
+                      <v-icon color="error">mdi-close</v-icon>
+                    </v-btn>
+                  </v-col>
+
+                  <v-col
+                    v-show="size.customShipping && showCustomShipping"
+                    cols="8"
+                  >
+                    <v-select
+                      v-model="size.shippingOptions"
+                      outlined
+                      dense
+                      multiple
+                      :items="allShippingOptions"
+                      label="Piegade"
+                    ></v-select>
+                  </v-col>
+                  <v-col
+                    v-show="size.customShipping && showCustomShipping"
+                    cols="3"
+                  >
+                    <v-text-field
+                      v-model="size.weight"
+                      label="Svars"
+                      outlined
+                      dense
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    v-show="!size.customShipping && showCustomShipping"
+                    cols="8"
+                  >
+                    <v-text-field
+                      value="Noklusejuma"
+                      disabled
+                      outlined
+                      dense
+                      label="Piegade"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    v-show="!size.customShipping && showCustomShipping"
+                    cols="3"
+                  >
+                    <v-text-field
+                      v-model="product.weight"
+                      disabled
+                      label="Svars"
+                      outlined
+                      dense
+                      type="number"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col v-show="showCustomShipping" class="ml-n1" cols="1">
+                    <v-btn
+                      icon
+                      @click="size.customShipping = !size.customShipping"
+                    >
+                      <v-icon :disabled="!size.customShipping"
+                        >mdi-truck-outline</v-icon
+                      >
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
       </v-col>
+
       <!-- types -->
-      <v-col md="12" xl="6" class="px-8">
+      <v-col md="12" class="px-8">
         <v-row>
-          <v-col md="4">
+          <v-col md="4" lg="3">
             <v-text-field
               v-model="product.typesName"
               label="Selekcijas nosaukums"
@@ -173,7 +267,7 @@
               clearable
             ></v-text-field>
           </v-col>
-          <v-col md="4">
+          <v-col md="4" lg="3">
             <v-spacer></v-spacer>
             <v-text-field
               v-model="product.subtypesName"
@@ -184,20 +278,17 @@
               clearable
             ></v-text-field>
           </v-col>
-          <v-col md="4">
-            <v-btn class="float-right" @click="addType">
+          <v-spacer></v-spacer>
+          <v-col md="4" lg="3">
+            <v-btn class="mr-8" absolute right @click="addType">
               Pievienot "{{ product.typesName }}" tipu
             </v-btn>
           </v-col>
         </v-row>
         <p v-if="product.types[0] == null">Beztipu produkts</p>
         <v-row v-else>
-          <v-col
-            v-for="(type, i) in product.types"
-            :key="i"
-            style="height: 150px"
-            md="4"
-          >
+          <!-- style="height: 150px" -->
+          <v-col v-for="(type, i) in product.types" :key="i" md="4" lg="3">
             <v-row dense>
               <v-col cols="8">
                 <v-text-field
@@ -239,117 +330,44 @@
           </v-col>
         </v-row>
       </v-col>
-      <!-- sizes -->
-      <v-col md="12" xl="6" class="px-8">
-        <p v-if="product.sizes[0] == null">Viena izmera produkts</p>
-        <v-row v-for="(gender, i) in product.sizes" v-else :key="i">
-          <v-row>
-            <v-btn @click="addSize(i)">Pievienot izmeru</v-btn>
-            <p>{{ gender.gender }}</p>
-          </v-row>
-          <v-row>
-            <v-col
-              v-for="(size, index) in gender.sizes"
-              :key="index"
-              md="4"
-              lg="4"
-              xl="4"
-            >
-              <v-row dense>
-                <v-col cols="8">
-                  <v-text-field
-                    v-model="size.sizeName"
-                    outlined
-                    dense
-                    label="Nosaukums"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="3">
-                  <v-text-field
-                    v-model="size.sizePrice"
-                    type="number"
-                    outlined
-                    dense
-                    label="Koeficents"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="1">
-                  <v-btn class="ml-n1" icon @click="removeSize(i, index)">
-                    <v-icon color="error">mdi-close</v-icon>
-                  </v-btn>
-                </v-col>
-                <v-col v-show="size.customShipping" cols="8">
-                  <v-select
-                    v-model="size.shippingOptions"
-                    outlined
-                    dense
-                    multiple
-                    :items="allShippingOptions"
-                    label="Piegade"
-                  ></v-select>
-                </v-col>
-                <v-col v-show="size.customShipping" cols="3">
-                  <v-text-field
-                    v-model="size.weight"
-                    label="Svars"
-                    outlined
-                    dense
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-                <v-col v-show="!size.customShipping" cols="8">
-                  <v-text-field
-                    value="Noklusejuma"
-                    disabled
-                    outlined
-                    dense
-                    label="Piegade"
-                  ></v-text-field>
-                </v-col>
-                <v-col v-show="!size.customShipping" cols="3">
-                  <v-text-field
-                    v-model="product.weight"
-                    disabled
-                    label="Svars"
-                    outlined
-                    dense
-                    type="number"
-                  ></v-text-field>
-                </v-col>
-                <v-col class="ml-n1" cols="1">
-                  <v-btn
-                    icon
-                    @click="size.customShipping = !size.customShipping"
-                  >
-                    <v-icon :disabled="!size.customShipping"
-                      >mdi-truck-outline</v-icon
-                    >
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-row>
-      </v-col>
-      <!-- <v-col md="12">
+      <!-- variations -->
+      <v-col md="12" xl="12" class="px-8">
         <v-row>
-          <v-col v-for="(gender, i) in product.sizes" :key="i" md="12">
-            {{ gender.gender }}
-            <v-row>
-              <v-col v-for="(size, idx) in gender.sizes" :key="idx" md="4">
-                <v-card>
-                  <v-card-title>
-                    {{ size.sizeName }}
-                  </v-card-title>
-                  <v-card-text>
-                    <p>{{ size.customShipping }}</p>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
+          <v-col v-show="showVariations" md="6">
+            <v-combobox
+              v-model="product.variations"
+              :label="product.variationsName + ':'"
+              clearable
+              deletable-chips
+              chips
+              multiple
+              outlined
+              hide-selected
+              height="65"
+            >
+            </v-combobox>
+          </v-col>
+          <v-col v-show="showVariations" md="3">
+            <v-text-field
+              v-model="product.variationsName"
+              placeholder="E.g. Krekla krasa, Uzraksts, Veidi"
+              label="Nosaukums"
+              height="65"
+              max="20"
+              min="3"
+              outlined
+              clearable
+            ></v-text-field>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col md="3" xl="2">
+            <v-checkbox
+              label="Papildus variacijas"
+              @click="showVariations = !showVariations"
+            ></v-checkbox>
           </v-col>
         </v-row>
-      </v-col> -->
+      </v-col>
     </v-row>
 
     <v-row style="border-bottom: white solid 2px">
@@ -554,8 +572,8 @@
         ></v-select>
         <v-spacer></v-spacer>
         <!-- :disabled="product.shipping != 'Sanemt uz vietas'" -->
-        <v-text-field label="Adrese kur var sanemt produktu"></v-text-field>
-        {{ product.shipping }}
+        <v-text-field v-model="product.address" label="Adrese kur var sanemt produktu"></v-text-field>
+        {{ product.shipping.Latvija }}
       </v-col>
     </v-row>
 
@@ -574,7 +592,7 @@
         v-model="product.isPublic"
         label="Make product publically visable"
       ></v-checkbox>
-      {{ product.shipping.Latvija }}
+      {{ product.shipping}}
       {{ errors }}
     </div>
 
@@ -597,12 +615,14 @@ export default {
       currentExpandedImage: null,
       selectedImages: [null],
       selectedGender: 0,
+      showCustomShipping: false,
+      showVariations: false,
       product: {
         brand_id: 0,
         title: 'Hoodie "Latvia"',
         isPublic: false,
         isConfirmed: true,
-        mainCategory: 'Apgerbi',
+        mainCategory: 'Apģērbi',
         subcategory: 'Džemperi',
         description:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
@@ -655,39 +675,39 @@ export default {
                 customShipping: false,
                 shippingOptions: [],
               },
-              // { sizeName: 'XL', sizePrice: 8 },
             ],
           },
-          // {
-          //   gender: 'Sievietem',
-          //   sizes: [
-          //     {
-          //       sizeName: 'XS',
-          //       sizePrice: -1,
-          //       weight: 0,
-          //       customShipping: false,
-          //       shippingOptions: [],
-          //     },
-          //     {
-          //       sizeName: 'S',
-          //       sizePrice: 0,
-          //       weight: 0,
-          //       customShipping: false,
-          //       shippingOptions: [],
-          //     },
-          //     {
-          //       sizeName: 'M',
-          //       sizePrice: 2,
-          //       weight: 0,
-          //       customShipping: false,
-          //       shippingOptions: [],
-          //     },
-          //   ],
-          // },
+          {
+            gender: 'Sievietem',
+            sizes: [
+              {
+                sizeName: 'XS',
+                sizePrice: -1,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+              {
+                sizeName: 'S',
+                sizePrice: 0,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+              {
+                sizeName: 'M',
+                sizePrice: 2,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: [],
+              },
+            ],
+          },
         ],
         related: [],
         weight: 0,
         shipping: [],
+        address: ""
       },
       categories: [
         {
@@ -795,6 +815,13 @@ export default {
     }
   },
   computed: {
+    categoryHasGenders() {
+      let returnThis = false 
+      if (this.product.mainCategory.text == "Apģērbi") {
+        returnThis = true
+      }
+      return returnThis
+    },
     allShippingOptions() {
       const arr = []
       this.shippingOptions.forEach((locale) =>
@@ -1007,15 +1034,28 @@ export default {
           sale_price: this.product.sale_price,
           on_sale: this.product.on_sale,
           operatorIsMultiply: this.product.operatorIsMultiply,
+          variationsName: this.product.variationsName,
+          typesName: this.product.typesName,
+          subtypesName: this.product.subtypesName,
+          variations: this.product.variations,  
           types: typesFound,
           sizes: sizesFound,
           taggs: this.product.taggs,
           gender: this.product.gender,
           images: this.selectedImages,
           related: this.product.related,
+          weight: this.product.weight,
+          // shipping: "hey",
+          shipping: {
+            Latvija: this.product.shipping.Latvija,
+            Baltija: this.product.shipping.Baltija,
+            address: this.product.address
+          }
+          
+          // shipping: JSON.stringify(this.product.shipping),
         })
         .then((res) => console.log(res))
-        .catch((err) => this.errors.push(err.response.data.message))
+        .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))
         .catch((err) => this.errors.push(err.response.data.errors))
         .catch((err) => console.log(err.response.data.errors))
     },
@@ -1149,6 +1189,8 @@ Non mvp:
 Should it be possible to have products pre-approved?
 
 In the admin dashboard by default delete marked products will have to be manually removed by the admin however it should be possible to set an autodelete which will delete any products that have been marked for deletion but haven't been updated since then for a day.
+
+A product must have at least two sizes or none at all. Same for variations and types.
 
 */
 </style>
