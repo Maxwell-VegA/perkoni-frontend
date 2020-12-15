@@ -231,9 +231,12 @@ export default {
     },
     currentGender: {
       get() {
+        console.log(this.$store.state.currentGender)
+        console.log(this.$store.state.categories[this.$store.state.currentCategory].genders[this.$store.state.currentGender])
         return this.$store.state.currentGender
       },
       set(v) {
+        console.log(v)
         this.$store.commit('UPDATE_GENDER', v)
       },
     },

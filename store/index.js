@@ -5,7 +5,7 @@ export const state = () => ({
     currentGender: null,
     product: {},
     cart: [],
-    // relatedProducts: [],
+    // relatedProducts: ['empty'],
     categories: [
         {
           text: 'Jaunumi',
@@ -99,6 +99,48 @@ export const state = () => ({
           pages: 0,
         },
     ],
+    shippingOptions: [
+        {
+          locale: 'Latvija',
+          options: [
+            {
+              text: 'Vestule',
+              price: 1.5,
+              weight: 100,
+            },
+            {
+              text: 'Izsekojama vestule',
+              price: 2.5,
+              weight: 100,
+            },
+            {
+              text: 'Pasta pacina',
+              price: 4.0,
+              weight: 3000,
+            },
+            {
+              text: 'Pakomats',
+              price: 2.5,
+              weight: 30000,
+            },
+            {
+              text: 'Sanemt uz vietas',
+              price: 0,
+              weight: 1000000,
+            },
+          ],
+        },
+        {
+          locale: 'Baltija',
+          options: [
+            {
+              text: 'Pakomats (Baltija)',
+              price: 5,
+              weight: 30000,
+            },
+          ],
+        },
+    ],
 })
 
 export const mutations = {
@@ -121,6 +163,11 @@ export const mutations = {
     },
     SET_PRODUCT (state, product) {
         state.product = product
+        // state.product.related.forEach(id => {
+        // async () => {
+        //   await actions.getRelated({productId: 10})
+        // }
+        // });
     },
     SET_CART (state, cart) {
         state.cart = cart
@@ -149,7 +196,7 @@ export const actions = {
                 page: this.state.currentPage,
                 category: this.state.categories[this.state.currentCategory].text,
                 subcategory: this.state.categories[this.state.currentCategory].subcategories[this.state.currentSubcategory],
-                gender: this.state.currentGender,
+                gender: this.state.categories[this.state.currentCategory].genders[this.state.currentGender],
             }
         }
         
@@ -163,9 +210,14 @@ export const actions = {
 
         commit('SET_PRODUCTS', products)
     },
+    // async getRelated({commit}, {productId}) {
+    //   // let {data} = await getData(this.$axios, `products/${productId}/terse`)
+    //   let {data} = await getData(this.$axios, `products/${productId}`)
+    //   commit('SET_RELATED', data.data)
+    // },
     async getProduct({commit}, {productId}) {
-        let {data} = await getData(this.$axios, `products/${productId}`)
-        commit('SET_PRODUCT', data.data)
+      let {data} = await getData(this.$axios, `products/${productId}`)
+      commit('SET_PRODUCT', data.data)
     },
     async getCart({commit}) {
         let {data} = await getData(this.$axios, `cart`)

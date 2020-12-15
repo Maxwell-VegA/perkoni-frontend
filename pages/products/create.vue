@@ -922,6 +922,45 @@ export default {
       )
       return arr
     },
+    compShipping() {
+      let arr = [
+        {
+          locale: 'Latvija',
+          options: [],
+          address: this.product.address
+        },
+        {
+          locale: 'Baltija',
+          options: [],
+        },
+        {
+          locale: 'Austrumeiropa',
+          options: [],
+        },
+      ]
+      this.product.shipping.Latvija.forEach( opt => 
+        arr[0].options.push({
+          text: opt.text,
+          price: opt.price,
+          weight: opt.weight,
+        })
+      )
+      this.product.shipping.Baltija.forEach( opt => 
+        arr[1].options.push({
+          text: opt.text,
+          price: opt.price,
+          weight: opt.weight,
+        })
+      )
+      // this.product.shipping.Austrumeiropa.forEach( opt => 
+      //   arr[2].options.push({
+      //     text: opt.text,
+      //     price: opt.price,
+      //     weight: opt.weight,
+      //   })
+      // )
+      return arr
+    }
   },
   watch: {},
   mounted() {
@@ -1045,11 +1084,12 @@ export default {
           images: this.selectedImages,
           related: this.product.related,
           weight: this.product.weight,
-          shipping: {
-            Latvija: this.product.shipping.Latvija,
-            Baltija: this.product.shipping.Baltija,
-            address: this.product.address
-          }
+          shipping: this.compShipping
+          // shipping: {
+          //   Latvija: this.product.shipping.Latvija,
+          //   Baltija: this.product.shipping.Baltija,
+          //   address: this.product.address
+          // }
         })
         .then((res) => console.log(res))
         .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))

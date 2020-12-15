@@ -54,10 +54,16 @@
               </v-list-item>
               <!-- for item in cart echo them all here with some minor details, perhaps calculate a total price -->
               <!-- item quantity, price, total price, (on click go to product/id),  -->
-              <v-list-item>
-                <v-list-item-title>Proceed to checkout</v-list-item-title>
+              <v-list-item v-if="cart.length > 0">
+                <v-list-item-title>Norekinaties</v-list-item-title>
                 <v-list-item-action>
                   <v-icon>mdi-cart-arrow-right</v-icon>
+                </v-list-item-action>
+              </v-list-item>
+              <v-list-item v-else>
+                <v-list-item-title>Grozs tuksh</v-list-item-title>
+                <v-list-item-action>
+                  <v-icon>mdi-cart-remove</v-icon>
                 </v-list-item-action>
               </v-list-item>
             </v-list>

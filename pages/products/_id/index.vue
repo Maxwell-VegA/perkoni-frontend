@@ -2,9 +2,9 @@
   <div>
     <v-col offset-xl="1">
       <h1 class="display-3 my-8">{{ product.title }}</h1>
-      <!-- <h3 class="font-weight-light">
-        {{ product.mainCategory }}/{{ product.subcategory }}
-      </h3> -->
+      <h3 class="font-weight-light">
+        {{ product.mainCategory }} / {{ product.subcategory }} / {{ product.gender }}
+      </h3>
     </v-col>
     <div>
 
@@ -49,7 +49,7 @@
       <v-row no-gutters>
         <v-spacer></v-spacer>
         <v-col cols="12" lg="9" xl="8">
-          <v-row class="">
+          <v-row >
 
 <!-- Carousel -->
             <v-col cols="12" md="6" xl="5" >
@@ -97,7 +97,7 @@
               <v-row >
 <!-- short description -->
                 <v-col
-                  class="mt-n2"
+                  class="mt-n3"
                   offset="1"
                   cols="10"
                   offset-md="0"
@@ -109,8 +109,9 @@
                 </v-col>
 
 <!-- Selects -->
-                <v-col class="mt-n8" offset="1" cols="10" offset-md="0" md="8">
+                <v-col class="mt-n5" offset="1" cols="10" offset-md="0" md="8">
                   <v-select
+                  class="my-n1"
                     v-show="product.gender[1] != undefined"
                     v-model="selectedGender"
                     :items="product.gender"
@@ -118,6 +119,7 @@
                   ></v-select>
 
                   <v-select
+                  class="my-n1"
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
                     :disabled="productSizesArray[0].text == 'Izvelies modeli'"
                     v-model="selectedSize"
@@ -126,6 +128,7 @@
                   ></v-select>
 
                   <v-select
+                  class="my-n1"
                     v-show="product.variations[1] != undefined"
                     v-model="selectedVariation"
                     :items="product.variations"
@@ -133,6 +136,7 @@
                   ></v-select>
 
                   <v-select
+                  class="my-n1"
                     v-show="productTypesArray[0].text != 'singleTypeProduct'"
                     v-model="selectedType"
                     :items="productTypesArray"
@@ -141,6 +145,7 @@
                   ></v-select>
 
                   <v-select
+                  class="my-n1"
                     v-show="productSubtypesArray[selectedType] != undefined"
                     v-model="selectedSubtypeName"
                     :items="productSubtypesArray"
@@ -151,7 +156,7 @@
 <!-- Price -->
                 <v-col
                   v-if="product.base_price !== null"
-                  class="text-h4"
+                  class="text-h4 my-n6"
                   offset="1"
                   offset-md="0"
                   cols="12"
@@ -180,7 +185,7 @@
                   </v-row>
                 </v-col>
 <!-- Add to cart -->
-                <v-col cols="12" class="pr-8 ml-n1 mt-n3">
+                <v-col cols="12" class="pr-8 ml-n1">
                   <!-- <v-card class="mb-2">
                     <v-card-actions> -->
                   <v-tooltip bottom>
@@ -214,9 +219,8 @@
                   </v-card> -->
                 </v-col>
               </v-row>
-
             </v-col>
-
+<!-- Long description -->
             <v-col cols="6" xl="5">
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
@@ -225,6 +229,7 @@
                 </v-card-text>
               </v-card>
             </v-col>
+<!-- Related products -->
             <v-col cols="6" xl="7" class="pr-9">
               <v-card>
                 <v-card-title> Lidzigie produkti </v-card-title>
@@ -248,11 +253,14 @@
                 </v-card-text>
               </v-card>
             </v-col>
+
           </v-row>
         </v-col>
+<!-- Sidebar --------------------------------------------------- -->
         <v-col cols="12" lg="3" xl="2">
           <v-row>
             <v-col>
+<!-- Bookmark / Share -->
               <v-card class="mb-2">
                 <v-card-actions>
                   <v-tooltip bottom close-delay="500">
@@ -292,7 +300,7 @@
                   </v-tooltip>
                 </v-card-actions>
               </v-card>
-
+<!-- Brand -->
               <v-card class="mb-2">
                 <v-card-subtitle class="mb-n8" primary-title>
                   Razotajs:
@@ -341,7 +349,7 @@
                   </div>
                 </v-expand-transition>
               </v-card>
-
+<!-- Shipping -->
               <v-card>
                 <v-card-title>
                   Piegades iespejas
@@ -360,28 +368,51 @@
                 <v-expand-transition>
                   <div v-show="shippingCardExpanded">
                     <v-divider></v-divider>
+                      <v-card-subtitle >
+                        Pirkumiem virs
+                        {{ product.brand_freeShipping }}
+                        &#8364;
+                        no
+                        {{ product.brand_name }}
+                        piegade par brivu.
+                      </v-card-subtitle>
                     <v-card-text>
-                      <v-list>
-                        <v-list-item>
+                      <div v-if="!productSizesArray[selectedSize].customShipping">
+                      <v-list v-for="(region, i) in product.shipping" :key="i">
+                        <v-subheader>{{ region.locale }}</v-subheader>
+                        <v-list-item v-for="(opt, idx) in region.options" :key="idx">
                           <v-list-item-content>
-                            Sanemt veikala
-                          </v-list-item-content>
-                          <!-- <v-list-item-action> 0.00 &#8364 </v-list-item-action> -->
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content>
-                            <v-list-item-title> Vestule </v-list-item-title>
-                            <v-list-item-subtitle>
-                              lidz 10 gb
+                            <v-list-item-title> {{ opt.text }} </v-list-item-title>
+                            <v-list-item-subtitle v-if="opt.weight == 1000000">
+                              {{ region.address }} 
+                              <!-- if 100+ show 100+ -->
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle v-else-if="(opt.weight / product.weight) < 51">
+                              Lidz {{ (opt.weight / product.weight).toFixed() }} gb
+                              <!-- if 100+ show 100+ -->
+                            </v-list-item-subtitle>
+                            <v-list-item-subtitle v-else>
+                              50+ gb
                             </v-list-item-subtitle>
                           </v-list-item-content>
-                          <!-- <v-list-item-action>1.50 &#8364 </v-list-item-action> -->
-                        </v-list-item>
-                        <v-list-item>
-                          <v-list-item-content> Pakomats </v-list-item-content>
-                          <!-- <v-list-item-action>3.00 &#8364 </v-list-item-action> -->
+                          <v-list-item-action> {{ opt.price }} &#8364; </v-list-item-action>
                         </v-list-item>
                       </v-list>
+                      </div>
+                      <div v-else>
+                      <v-list >
+                        <v-list-item v-for="(opt, idx) in productSizesArray[selectedSize].shippingOptions" :key="idx">
+                          <v-list-item-content>
+                            <v-list-item-title> {{ opt }} </v-list-item-title>
+                            <v-list-item-subtitle>
+                              Lidz {{ (shippingProperties(opt).weight / product.weight).toFixed() }} gb
+                              <!-- if 100+ show 100+ -->
+                            </v-list-item-subtitle>
+                          </v-list-item-content>
+                          <v-list-item-action> {{ shippingProperties(opt).price }} &#8364; </v-list-item-action>
+                        </v-list-item>
+                      </v-list>
+                      </div>
                     </v-card-text>
                   </div>
                 </v-expand-transition>
@@ -420,7 +451,7 @@ export default {
       selectedImageIndex: 0,
       fullscreenImage: false,
       brandCardExpanded: false,
-      shippingCardExpanded: false,
+      shippingCardExpanded: true,
       bookmarked: false,
       relatedProducts: [],
     }
@@ -520,6 +551,11 @@ export default {
       },
     },
   },
+  // watch: {
+  //   'product': function() {
+  //     console.log(123)
+  //   }
+  // },
   mounted() {
     // this.getProduct()
     this.isInCart()
@@ -586,6 +622,18 @@ export default {
     //     }
     //   })
     // },
+    shippingProperties(name) {
+      let properties = {}
+      this.$store.state.shippingOptions.forEach(locale => {
+        locale.options.forEach(option => {
+          if (option.text == name) {
+            properties.price = option.price
+            properties.weight = option.weight
+          }
+        })
+      })
+      return properties
+    },
     isInCart() {
       this.$axios
         .get('cart')
