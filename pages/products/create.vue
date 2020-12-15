@@ -23,7 +23,7 @@
             </v-col>
             <v-col md="6">
               <v-select
-                v-model="product.subcartegory"
+                v-model="product.subcategory"
                 :items="product.mainCategory.subcategories"
                 label="Subkategorija"
                 :rules="[rules.required]"
@@ -622,8 +622,8 @@ export default {
         title: 'Hoodie "Latvia"',
         isPublic: false,
         isConfirmed: true,
-        mainCategory: 'Apģērbi',
-        subcategory: 'Džemperi',
+        mainCategory: '',
+        subcategory: '',
         description:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
         longDescription: '',
@@ -1045,14 +1045,11 @@ export default {
           images: this.selectedImages,
           related: this.product.related,
           weight: this.product.weight,
-          // shipping: "hey",
           shipping: {
             Latvija: this.product.shipping.Latvija,
             Baltija: this.product.shipping.Baltija,
             address: this.product.address
           }
-          
-          // shipping: JSON.stringify(this.product.shipping),
         })
         .then((res) => console.log(res))
         .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))

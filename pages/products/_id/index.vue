@@ -7,6 +7,8 @@
       </h3> -->
     </v-col>
     <div>
+
+<!-- Fullscreen carousel -->
       <v-dialog v-model="fullscreenImage" width="80vh" height="100vh">
         <v-card>
           <v-carousel
@@ -47,8 +49,10 @@
       <v-row no-gutters>
         <v-spacer></v-spacer>
         <v-col cols="12" lg="9" xl="8">
-          <v-row>
-            <v-col cols="12" md="6" xl="5">
+          <v-row class="">
+
+<!-- Carousel -->
+            <v-col cols="12" md="6" xl="5" >
               <v-card>
                 <v-carousel
                   v-model="selectedImageIndex"
@@ -56,6 +60,7 @@
                   height="100%"
                   progress-color="white"
                   progress
+                  hide-delimiters
                   continuous
                 >
                   <v-carousel-item
@@ -89,8 +94,10 @@
             </v-col>
 
             <v-col cols="12" md="6" xl="7">
-              <v-row align-content="center">
+              <v-row >
+<!-- short description -->
                 <v-col
+                  class="mt-n2"
                   offset="1"
                   cols="10"
                   offset-md="0"
@@ -101,19 +108,35 @@
                   <p>{{ product.description }}</p>
                 </v-col>
 
-                <v-col offset="1" cols="10" offset-md="0" md="8">
+<!-- Selects -->
+                <v-col class="mt-n8" offset="1" cols="10" offset-md="0" md="8">
+                  <v-select
+                    v-show="product.gender[1] != undefined"
+                    v-model="selectedGender"
+                    :items="product.gender"
+                    label="Modelis"
+                  ></v-select>
+
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
+                    :disabled="productSizesArray[0].text == 'Izvelies modeli'"
                     v-model="selectedSize"
                     :items="productSizesArray"
-                    label="Produkta izmeeri"
+                    label="Izmers"
+                  ></v-select>
+
+                  <v-select
+                    v-show="product.variations[1] != undefined"
+                    v-model="selectedVariation"
+                    :items="product.variations"
+                    :label="product.variationsName"
                   ></v-select>
 
                   <v-select
                     v-show="productTypesArray[0].text != 'singleTypeProduct'"
                     v-model="selectedType"
                     :items="productTypesArray"
-                    label="Produkta tipi"
+                    :label="product.typesName"
                     @change="selectedSubtypeName = null"
                   ></v-select>
 
@@ -121,10 +144,11 @@
                     v-show="productSubtypesArray[selectedType] != undefined"
                     v-model="selectedSubtypeName"
                     :items="productSubtypesArray"
-                    label="Produkta subtipi"
+                    :label="product.subtypesName"
                   ></v-select>
                 </v-col>
 
+<!-- Price -->
                 <v-col
                   v-if="product.base_price !== null"
                   class="text-h4"
@@ -155,7 +179,7 @@
                     </v-col>
                   </v-row>
                 </v-col>
-
+<!-- Add to cart -->
                 <v-col cols="12" class="pr-8 ml-n1 mt-n3">
                   <!-- <v-card class="mb-2">
                     <v-card-actions> -->
@@ -190,13 +214,14 @@
                   </v-card> -->
                 </v-col>
               </v-row>
+
             </v-col>
 
             <v-col cols="6" xl="5">
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
                 <v-card-text>
-                  <!-- <p v-html="product.longDescription"></p> -->
+                  <p v-html="product.longDescription"></p>
                 </v-card-text>
               </v-card>
             </v-col>
@@ -387,7 +412,9 @@ export default {
       errors: {},
       inCart: false,
       quantity: 1,
+      selectedGender: "",
       selectedSize: 0,
+      selectedVariation: "",
       selectedType: 0,
       selectedSubtypeName: null,
       selectedImageIndex: 0,
@@ -414,15 +441,35 @@ export default {
       }
       return returnThis
     },
+    selectedSizes() {
+      if (this.product.gender[1] == undefined) {
+        this.selectedGender = this.product.gender[0]
+      }
+      return this.product.sizes.find(gen => gen.gender == this.selectedGender)
+    },
     productSizesArray() {
       const arr = []
-      this.product.sizes.forEach((size, i) => {
-        arr.push({
-          text: size.sizeName,
-          price: size.sizePrice,
-          value: i,
+      if (this.selectedSizes != undefined) {
+        this.selectedSizes.sizes.forEach((size, i) => {
+          arr.push({
+            text: size.sizeName,
+            price: size.sizePrice,
+            value: i,
+            weight: size.weight,
+            customShipping: size.customShipping,
+            shippingOptions: size.shippingOptions,
         })
       })
+      } else {
+        arr.push({
+          text: 'Izvelies modeli',
+          price: 0,
+          value: 0,
+          weight: 0,
+          customShipping: false,
+          shippingOptions: 0,
+        })
+      }
       // console.log(arr)
       return arr
     },
@@ -558,15 +605,15 @@ export default {
           console.log(err.response.data.message, err.response.data.exception)
         )
     },
-    // getRelated() {
-    //   this.relatedProducts = []
-    //   this.product.related.forEach((id) => {
-    //     this.$axios
-    //       .get('products/' + id)
-    //       .then((res) => this.relatedProducts.push(res.data.data))
-    //   })
-    //   console.log(this.relatedProducts)
-    // },
+    getRelated() {
+      this.relatedProducts = []
+      this.product.related.forEach((id) => {
+        this.$axios
+          .get('products/' + id)
+          .then((res) => this.relatedProducts.push(res.data.data))
+      })
+      console.log(this.relatedProducts)
+    },
   },
 }
 </script>
