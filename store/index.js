@@ -5,7 +5,6 @@ export const state = () => ({
     currentGender: null,
     product: {},
     cart: [],
-    // relatedProducts: ['empty'],
     categories: [
         {
           text: 'Jaunumi',

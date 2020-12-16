@@ -119,6 +119,7 @@
 
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
+                    v-if="productSizesArray[0].text"
                     v-model="selectedSize"
                     class="my-n1"
                     :disabled="productSizesArray[0].text == 'Izvelies modeli'"
@@ -753,6 +754,8 @@ Verify that product options have been chosen before the product is added to cart
 If product is already in cart get the quantity of it and change the btn to a success version. Will also need an update method for changing the quantity.
 
 Should add like a cool and gratifying animation for adding a product to the cart
+
+If there is a gender which has less than two sizes then do not display sizes at all. Or perhaps to simplify only display sizes after a gender has been selected.
 
  */
 </style>

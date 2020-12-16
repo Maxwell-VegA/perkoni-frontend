@@ -15,11 +15,14 @@
             <v-col md="6">
               <v-select
                 v-model="product.mainCategory"
-                @change="product.gender = []"
+                @change="product.gender = [product.mainCategory.genders[0]], sizeGenders()"
                 :items="categories"
                 label="Kategorija"
                 return-object
               ></v-select>
+            <!-- {{ product.gender }}
+            <br>
+            {{ product.sizes }} -->
             </v-col>
             <v-col md="6">
               <v-select
@@ -48,7 +51,7 @@
             outlined
             rows="5"
             no-resize
-            counter="255"
+            counter="200"
           ></v-textarea>
           <v-textarea
             v-model="product.longDescription"
@@ -133,9 +136,9 @@
       </v-col>
     </v-row>
 
-    <v-row style="border-bottom: white solid 2px">
+    <v-row style="border-bottom: white solid 2px" >
       <!-- sizes -->
-      <v-col md="12" class="px-8">
+      <v-col md="12" class="px-8" v-if="product.sizes[0].gender != 'genderUndefined'">
         <v-checkbox
           label=" Radit svara-specifiskas piegades iespejas "
           @click="showCustomShipping = !showCustomShipping"
@@ -163,7 +166,7 @@
                 lg="3"
                 xl="2"
               >
-                <v-row dense>
+                <v-row dense v-if="gender.sizes.length > 1">
                   <v-col cols="8">
                     <v-text-field
                       v-model="size.sizeName"
@@ -249,6 +252,9 @@
                       >
                     </v-btn>
                   </v-col>
+                </v-row>
+                <v-row v-else>
+                  Dzimums are vienu izmeru
                 </v-row>
               </v-col>
             </v-row>
@@ -627,10 +633,22 @@ export default {
         title: 'Hoodie "Latvia"',
         isPublic: false,
         isConfirmed: true,
-        mainCategory: '',
+        mainCategory: {
+          text: 'Apģērbi',
+          subcategories: [
+            'Krekli',
+            'Džemperi',
+            'Jakas',
+            'Kleitas',
+            'Cepures',
+            'Šalles',
+            'Bez apdrukas',
+          ],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
+        },
         subcategory: '',
         description:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga esse adipisci. Magni, laborum.',
+          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat voluptatem reprehenderit ipsa unde iste, nulla consectetur fugiat, dolor laborum cupiditate aperiam doloribus, eius assumenda a fuga.',
         longDescription: '',
         is_new: true,
         base_price: 30,
@@ -639,69 +657,28 @@ export default {
         operatorIsMultiply: false,
         taggs: ['Latvia', 'November', 'Autumn'],
         gender: [],
-        // likely if the gender is set with the product as clothing then the category changed to something else it doesn't reset to genderless
         variationsName: 'Variacijas',
         typesName: 'Matreali',
         subtypesName: 'Krasas',
         variations: [],
         types: [
-          { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
-          // { typeName: 'Cool', typePrice: 2, typeSecondary: [] },
-          // { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [] },
-          {
-            typeName: 'Super Cool',
-            typePrice: 5,
-            typeSecondary: ['black', 'white', 'gray'],
-          },
-          { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [] },
+          // { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
+          // // { typeName: 'Cool', typePrice: 2, typeSecondary: [] },
+          // // { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [] },
+          // {
+          //   typeName: 'Super Cool',
+          //   typePrice: 5,
+          //   typeSecondary: ['black', 'white', 'gray'],
+          // },
+          // { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [] },
         ],
         sizes: [
           {
-            gender: 'Unisex',
+            gender: 'genderUndefined',
             sizes: [
               {
-                sizeName: 'S',
+                sizeName: 'singleSizeProduct',
                 sizePrice: 0,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-              {
-                sizeName: 'M',
-                sizePrice: 2,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-              {
-                sizeName: 'L',
-                sizePrice: 5,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-            ],
-          },
-          {
-            gender: 'Sievietem',
-            sizes: [
-              {
-                sizeName: 'XS',
-                sizePrice: -1,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-              {
-                sizeName: 'S',
-                sizePrice: 0,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-              {
-                sizeName: 'M',
-                sizePrice: 2,
                 weight: 0,
                 customShipping: false,
                 shippingOptions: [],
@@ -737,7 +714,7 @@ export default {
             'Teksti',
             'Citas',
           ],
-          genders: [],
+          genders: ['Bezdzimuma'],
         },
         {
           text: 'Uzlīmes',
@@ -747,17 +724,17 @@ export default {
             'Latvija / Rīga / latvietis',
             'Citas',
           ],
-          genders: [],
+          genders: ['Bezdzimuma'],
         },
         {
           text: 'Tetovējumi',
           subcategories: [],
-          genders: [],
+          genders: ['Bezdzimuma'],
         },
         {
           text: 'Citi',
           subcategories: ['Rotas', 'Somas', 'Lietussargi'],
-          genders: [],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem', 'Bezdzimuma'],
         },
       ],
       taggs: [
@@ -783,7 +760,7 @@ export default {
     },
     categoryHasGenders() {
       let returnThis = false 
-      if (this.product.mainCategory.text == "Apģērbi") {
+      if (this.product.mainCategory.genders.length > 1) {
         returnThis = true
       }
       return returnThis
@@ -888,47 +865,7 @@ export default {
       )
       return arr
     },
-    // compShipping() {
-    //   let arr = [
-    //     {
-    //       locale: 'Latvija',
-    //       options: [],
-    //       address: this.product.address
-    //     },
-    //     {
-    //       locale: 'Baltija',
-    //       options: [],
-    //     },
-    //     {
-    //       locale: 'Austrumeiropa',
-    //       options: [],
-    //     },
-    //   ]
-    //   this.product.shipping.Latvija.forEach( opt => 
-    //     arr[0].options.push({
-    //       text: opt.text,
-    //       price: opt.price,
-    //       weight: opt.weight,
-    //     })
-    //   )
-    //   this.product.shipping.Baltija.forEach( opt => 
-    //     arr[1].options.push({
-    //       text: opt.text,
-    //       price: opt.price,
-    //       weight: opt.weight,
-    //     })
-    //   )
-    //   // this.product.shipping.Austrumeiropa.forEach( opt => 
-    //   //   arr[2].options.push({
-    //   //     text: opt.text,
-    //   //     price: opt.price,
-    //   //     weight: opt.weight,
-    //   //   })
-    //   // )
-    //   return arr
-    // }
   },
-  watch: {},
   mounted() {
     // this.getProduct()
     this.getUserBrands()
@@ -936,35 +873,35 @@ export default {
   methods: {
     sizeGenders() {
       const arr = []
-      if (this.product.gender[0] != undefined) {
-        this.product.gender.forEach((gen, i) => {
-          arr.push({
-            gender: gen,
-            sizes: [
-              {
-                sizeName: 'New Size',
-                sizePrice: 0,
-                weight: 0,
-                customShipping: false,
-                shippingOptions: [],
-              },
-            ],
+        if (this.product.gender[0] != undefined) {
+          this.product.gender.forEach((gen, i) => {
+            arr.push({
+              gender: gen,
+              sizes: [
+                {
+                  sizeName: '',
+                  sizePrice: 0,
+                  weight: 0,
+                  customShipping: false,
+                  shippingOptions: [],
+                },
+              ],
+            })
           })
-        })
-      } else {
-        arr.push({
-          gender: 'Bezdzimuma',
-          sizes: [
-            {
-              sizeName: 'New Size',
-              sizePrice: 0,
-              weight: 0,
-              customShipping: false,
-              shippingOptions: [],
-            },
-          ],
-        })
-      }
+        } else {
+          arr.push({
+            gender: 'genderUndefined',
+              sizes: [
+                {
+                  sizeName: 'singleSizeProduct',
+                  sizePrice: 0,
+                  weight: 0,
+                  customShipping: false,
+                  shippingOptions: [],
+                },
+              ],
+          })
+        }
       this.product.sizes = arr
     },
     log(v) {
@@ -1009,7 +946,7 @@ export default {
       let typesFound = this.product.types
       let sizesFound = this.product.sizes
 
-      if (typesFound[0] == undefined) {
+      if (typesFound.length < 2) {
         typesFound = [
           {
             typeName: 'singleTypeProduct',
@@ -1018,8 +955,14 @@ export default {
           },
         ]
       }
-      if (sizesFound[0] == undefined) {
-        sizesFound = [{ sizeName: 'singleSizeProduct', sizePrice: 0 }]
+      if (sizesFound.length < 2) {
+        sizesFound = [{
+          sizeName: 'singleSizeProduct',
+          sizePrice: 0,
+          weight: 0,
+          customShipping: false,
+          shippingOptions: [],
+        }]
       }
       // console.log(this.product.types)
       // console.log(this.product.sizes)
@@ -1052,11 +995,6 @@ export default {
           weight: this.product.weight,
           shipping: this.product.shipping,
           address: this.product.address
-          // shipping: {
-          //   Latvija: this.product.shipping.Latvija,
-          //   Baltija: this.product.shipping.Baltija,
-          //   address: this.product.address
-          // }
         })
         .then((res) => console.log(res))
         .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))
@@ -1127,7 +1065,7 @@ export default {
     },
     addType() {
       this.product.types.push({
-        typeName: 'New Type',
+        typeName: '',
         typePrice: 0,
         typeSecondary: [],
       })
@@ -1139,7 +1077,7 @@ export default {
     },
     addSize(index) {
       this.product.sizes[index].sizes.push({
-        sizeName: 'New Size',
+        sizeName: '',
         sizePrice: 0,
         weight: 0,
         customShipping: false,
@@ -1195,6 +1133,10 @@ Should it be possible to have products pre-approved?
 In the admin dashboard by default delete marked products will have to be manually removed by the admin however it should be possible to set an autodelete which will delete any products that have been marked for deletion but haven't been updated since then for a day.
 
 A product must have at least two sizes or none at all. Same for variations and types.
+
+Problem to be solved. Every time there is a change to the product genderthe sizes settings are completely reset. 
+
+Currently it is possible to set a price for a gender's size then leave that as the only size for that gender and so effectively get gender dependant prices. 
 
 */
 </style>

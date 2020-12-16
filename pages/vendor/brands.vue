@@ -3,6 +3,7 @@
     <div>
       <v-row>
         <v-col offset-md="0" cols="6" sm="6" md="6" lg="4" xl="3">
+          <form autocomplete="off">
           <v-text-field
             v-model="brand.name"
             outlined
@@ -18,10 +19,16 @@
             counter="86"
           ></v-textarea>
           <v-text-field
+            v-model="brand.custom_link"
+            type="url"
+            placeholder="https://www.rotapats.lv"
+            label="Razotaja websaite"
+            hint="Pievieno linku uz razotaja facebook profilu"
+            prepend-inner-icon="mdi-link-variant"
+          ></v-text-field>
+          <v-text-field
             v-model="brand.facebook"
-            outlined
-            dense
-            placeholder="https://www.facebook.com/deviniperkoni"
+            type="url"
             label="Facebook"
             hint="Pievieno linku uz razotaja facebook profilu"
             prepend-inner-icon="mdi-facebook"
@@ -30,10 +37,7 @@
           <!-- Perhaps I should force prepend the site links and only allow sublinks to their profiles to be added so as to prevent anything else than facebook and instagram links being placed in there -->
           <v-text-field
             v-model="brand.instagram"
-            aria-autocomplete="off"
-            outlined
-            dense
-            placeholder="https://www.instagram.com/deviniperkoni"
+            type="url"
             label="Instagram"
             hint="Pievieno linku uz razotaja instagram profilu"
             prepend-inner-icon="mdi-instagram"
@@ -49,7 +53,8 @@
           <!-- Note: free shipping only applies to Latvia -->
           <v-select
             :items="allBrands"
-            v-model="shippingPartners"
+            :disabled="allBrands.length == 0"
+            v-model="brand.shippingPartners"
             prepend-inner-icon="mdi-truck-outline"
             label="Piegades partneri:"
             hint="Citi razotaji ar kuriem kopa iespejams izsutit pasutijumus"
@@ -66,7 +71,9 @@
             @change="onImageSelected"
           >
           </v-file-input>
-          <v-btn width="100%" @click="createBrand">Izveidot razotaju</v-btn>
+          <v-btn v-if="!editing" width="100%" @click="createBrand">Izveidot razotaju</v-btn>
+          <v-btn v-else width="100%" @click="updateBrand">Saglabat izmainas</v-btn>
+          </form>
         </v-col>
         <v-col
           v-for="(brand, i) in brands"
@@ -125,20 +132,23 @@
 
 <script>
 export default {
-  // middleware: 'auth-vendor',
+  middleware: 'auth-vendor',
+  // works
   data() {
     return {
+      editing: false,
       selectedFile: null,
       brand: {
         id: null,
         logo: '',
         name: '',
         description: '',
-        facebook: '',
-        instagram: '',
+        facebook: 'https://www.facebook.com/',
+        instagram: 'https://www.instagram.com/',
+        custom_link: '',
         freeShipping: null,
-      },
         shippingPartners: [],
+      },
       brands: [],
     }
   },
@@ -168,14 +178,18 @@ export default {
       } else {
         fd.append('logo', this.brand.logo)
       }
+      if (this.brand.shippingPartners != null) {
+        fd.append('shippingPartners', this.brand.shippingPartners)
+      }
       fd.append('user_id', this.$auth.user.id)
       fd.append('name', this.brand.name)
       fd.append('description', this.brand.description)
       fd.append('facebook', this.brand.facebook)
       fd.append('instagram', this.brand.instagram)
       fd.append('freeShipping', parseFloat(this.brand.freeShipping))
-      fd.append('shippingPartners', this.brand.shippingPartners)
-      this.$axios.post('brand', fd).catch((err) => console.log(err))
+      fd.append('custom_link', this.brand.custom_link)
+      this.$axios.post('brand', fd)
+        .catch(err => console.log(err.response.data))
       this.getUserBrands()
     },
     onImageSelected(event) {
@@ -183,13 +197,12 @@ export default {
     },
     getUserBrands() {
       this.$axios
-        .get('brand', {
-          headers: { Authorization: this.$auth.getToken('local') },
-        })
+        .get('brand')
         .then((res) => (this.brands = res.data))
     },
     edit(index) {
       this.brand = this.brands[index]
+      this.editing = true
     },
   },
 }
