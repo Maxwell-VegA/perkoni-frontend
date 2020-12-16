@@ -104,7 +104,7 @@ export const state = () => ({
           locale: 'Latvija',
           options: [
             {
-              text: 'Sanemt uz vietas',
+              text: 'Sanemt ofisa',
               price: 0,
               weight: 1000000,
               value: 0,

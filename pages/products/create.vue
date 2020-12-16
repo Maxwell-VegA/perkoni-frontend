@@ -194,6 +194,8 @@
                     <v-select
                       v-model="size.shippingOptions"
                       outlined
+                      chips
+                      small-chips
                       dense
                       multiple
                       :items="allShippingOptions"
@@ -321,6 +323,9 @@
               dense
               small-chips
               deletable-chips
+              single-line
+              allow-overflow
+              auto-select-first
               outlined
               multiple
               chips
@@ -523,7 +528,7 @@
           @change="getUserProducts"
         >
         </v-select>
-        <v-combobox
+        <v-select
           v-model="compRelatedProducts"
           v-bind="{ disabled: !product.brand_id }"
           label="Lidzgie produkti"
@@ -531,21 +536,22 @@
           deletable-chips
           chips
           multiple
-          hide-selected
           counter="9"
           :items="relatedProducts"
         >
-        </v-combobox>
+        </v-select>
         <v-combobox
           v-model="product.taggs"
           label="Produkta tagi"
           clearable
+          auto-select-first
+          :delimiters="[',', ';']"
           chips
           multiple
           deletable-chips
           hide-selected
           :items="taggs"
-          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
+          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Comma or semicolon to separate"
         >
         </v-combobox>
 
