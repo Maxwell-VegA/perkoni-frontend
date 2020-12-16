@@ -119,13 +119,14 @@
 
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
-                    v-if="productSizesArray[0].text"
                     v-model="selectedSize"
                     class="my-n1"
-                    :disabled="productSizesArray[0].text == 'Izvelies modeli'"
+                    v-if="productSizesArray[0].text"
+                    :disabled="productSizesArray[0].text == 'Izvelies modeli' || !productSizesArray[0].text"
                     :items="productSizesArray"
                     label="Izmers"
                   ></v-select>
+                    <!-- v-if="productSizesArray[0].text != 'Izvelies modeli' && productSizesArray[0].text" -->
 
                   <v-select
                     v-show="product.variations[1] != undefined"

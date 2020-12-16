@@ -114,6 +114,11 @@
           product.sale_price - {{ product.sale_price }}
           <!-- Btw currently it is possible to set a sale price which is higher than the base price -->
         </p>
+        <v-select
+          style="margin-top: 14px"
+          v-model="selectedGender"
+          :items="tableSelectGender"
+        ></v-select>
         <v-data-table
           class="product-createpage-table"
           style="background: transparent"
@@ -125,11 +130,6 @@
           :items-per-page="6"
         >
         </v-data-table>
-        <!-- <v-select
-          v-model="selectedGender"
-          :items="['Unisex']"
-        ></v-select> -->
-        <v-text-field v-model="selectedGender" type="number"></v-text-field>
         <p v-if="devMode" class="text--disabled">
           product.operatorIsMultiply - {{ product.operatorIsMultiply }}
         </p>
@@ -331,7 +331,6 @@
               deletable-chips
               single-line
               allow-overflow
-              auto-select-first
               outlined
               multiple
               chips
@@ -846,6 +845,31 @@ export default {
             ))
         )
       )
+      let shipping = {
+        name: 'Custom shipping'
+      };
+      let weight = {
+        name: 'Svars'
+      };
+      let output = undefined 
+      this.product.sizes[this.selectedGender].sizes.forEach((size, i) => 
+        // this.shippingOptions.forEach((locale) => (locale.options.find(option => option.value === size.shippingOptions))) 
+        shipping['price' + i] = size.customShipping,
+      );
+      
+      arr.push(shipping)
+      
+      // this.product.sizes[this.selectedGender].sizes.forEach(function (size, i) {
+      //   if (shipping['price' + i] === true) {
+      //     weight['price' + i] = size.weight
+      //   }
+      //   // else {
+      //   //   weight['price' + i] = product.weight
+      //   // }
+      // }
+      // )
+      // arr.push(weight)
+
       return arr
     },
     tableSizes() {
@@ -865,6 +889,16 @@ export default {
       )
       return arr
     },
+    tableSelectGender() {
+      const arr = []
+      this.product.gender.forEach((gen, i) => {
+        arr.push({
+          text: gen,
+          value: i
+        })
+      });
+      return arr
+    }
   },
   mounted() {
     // this.getProduct()
@@ -1065,7 +1099,7 @@ export default {
     },
     addType() {
       this.product.types.push({
-        typeName: '',
+        typeName: 'New Type',
         typePrice: 0,
         typeSecondary: [],
       })
@@ -1077,7 +1111,7 @@ export default {
     },
     addSize(index) {
       this.product.sizes[index].sizes.push({
-        sizeName: '',
+        sizeName: 'New Size',
         sizePrice: 0,
         weight: 0,
         customShipping: false,
