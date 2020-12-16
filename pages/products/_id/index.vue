@@ -4,7 +4,8 @@
       <h1 class="display-3 my-8">{{ product.title }}</h1>
       <h3 class="font-weight-light">
         {{ product.mainCategory }} / {{ product.subcategory }} /
-        {{ product.gender }}
+        {{ product.gender }} /
+        {{ selectedGender+'//'+productSizesArray[selectedSize].text+'//'+selectedVariation+'//'+productTypesArray[selectedType].text+'//'+selectedSubtypeIndex }}
       </h3>
     </v-col>
     <div>
@@ -109,13 +110,16 @@
 
                 <!-- Selects -->
                 <v-col class="mt-n5" offset="1" cols="10" offset-md="0" md="8">
+        {{ selectedCombination }}
                   <v-select
                     v-show="product.gender[1] != undefined"
                     v-model="selectedGender"
                     class="my-n1"
                     :items="product.gender"
                     label="Modelis"
+                    @change="productSizesArray = 0"
                   ></v-select>
+                  <!-- should be if selectedSize on the new gender doesn't exist then it gets reset -->
 
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
@@ -537,6 +541,48 @@ export default {
     //     (product) => product.id == this.$route.params.id
     //   )
     // },
+    selectedCombination() {
+      let gender      = 'G'
+      let size        = 'S'
+      let variation   = 'V'
+      let type        = 'T'
+      let subtype     = 'Y'
+      
+      if (this.selectedGender != '') {
+        gender = this.selectedGender
+      } else {
+        gender = 'G'
+      }
+      if (this.productSizesArray[this.selectedSize].text != 'Izvelies modeli') {
+        size = this.productSizesArray[this.selectedSize].text
+      } else {
+        size = 'S'
+      }
+      if(this.selectedVariation != '') {
+        variation = this.selectedVariation
+      } else {
+        variation = 'V'
+      }
+      if (this.productTypesArray[this.selectedType].text != 'singleTypeProduct') {
+        type = this.productTypesArray[this.selectedType].text
+      } else {
+        type = 'T'
+      }
+      if (this.selectedSubtypeName != null) {
+        subtype = this.selectedSubtypeName
+      } else {
+        subtype = 'Y'
+      }
+
+      let combination = 
+        gender      + '_//__' + 
+        size        + '_//__' +
+        variation   + '_//__' +
+        type        + '_//__' +
+        subtype
+
+       return combination
+    },
     activePrice() {
       let returnThis = 0
       if (this.product.on_sale) {
@@ -552,7 +598,8 @@ export default {
       }
       return this.product.sizes.find((gen) => gen.gender == this.selectedGender)
     },
-    productSizesArray() {
+    productSizesArray: {
+      get() {
       const arr = []
       if (this.selectedSizes != undefined) {
         this.selectedSizes.sizes.forEach((size, i) => {
@@ -577,6 +624,18 @@ export default {
       }
       // console.log(arr)
       return arr
+      },
+      // set(num) {
+      //   const arr = [{
+      //     text: 'Izvelies modeli',
+      //     price: 0,
+      //     value: 0,
+      //     weight: 0,
+      //     customShipping: false,
+      //     shippingOptions: 0,
+      //   }]
+      //   return arr
+      // }
     },
     productTypesArray() {
       const arr = []
