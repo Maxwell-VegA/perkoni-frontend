@@ -104,7 +104,7 @@
                   lg="11"
                   xl="9"
                 >
-                  <p>{{ product.description }}</p>
+                  <!-- <p>{{ product.description }}</p> -->
                   <p> {{ selectedCombination }} </p>
                 </v-col>
 
@@ -226,6 +226,12 @@
             </v-col>
             <!-- Long description -->
             <v-col cols="6" xl="5">
+              <v-card v-for="(match, i) in targetMatch" :key="i">
+                <v-card-title>
+                  {{ match.message }}
+                </v-card-title>
+                  {{ targetMatch }}
+              </v-card>
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
                 <v-card-text>
@@ -548,6 +554,7 @@ export default {
       let subtype     = 'Y'
 
       this.selectedSizes
+      console.log(this.product)
       
       if (this.selectedGender != '') {
         gender = this.selectedGender
@@ -692,6 +699,32 @@ export default {
     //   }
     //   return arr
     // },
+    targetMatch() {
+      let val = []
+
+      this.product.targets.forEach(t => {
+        let match = true
+
+        const splitKey = t.key.split('_//__')
+        const splitCurrent = this.selectedCombination.split('_//__')
+        
+        for (let index = 0; index < splitKey.length;) {
+          if (splitKey[index] !== "ANY-1337" && splitKey[index] !== splitCurrent[index]) {
+            match = false
+            break
+          }
+          index ++
+        }
+
+        if (match && t.active) {
+          console.log(match)
+          val.push(t)
+        }
+
+      })
+
+      return val
+    },
   },
   // watch: {
   //   'product': function() {
@@ -714,15 +747,39 @@ export default {
           this.productSizesArray[this.selectedSize].price
         )
       }
+
+      let val
+      // toFixed
       if (price != null) {
         if (this.product.operatorIsMultiply == true) {
-          return (price + this.typePrice * this.sizePrice).toFixed(2)
-        } else {
-          return (price + this.typePrice + this.sizePrice).toFixed(2)
+          val = price + this.typePrice * this.sizePrice
+        } else if (this.product.operatorIsMultiply == false) {
+          val = price + this.typePrice + this.sizePrice
         }
       } else {
         return null
       }
+
+      if (this.targetMatch.length > 0) {
+        this.targetMatch.forEach(match => {
+          if (match.available) {
+            if (match.overridePriceType === "set") {
+              val = parseFloat(match.overridePrice)
+            } else if (match.overridePriceType === "add") {
+              val = val + parseFloat(match.overridePrice)
+            } else if (match.overridePriceType === "multiply") {
+              val = val * parseFloat(match.overridePrice)
+            }
+          }
+        })
+      }
+
+    return val.toFixed(2)
+    // Under this setup a SET price can be altered by another later targetMatch.
+    // It can be added to or multiplied but most dangerously it can 
+    // be set to something completly different.
+    // Two set prices should never be allowed to overlap
+    // The likeliest solution to this is some kind of checking and validation on /create
     },
     addToCart() {
       this.$axios

@@ -1154,36 +1154,36 @@ export default {
     },
     computeTargetsKeys(targets) {
       targets.forEach(t => {
-        let gender      = 'G'
-        let size        = 'S'
-        let variation   = 'V'
-        let type        = 'T'
-        let subtype     = 'Y'
+        let gender      = 'ANY-1337'
+        let size        = 'ANY-1337'
+        let variation   = 'ANY-1337'
+        let type        = 'ANY-1337'
+        let subtype     = 'ANY-1337'
         
         if (t.gender != 'Visi') {
           gender = t.gender
         } else {
-          gender = 'G'
+          gender = 'ANY-1337'
         }
         if (t.size != 'Visi') {
           size = t.size
         } else {
-          size = 'S'
+          size = 'ANY-1337'
         }
         if(t.variation != 'Visi') {
           variation = t.variation
         } else {
-          variation = 'V'
+          variation = 'ANY-1337'
         }
         if (t.type.text) {
           type = t.type.text
         } else {
-          type = 'T'
+          type = 'ANY-1337'
         }
         if (t.subtype != 'Visi') {
           subtype = t.subtype
         } else {
-          subtype = 'Y'
+          subtype = 'ANY-1337'
         }
 
         let key = 

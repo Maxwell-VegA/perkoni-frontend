@@ -113,7 +113,7 @@
                       :items="compSubtypes"
                       no-resize
                       outlined
-                      counter="200"
+                      counter="100"
                     ></v-textarea>
                   </v-col>
 <!-- on/off, price: auto/custom, price as: multiplicative, addition, constant, message: none/custom, available: t/f, targeted item count (welcome to for loop hell), price -->
