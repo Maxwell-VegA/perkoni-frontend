@@ -596,6 +596,7 @@
           :varName="product.variationsName"
           :typesName="product.typesName"
           :subtypesName="product.subtypesName"
+          @updateRules="updateOverrideRules($event)"
         ></manual-override>
           <!-- will have to pass all five parameters -->
           <!-- will have to pass the three parameter names -->
@@ -607,17 +608,18 @@
       <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
+      <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn>
       <v-btn @click="log(product.shipping)">Shipping</v-btn>
-      <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
-      <v-btn>Submit for review</v-btn>
+      <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
+      <v-btn>Submit for review</v-btn> -->
 
-      <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn
+      <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn -->
       ><!-- Only visible on edit page -->
       <v-checkbox
         v-model="product.isPublic"
         label="Make product publically visable"
       ></v-checkbox>
-      {{ product.shipping}}
+      {{ product.targets }}
       {{ errors }}
     </div>
 
@@ -707,7 +709,8 @@ export default {
         related: [],
         weight: 0,
         shipping: [],
-        address: ""
+        address: "",
+        targets: ['hey'],
       },
       categories: [
         {
@@ -993,30 +996,31 @@ export default {
     //     .catch((err) => (this.errors = err.response.data.message))
     // },
     storeProduct() {
+      this.computeTargetsKeys(this.product.targets)
       this.sortSelectedImages()
       console.log(this.product)
       this.errors = []
       let typesFound = this.product.types
       let sizesFound = this.product.sizes
 
-      if (typesFound.length < 2) {
-        typesFound = [
-          {
-            typeName: 'singleTypeProduct',
-            typePrice: 0,
-            typeSecondary: [null],
-          },
-        ]
-      }
-      if (sizesFound.length < 2) {
-        sizesFound = [{
-          sizeName: 'singleSizeProduct',
-          sizePrice: 0,
-          weight: 0,
-          customShipping: false,
-          shippingOptions: [],
+      if (typesFound.length <= 1) {
+        typesFound = [{
+          typeName: 'singleTypeProduct',
+          typePrice: 0,
+          typeSecondary: [null],
         }]
       }
+      sizesFound.forEach(gen => {
+        if (gen.sizes.length <= 1) {
+          gen = [{
+            sizeName: 'singleSizeProduct',
+            sizePrice: 0,
+            weight: 0,
+            customShipping: false,
+            shippingOptions: [],
+          }]
+        }
+      })
       // console.log(this.product.types)
       // console.log(this.product.sizes)
       this.$axios
@@ -1047,12 +1051,13 @@ export default {
           related: this.product.related,
           weight: this.product.weight,
           shipping: this.product.shipping,
-          address: this.product.address
+          address: this.product.address,
+          targets: this.product.targets,
         })
         .then((res) => console.log(res))
+        .catch((err) => console.log(err.response.data.errors, err.response.data.message))
         .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))
         .catch((err) => this.errors.push(err.response.data.errors))
-        .catch((err) => console.log(err.response.data.errors))
     },
     onImagesSelected(event) {
       if (this.selectedImages[0] == null) {
@@ -1144,6 +1149,55 @@ export default {
         }
       )
     },
+    updateOverrideRules(targets) {
+      this.product.targets = targets
+    },
+    computeTargetsKeys(targets) {
+      targets.forEach(t => {
+        let gender      = 'G'
+        let size        = 'S'
+        let variation   = 'V'
+        let type        = 'T'
+        let subtype     = 'Y'
+        
+        if (t.gender != 'Visi') {
+          gender = t.gender
+        } else {
+          gender = 'G'
+        }
+        if (t.size != 'Visi') {
+          size = t.size
+        } else {
+          size = 'S'
+        }
+        if(t.variation != 'Visi') {
+          variation = t.variation
+        } else {
+          variation = 'V'
+        }
+        if (t.type.text) {
+          type = t.type.text
+        } else {
+          type = 'T'
+        }
+        if (t.subtype != 'Visi') {
+          subtype = t.subtype
+        } else {
+          subtype = 'Y'
+        }
+
+        let key = 
+          gender      + '_//__' + 
+          size        + '_//__' +
+          variation   + '_//__' +
+          type        + '_//__' +
+          subtype
+
+        t.key = key
+
+        console.log(t.key)
+      })
+    }
   },
 }
 </script>

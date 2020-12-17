@@ -4,15 +4,16 @@
     :headers="headers"
     :items="targets"
     :expanded.sync="expanded"
-    item-key="gender"
+    item-key="index"
     show-expand
     single-expand
+    :items-per-page="5"
     sort-by="size"
     class="elevation-4"
   >
     <!-- <template #item.data-table-expand></template> -->
     <template #expanded-item="{ headers, item }">
-      <td :colspan="headers.length">More info about {{ item.gender }}</td>
+      <td :colspan="headers.length">More info about {{ item.index }}</td>
     </template>
     <template v-slot:top>
       <v-toolbar flat>
@@ -95,7 +96,9 @@
                   <v-col cols="12" sm="6" md="6">
                     <v-text-field
                       :disabled="editedItem.overridePriceType === 'false'"
+                      :required="editedItem.overridePriceType !== 'false'"
                       v-model="editedItem.overridePrice"
+                      validate-on-blur
                       label="Cena"
                       type="number"
                     ></v-text-field>
@@ -128,11 +131,19 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template v-slot:item.type="{ item }">
+      <span v-if="item.type.text"> {{ item.type.text }} </span>
+      <span v-else> Visi </span>
+    </template>
     <template v-slot:item.overridePriceType="{ item }">
       <span>{{ overridePriceOptions.find(opt => opt.value == item.overridePriceType).text }}</span>
     </template>
     <template v-slot:item.overridePrice="{ item }">
-      <span v-if="item.overridePrice">{{ (item.overridePrice).toFixed(2) }}&nbsp;&#8364;</span>
+      <!-- <span v-if="item.overridePrice">{{ (item.overridePrice).toFixed(2) }}&#8364;</span> -->
+      <span v-if="item.overridePrice">{{ compPrice(item) }}&#8364;</span>
+    </template>
+    <template v-slot:item.available="{ item }">
+      <v-checkbox v-model="item.available"></v-checkbox>
     </template>
     <template v-slot:item.active="{ item }">
       <v-checkbox v-model="item.active"></v-checkbox>
@@ -142,7 +153,8 @@
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize"> Reset </v-btn>
+        <span>Nav izveidoti noteikumi</span>
+      <!-- <v-btn color="primary" @click="initialize"> Reset </v-btn> -->
     </template>
   </v-data-table>
   <!-- </v-row> -->
@@ -167,14 +179,16 @@ export default {
       { text: 'Variacija',  value: 'variation'  },
       { text: 'Tips',       value: 'type',      },
       { text: 'Subtips',    value: 'subtype'    },
-      { text: 'Aprekina metode',    value: 'overridePriceType'},
-      { text: 'Cena',    value: 'overridePrice'},
+      { text: 'Aprekina metode', value: 'overridePriceType'},
+      { text: 'Cena',       value: 'overridePrice'},
+      { text: 'Pieejams',   value: 'available'  },
       { text: 'Aktivs',     value: 'active'     },
       { text: 'Rediget',    value: 'actions'    },
     ],
     targets: [],
     editedIndex: -1,
     editedItem: {
+      index: 1,
       gender: "Visi",
       size: "Visi",
       variation: "Visi",
@@ -185,12 +199,14 @@ export default {
       overridePriceType: 'false',
       overridePrice: null,
       message: '',
+      key: null
       //   normala, noteikt, pielikt, reizinat,
       //   false, set, add, multiply (multiply what exactly?)
       //   combination price
       //   targetted items
     },
     defaultItem: {
+      index: 1,
       gender: '',
       size: 0,
       variation: 0,
@@ -201,6 +217,7 @@ export default {
       overridePriceType: 'false',
       overridePrice: null,
       message: '',
+      key: null
     },
     overridePriceOptions: [
       {
@@ -225,49 +242,6 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
-    selectedCombination() {
-        // Maybe make this a function and simply pass in each item
-        let gender      = 'G'
-        let size        = 'S'
-        let variation   = 'V'
-        let type        = 'T'
-        let subtype     = 'Y'
-        
-        if (this.selectedGender != '') {
-        gender = this.selectedGender
-        } else {
-        gender = 'G'
-        }
-        if (this.productSizesArray[this.selectedSize].text != 'Izvelies modeli' && this.productSizesArray[this.selectedSize].text != null) {
-        size = this.productSizesArray[this.selectedSize].text
-        } else {
-        size = 'S'
-        }
-        if(this.selectedVariation != '') {
-        variation = this.selectedVariation
-        } else {
-        variation = 'V'
-        }
-        if (this.productTypesArray[this.selectedType].text != 'singleTypeProduct') {
-        type = this.productTypesArray[this.selectedType].text
-        } else {
-        type = 'T'
-        }
-        if (this.selectedSubtypeName != null) {
-        subtype = this.selectedSubtypeName
-        } else {
-        subtype = 'Y'
-        }
-
-        let combination = 
-        gender      + '_//__' + 
-        size        + '_//__' +
-        variation   + '_//__' +
-        type        + '_//__' +
-        subtype
-
-        return combination
     },
     compGenders() {
         let arr = ["Visi"]
@@ -318,6 +292,13 @@ export default {
         })
         }
         return arr
+    },
+    compIndex() {
+        let lastIndex = 0
+        if (this.targets[this.targets.length - 1] != undefined) {
+            lastIndex = this.targets[this.targets.length - 1].index
+        }
+        return 1 + lastIndex
     }
   },
 
@@ -325,6 +306,9 @@ export default {
     dialog(val) {
       val || this.close()
     },
+    targets() {
+        this.$emit('updateRules', this.targets)
+    }
   },
 
   created() {
@@ -332,49 +316,42 @@ export default {
   },
 
   methods: {
+    compPrice(item) {
+        let orpt = item.overridePriceType
+        let returnThis
+        if (orpt === 'false') {
+            returnThis = ''
+        } else if (orpt === 'set') {
+            returnThis = item.overridePrice
+        } else if (orpt === 'add') {
+            returnThis = `+${item.overridePrice}`
+        } else if (orpt === 'multiply') {
+            returnThis = `*${item.overridePrice}`
+        } else {
+            returnThis = 'ELSE'
+        }
+        return returnThis
+    },
     initialize() {
       this.targets = [
-        {
-          gender: 'Frozen Yogurt',
-          size: 159,
-          variation: 6.0,
-          type: 24,
-          subtype: 4.0,
-      active: true,
-      available: true,
-      overridePriceType: 'false',
-      overridePrice: null,
-      message: '',
-        },
-        {
-          gender: 'Ice cream sandwich',
-          size: 237,
-          variation: 9.0,
-          type: 37,
-          subtype: 4.3,
-      active: false,
-      available: true,
-      overridePriceType: 'set',
-      overridePrice: 45,
-      message: '',
-        },
-        {
-          gender: 'Eclair',
-          size: 262,
-          variation: 16.0,
-          type: 23,
-          subtype: 6.0,
-      active: true,
-      available: true,
-      overridePriceType: 'false',
-      overridePrice: null,
-      message: '',
-        },
+        // {
+        //   gender: 'Frozen Yogurt',
+        //   size: 159,
+        //   variation: 6.0,
+        //   type: 24,
+        //   subtype: 4.0,
+        //   active: true,
+        //   available: true,
+        //   overridePriceType: 'false',
+        //   overridePrice: null,
+        //   message: '',
+        // },
       ]
     },
 
     onNewItem() {
       this.editedItem = {
+      index: this.compIndex,
       gender: this.compGenders[0],
       size: "Visi",
       variation: "Visi",
@@ -385,6 +362,7 @@ export default {
       overridePriceType: 'false',
       overridePrice: null,
       message: '',
+      key: null,
       }
     },
 
@@ -420,5 +398,11 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+/* 
+
+What about rules overriding each other?
+
+ */
+</style>
 

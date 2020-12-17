@@ -5,7 +5,6 @@
       <h3 class="font-weight-light">
         {{ product.mainCategory }} / {{ product.subcategory }} /
         {{ product.gender }} /
-        {{ selectedGender+'//'+productSizesArray[selectedSize].text+'//'+selectedVariation+'//'+productTypesArray[selectedType].text+'//'+selectedSubtypeIndex }}
       </h3>
     </v-col>
     <div>
@@ -106,11 +105,11 @@
                   xl="9"
                 >
                   <p>{{ product.description }}</p>
+                  <p> {{ selectedCombination }} </p>
                 </v-col>
 
                 <!-- Selects -->
                 <v-col class="mt-n5" offset="1" cols="10" offset-md="0" md="8">
-        {{ selectedCombination }}
                   <v-select
                     v-show="product.gender[1] != undefined"
                     v-model="selectedGender"
@@ -547,6 +546,8 @@ export default {
       let variation   = 'V'
       let type        = 'T'
       let subtype     = 'Y'
+
+      this.selectedSizes
       
       if (this.selectedGender != '') {
         gender = this.selectedGender
