@@ -117,8 +117,9 @@
                     class="my-n1"
                     :items="product.gender"
                     label="Modelis"
-                    @change="productSizesArray = 0"
+                    @change="selectedSize = 0"
                   ></v-select>
+                    <!-- @change="productSizesArray = 0" -->
                   <!-- should be if selectedSize on the new gender doesn't exist then it gets reset -->
 
                   <v-select
@@ -131,7 +132,6 @@
                     label="Izmers"
                   ></v-select>
                     <!-- v-if="productSizesArray[0].text != 'Izvelies modeli' && productSizesArray[0].text" -->
-
                   <v-select
                     v-show="product.variations[1] != undefined"
                     v-model="selectedVariation"
@@ -553,7 +553,7 @@ export default {
       } else {
         gender = 'G'
       }
-      if (this.productSizesArray[this.selectedSize].text != 'Izvelies modeli') {
+      if (this.productSizesArray[this.selectedSize].text != 'Izvelies modeli' && this.productSizesArray[this.selectedSize].text != null) {
         size = this.productSizesArray[this.selectedSize].text
       } else {
         size = 'S'

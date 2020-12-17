@@ -587,6 +587,21 @@
       </v-col>
     </v-row>
 
+    <v-row>
+      <v-col md="12">
+        <manual-override 
+          :sizes="product.sizes"
+          :variations="product.variations"
+          :types="product.types"
+          :varName="product.variationsName"
+          :typesName="product.typesName"
+          :subtypesName="product.subtypesName"
+        ></manual-override>
+          <!-- will have to pass all five parameters -->
+          <!-- will have to pass the three parameter names -->
+      </v-col>
+    </v-row>
+
     <div>
       <!-- controlls -->
       <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
@@ -613,7 +628,11 @@
 </template>
 
 <script>
+import ManualOverride from '~/components/ManualOverride'
+// 
+
 export default {
+  components: { ManualOverride },
   data() {
     return {
       blankArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
