@@ -113,28 +113,30 @@
     </v-app-bar>
     <!--  -->
     <v-main>
-      <v-container>
-        <div style="width: 100%; height: 50%">
-          <v-overlay z-index="4" :value="searchActive">
-            <v-card @keydown.esc="searchActive = false">
-              <v-card-title primary-title>
-                <v-text-field
-                  outlined
-                  autofocus
-                  class="mt-4"
-                  label="Meklet produktu"
-                  append-icon="mdi-magnify"
-                  dense
-                ></v-text-field>
-              </v-card-title>
-              <!-- list of search results - image, name, price, category -->
-              <v-card-text> Dzemperis </v-card-text>
-            </v-card>
-          </v-overlay>
-        </div>
-        <nuxt />
-        <!--------------------------------------------->
-      </v-container>
+      <!-- <form autocomplete="off"> -->
+        <v-container>
+          <div style="width: 100%; height: 50%">
+            <v-overlay z-index="4" :value="searchActive">
+              <v-card @keydown.esc="searchActive = false">
+                <v-card-title primary-title>
+                  <v-text-field
+                    outlined
+                    autofocus
+                    class="mt-4"
+                    label="Meklet produktu"
+                    append-icon="mdi-magnify"
+                    dense
+                  ></v-text-field>
+                </v-card-title>
+                <!-- list of search results - image, name, price, category -->
+                <v-card-text> Dzemperis </v-card-text>
+              </v-card>
+            </v-overlay>
+          </div>
+          <nuxt />
+          <!--------------------------------------------->
+        </v-container>
+      <!-- </form> -->
     </v-main>
     <!--  -->
     <admin-nav />

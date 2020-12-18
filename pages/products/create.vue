@@ -1160,8 +1160,8 @@ export default {
         let type        = 'ANY-1337'
         let subtype     = 'ANY-1337'
         
-        if (t.gender != 'Visi') {
-          gender = t.gender
+        if (t.gender.text) {
+          gender = t.gender.text
         } else {
           gender = 'ANY-1337'
         }

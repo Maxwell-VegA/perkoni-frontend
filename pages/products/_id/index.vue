@@ -104,8 +104,8 @@
                   lg="11"
                   xl="9"
                 >
-                  <!-- <p>{{ product.description }}</p> -->
-                  <p> {{ selectedCombination }} </p>
+                  <p>{{ product.description }}</p>
+                  <!-- <p> {{ selectedCombination }} </p> -->
                 </v-col>
 
                 <!-- Selects -->
@@ -210,6 +210,7 @@
                     color="primary"
                     style="margin-top: -2px"
                     class="py-5 ml-1"
+                    v-bind="{disabled: !isAvailable}"
                     @click="addToCart"
                   >
                     pievienot grozam
@@ -226,11 +227,11 @@
             </v-col>
             <!-- Long description -->
             <v-col cols="6" xl="5">
-              <v-card v-for="(match, i) in targetMatch" :key="i">
-                <v-card-title>
+              <v-card v-for="(match, i) in targetMatch" :key="i" class="primary mb-4">
+                <v-card-title class="" >
                   {{ match.message }}
                 </v-card-title>
-                  {{ targetMatch }}
+                  <!-- {{ targetMatch }} -->
               </v-card>
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
@@ -522,6 +523,7 @@ export default {
   data() {
     return {
       errors: {},
+      isAvailable: true,
       inCart: false,
       typePrice: 0,
       sizePrice: 0,
@@ -722,6 +724,19 @@ export default {
         }
 
       })
+
+      if (val.length > 0) {
+        for (const match of val) {
+          if (match.available) {
+            this.isAvailable = true
+        } else {
+          this.isAvailable = false
+          break
+        }
+      }
+      } else {
+        this.isAvailable = true
+      }
 
       return val
     },

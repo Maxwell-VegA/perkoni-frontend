@@ -8,22 +8,22 @@
     show-expand
     single-expand
     :items-per-page="5"
-    sort-by="size"
+    sort-by="index"
     class="elevation-4"
   >
     <!-- <template #item.data-table-expand></template> -->
     <template #expanded-item="{ headers, item }">
-      <td :colspan="headers.length">More info about {{ item.index }}</td>
+      <td :colspan="headers.length">{{ item.message }}</td>
     </template>
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Manualie noteikumi:</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
+        <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn @click="onNewItem()" color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-              New Item
+              Jauns noteikums
             </v-btn>
           </template>
           <v-card>
@@ -113,7 +113,7 @@
                       :items="compSubtypes"
                       no-resize
                       outlined
-                      counter="100"
+                      counter="144"
                     ></v-textarea>
                   </v-col>
 <!-- on/off, price: auto/custom, price as: multiplicative, addition, constant, message: none/custom, available: t/f, targeted item count (welcome to for loop hell), price -->
@@ -131,6 +131,10 @@
         </v-dialog>
       </v-toolbar>
     </template>
+    <template v-slot:item.gender="{ item }">
+      <span v-if="item.gender.text"> {{ item.gender.text }} </span>
+      <span v-else> Visi </span>
+    </template>
     <template v-slot:item.type="{ item }">
       <span v-if="item.type.text"> {{ item.type.text }} </span>
       <span v-else> Visi </span>
@@ -139,7 +143,6 @@
       <span>{{ overridePriceOptions.find(opt => opt.value == item.overridePriceType).text }}</span>
     </template>
     <template v-slot:item.overridePrice="{ item }">
-      <!-- <span v-if="item.overridePrice">{{ (item.overridePrice).toFixed(2) }}&#8364;</span> -->
       <span v-if="item.overridePrice">{{ compPrice(item) }}&#8364;</span>
     </template>
     <template v-slot:item.available="{ item }">
@@ -183,7 +186,7 @@ export default {
       { text: 'Cena',       value: 'overridePrice'},
       { text: 'Pieejams',   value: 'available'  },
       { text: 'Aktivs',     value: 'active'     },
-      { text: 'Rediget',    value: 'actions'    },
+      { text: 'Rediget',    value: 'actions',   sortable: false},
     ],
     targets: [],
     editedIndex: -1,

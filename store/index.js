@@ -221,12 +221,14 @@ export const actions = {
     //   commit('SET_RELATED', data.data)
     // },
     async getProduct({commit}, {productId}) {
-      let {data} = await getData(this.$axios, `products/${productId}`)
-      commit('SET_PRODUCT', data.data)
+      // let {data} = await getData(this.$axios, `products/${productId}`)
+      let res = await this.$axios(`products/${productId}`)
+      commit('SET_PRODUCT', res.data.data)
     },
     async getCart({commit}) {
-        let {data} = await getData(this.$axios, `cart`)
-        commit('SET_CART', data)
+        // let {data} = await getData(this.$axios, `cart`)
+        let res = await this.$axios(`cart`)
+        commit('SET_CART', res.data)
     },
     // async getRelated({commit}) {
         // function getter(id) {
@@ -266,9 +268,9 @@ export const modules = {
 
 }
 
-const getData = async function(axios, url) {
-    let res = await axios(url)
-    return {
-        data: res.data
-    }
-}
+// const getData = async function(axios, url) {
+//     let res = await axios(url)
+//     return {
+//         data: res.data
+//     }
+// }
