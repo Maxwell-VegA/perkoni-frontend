@@ -710,7 +710,7 @@ export default {
         weight: 0,
         shipping: [],
         address: "",
-        targets: ['hey'],
+        targets: [],
       },
       categories: [
         {

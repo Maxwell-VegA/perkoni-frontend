@@ -146,7 +146,7 @@
 <script>
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
-import { mapState } from 'vuex'
+// import { mapState } from 'vuex'
 //
 
 export default {
@@ -156,10 +156,26 @@ export default {
     return {
       title: 'DEVINI X PERKONI',
       searchActive: false,
+      lsTest: false,
+      update: false,
     }
   },
   computed: {
-    ...mapState(['cart']),
+    cart() {
+      let update = this.update
+      if (this.$auth.loggedIn) {
+        return this.$store.state.cart
+      } else if (!this.$auth.loggedIn && this.lsTest) {
+        let val = JSON.parse(localStorage.getItem('cart'))
+        if (!val) {
+          return []
+        } else {
+          return Object.values(val)
+        }
+      } else {
+        return []
+      }
+    },
     currentPathArray() {
       const arr = this.$route.path.split('/')
       const array = [
@@ -189,8 +205,22 @@ export default {
     },
   },
   created() {},
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.$root.$on('refreshCart'), () => {
+      this.update = !this.update
+    }
+    // this.getLocalCart()
+    this.lsTest = true
+    // function checkLS() {
+    //   res = this.localStorage.getItem('cart')
+    //   if (!res) {
+    //     this.localStorage.setItem('cart', '{}')
+    //   }
+    // }
+  },
+  methods: {
+
+  },
 }
 </script>
 

@@ -210,13 +210,17 @@
                     color="primary"
                     style="margin-top: -2px"
                     class="py-5 ml-1"
+                    :loading="addingToCart"
                     v-bind="{disabled: !isAvailable}"
                     @click="addToCart"
                   >
                     pievienot grozam
                     <v-icon>mdi-cart-plus</v-icon>
                   </v-btn>
-                  <v-btn v-else color="success">
+                  <v-btn v-else color="success"
+                    style="margin-top: -2px"
+                    class="py-5 ml-1"
+                  >
                     produkts ir groza
                     <v-icon>mdi-check-circle-outline</v-icon>
                   </v-btn>
@@ -523,8 +527,10 @@ export default {
   data() {
     return {
       errors: {},
+      addingToCart: false,
+      update: false,
+      lsTest: false,
       isAvailable: true,
-      inCart: false,
       typePrice: 0,
       sizePrice: 0,
       quantity: 1,
@@ -549,6 +555,7 @@ export default {
     //   )
     // },
     selectedCombination() {
+      this.addingToCart = false
       let gender      = 'G'
       let size        = 'S'
       let variation   = 'V'
@@ -556,7 +563,7 @@ export default {
       let subtype     = 'Y'
 
       this.selectedSizes
-      console.log(this.product)
+      // console.log(this.product)
       
       if (this.selectedGender != '') {
         gender = this.selectedGender
@@ -591,7 +598,7 @@ export default {
         type        + '_//__' +
         subtype
 
-       return combination
+      return combination
     },
     activePrice() {
       let returnThis = 0
@@ -671,10 +678,10 @@ export default {
       })
       return arr
     },
-    // productId() {
-    //   const arr = this.$route.path.split('/')
-    //   return arr[arr.length - 1]
-    // },
+    productId() {
+      const arr = this.$route.path.split('/')
+      return arr[arr.length - 1]
+    },
     selectedSubtypeIndex: {
       get() {
         let returnThis
@@ -740,15 +747,44 @@ export default {
 
       return val
     },
+    inCart() {
+      let cartItems = []
+      if (this.$auth.loggedIn) {
+        cartItems = this.$store.state.cart
+      } else if (this.lsTest) {
+        cartItems = Object.values(JSON.parse(localStorage.getItem('cart')))
+      }
+
+      let update = this.update
+      let returnThis
+
+      for (const cartItem of cartItems) {
+        if (cartItem.key == this.selectedCombination) {
+          returnThis = true
+          break
+        } else {
+          returnThis = false
+        }
+      };
+
+      // this.addingToCart = false
+      return returnThis
+
+    },
   },
-  // watch: {
-  //   'product': function() {
-  //     console.log(123)
-  //   }
-  // },
+  watch: {
+    // update() {
+    //   this.$nuxt.$emit('refreshCart')
+    // }
+    // 'product': function() {
+    //   console.log(123)
+    // }
+  },
   mounted() {
     // this.getProduct()
-    this.isInCart()
+    // this.localStorage.setItem('cart', "{}")
+    this.lsTest = true
+    this.isInCartQuestion()
   },
   methods: {
     displayPrice(price) {
@@ -797,38 +833,50 @@ export default {
     // The likeliest solution to this is some kind of checking and validation on /create
     },
     addToCart() {
-      this.$axios
-        .post('cart', {
-          productId: this.productId,
-          title: this.product.title,
-          price: this.displayPrice(this.activePrice),
-          selectedType: this.selectedType,
-          selectedSubtype: this.selectedSubtypeIndex,
-          selectedSize: this.selectedSize,
-          quantity: this.quantity,
-        })
-        .then((res) => {
-          // console.log(res.data)
-          this.inCart = true
-          this.$nuxt.$emit('refreshCart')
+      if (this.$auth.loggedIn) {
+        this.addingToCart = true
+        this.$axios
+          .post('cart', {
+            productId: this.productId,
+            title: this.product.title,
+            price: this.displayPrice(this.activePrice),
+            selectedType: this.selectedType,
+            selectedSubtype: this.selectedSubtypeIndex,
+            selectedSize: this.selectedSize,
+            quantity: this.quantity,
+            key: this.selectedCombination
+          })
+          .then((res) => {
+            this.$store.dispatch('getCart')
+          // this.$nuxt.$emit('refreshCart')
         })
         .catch((err) =>
           console.log(err.response.data.message, err.response.data.exception)
         )
-      // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
-      // Might be I can use a snackbar here
+      } else {
+        // console.log(1)
+        let current = JSON.parse(localStorage.getItem('cart'))
+        if (!current) {
+          current = {}
+        }
+        current[`${this.productId}_//__${this.selectedCombination}`] = {
+            product_id: this.productId,
+            title: this.product.title,
+            price: this.displayPrice(this.activePrice),
+            selected_type: this.selectedType,
+            selectedSubtypeIndex: this.selectedSubtypeIndex,
+            selected_size: this.selectedSize,
+            quantity: this.quantity,
+            key: this.selectedCombination
+        }
+        localStorage.setItem('cart', JSON.stringify(current))
+        // this.$nuxt.$emit('refreshCart')
+        // basically watch the quantity and update cart on change
+        // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
+        // Might be I can use a snackbar here
+      }
+      this.update = !this.update
     },
-    // resetSelectedSubtype() {
-    //   let match = false
-    //   this.product.types[this.selectedType].typeSecondary.forEach((subtype) => {
-    //     if (this.selectedSubtypeName === subtype) {
-    //       match = true
-    //     }
-    //     if (match === false) {
-    //       this.selectedSubtypeName = null
-    //     }
-    //   })
-    // },
     shippingProperties(idx, loc) {
       const properties = {}
       this.shippingOptions.forEach((locale) => {
@@ -844,24 +892,28 @@ export default {
       })
       return properties
     },
-    isInCart() {
-      this.$axios
-        .get('cart')
-        .then((res) => {
-          // console.log(res.data)
-          res.data.forEach((cartItem) => {
-            if (cartItem.product_id == this.productId) {
-              this.quantity = cartItem.quantity
-              this.selectedSize = cartItem.selected_size
-              this.selectedType = cartItem.selected_type
-              this.selectedSubtypeIndex = cartItem.selectedSubtypeIndex
-              this.inCart = true
-            }
-          })
-        })
-        .catch((err) =>
-          console.log(err.response.data.message, err.response.data.exception)
-        )
+    isInCartQuestion() {
+      // let update = this.update
+      let res = []
+      if (this.$auth.loggedIn) {
+        res = this.$store.state.cart
+      } else if (this.lsTest) {
+        res = JSON.parse(localStorage.getItem('cart'))
+        if (!res) {
+          localStorage.setItem('cart', '{}')
+          res = []
+        }
+      }
+      if (res.length > 0) {
+        res.forEach((cartItem) => {
+          if (cartItem.product_id == this.productId) {
+            this.quantity = cartItem.quantity
+          this.selectedSize = cartItem.selected_size
+          this.selectedType = cartItem.selected_type
+          this.selectedSubtypeIndex = cartItem.selectedSubtypeIndex
+        }
+      })
+      }
     },
     getRelated() {
       this.relatedProducts = []

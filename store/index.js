@@ -149,115 +149,91 @@ export const state = () => ({
 })
 
 export const mutations = {
-    SET_PRODUCTS (state, products) {
-        state.categories[state.currentCategory].products = products.data
-        state.categories[state.currentCategory].pages = products.meta.last_page
-        
-        // if (state.categories[state.currentCategory].loadedSubcategories[0] == undefined) {
-        //     state.categories[state.currentCategory].subcategories.forEach(
-        //         (subcategory) => {
-        //             state.categories[state.currentCategory].loadedSubcategories.push([null])
-        //     });
-        // }
+  SET_PRODUCTS (state, products) {
+      state.categories[state.currentCategory].products = products.data
+      state.categories[state.currentCategory].pages = products.meta.last_page
+      
+      // if (state.categories[state.currentCategory].loadedSubcategories[0] == undefined) {
+      //     state.categories[state.currentCategory].subcategories.forEach(
+      //         (subcategory) => {
+      //             state.categories[state.currentCategory].loadedSubcategories.push([null])
+      //     });
+      // }
 
-        // if (state.currentSubcategory !== undefined && 
-        //     state.categories[state.currentCategory].loadedSubcategories[state.currentSubcategory] == [null]
-        // ) {
-        //     state.categories[state.currentCategory].loadedSubcategories[state.currentSubcategory] = "Hey"
-        // }
-    },
-    SET_PRODUCT (state, product) {
-        state.product = product
-        // state.product.related.forEach(id => {
-        // async () => {
-        //   await actions.getRelated({productId: 10})
-        // }
-        // });
-    },
-    SET_CART (state, cart) {
-        state.cart = cart
-    },
-    UPDATE_PAGE(state, data) {
-        state.currentPage = data
-    },
-    UPDATE_CATEGORY(state, data) {
-        state.currentCategory = data
-    },
-    UPDATE_SUBCATEGORY(state, data) {
-        state.currentSubcategory = data
-    },
-    UPDATE_GENDER(state, data) {
-        state.currentGender = data
-    },
-    // SET_RELATED (state, products) {
-    //     state.relatedProducts = products
-    // },
+      // if (state.currentSubcategory !== undefined && 
+      //     state.categories[state.currentCategory].loadedSubcategories[state.currentSubcategory] == [null]
+      // ) {
+      //     state.categories[state.currentCategory].loadedSubcategories[state.currentSubcategory] = "Hey"
+      // }
+  },
+  SET_PRODUCT (state, product) {
+      state.product = product
+      // state.product.related.forEach(id => {
+      // async () => {
+      //   await actions.getRelated({productId: 10})
+      // }
+      // });
+  },
+  SET_CART (state, cart) {
+      state.cart = cart
+  },
+  UPDATE_PAGE(state, data) {
+      state.currentPage = data
+  },
+  UPDATE_CATEGORY(state, data) {
+      state.currentCategory = data
+  },
+  UPDATE_SUBCATEGORY(state, data) {
+      state.currentSubcategory = data
+  },
+  UPDATE_GENDER(state, data) {
+      state.currentGender = data
+  },
+  // SET_RELATED (state, products) {
+  //     state.relatedProducts = products
+  // },
 }
 
 export const actions = {
-    async getProducts({commit}) {    
-        let requestName = {
-            params: {
-                page: this.state.currentPage,
-                category: this.state.categories[this.state.currentCategory].text,
-                subcategory: this.state.categories[this.state.currentCategory].subcategories[this.state.currentSubcategory],
-                gender: this.state.categories[this.state.currentCategory].genders[this.state.currentGender],
-            }
-        }
-        
-        // if (this.state.categories[1].products[0] == undefined) {
-        //     let akcijas = await this.$axios('products', {params: {category: 'Akcijas'}})
-        //     commit('SET_PRODUCTS', akcijas.data)
-        // }  
-        
-        let res = await this.$axios('products', requestName)
-        let products = res.data
+  async getProducts({commit}) {    
+      let requestName = {
+          params: {
+              page: this.state.currentPage,
+              category: this.state.categories[this.state.currentCategory].text,
+              subcategory: this.state.categories[this.state.currentCategory].subcategories[this.state.currentSubcategory],
+              gender: this.state.categories[this.state.currentCategory].genders[this.state.currentGender],
+          }
+      }
+      
+      // if (this.state.categories[1].products[0] == undefined) {
+      //     let akcijas = await this.$axios('products', {params: {category: 'Akcijas'}})
+      //     commit('SET_PRODUCTS', akcijas.data)
+      // }  
+      
+      let res = await this.$axios('products', requestName)
+      let products = res.data
 
-        commit('SET_PRODUCTS', products)
-    },
-    // async getRelated({commit}, {productId}) {
-    //   // let {data} = await getData(this.$axios, `products/${productId}/terse`)
-    //   let {data} = await getData(this.$axios, `products/${productId}`)
-    //   commit('SET_RELATED', data.data)
-    // },
-    async getProduct({commit}, {productId}) {
-      // let {data} = await getData(this.$axios, `products/${productId}`)
-      let res = await this.$axios(`products/${productId}`)
-      commit('SET_PRODUCT', res.data.data)
-    },
-    async getCart({commit}) {
-        // let {data} = await getData(this.$axios, `cart`)
-        let res = await this.$axios(`cart`)
-        commit('SET_CART', res.data)
-    },
-    // async getRelated({commit}) {
-        // function getter(id) {
-        //     return new Promise ((resolve) => {
-        //         let res = this.$axios.get('products/' + id)
-        //         resolve (res.data)
-        //     })
-        // }
+      commit('SET_PRODUCTS', products)
+  },
+  async getProduct({commit}, {productId}) {
+    // let {data} = await getData(this.$axios, `products/${productId}`)
+    let res = await this.$axios(`products/${productId}`)
+    commit('SET_PRODUCT', res.data.data)
+  },
+  async getCart({commit}) {
+      // let {data} = await getData(this.$axios, `cart`)
+    if (this.$auth.loggedIn) {
+      let res = await this.$axios(`cart`)
+      commit('SET_CART', res.data)
+    }
+  },
+  // updateCart({ request }) {
+  //   if (this.$auth.loggedIn) {
+  //     this.$axios[request.method](`cart/${requestUrl}`, { data: request.data })
+  //   }
+  // }
 
-        // async function delayed(arr) {
-        //     var newArr = [];
-        //     for (const elem of arr) {
-        //         const newElem = await getter(elem)
-        //         newArr.push(newElem);
-        //     }
-        //     return newArr
-        // }
 
-        // commit('SET_RELATED', delayed(this.state.product.related))
-        
-        // let arr = []
-        
-        // this.state.product.related.forEach(id => {
-        //     this.$axios('products' + id)
-        //     .then(res => arr.push(res))
-        // });
-
-        // commit('SET_RELATED', arr)
-    // }
 }
 
 export const getters = {
