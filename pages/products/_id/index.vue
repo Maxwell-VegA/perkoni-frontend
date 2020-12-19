@@ -4,7 +4,6 @@
       <h1 class="display-3 my-8">{{ product.title }}</h1>
       <h3 class="font-weight-light">
         {{ product.mainCategory }} / {{ product.subcategory }} /
-        {{ product.gender }} /
       </h3>
     </v-col>
     <div>
@@ -193,58 +192,44 @@
                 </v-col>
                 <!-- Add to cart -->
                 <v-col cols="12" class="pr-8 ml-n1">
-                  <!-- <v-card class="mb-2">
-                    <v-card-actions> -->
-                  <v-tooltip bottom>
-                    <template #activator="{ on, attrs }">
-                      <input
-                        v-model="quantity"
-                        v-bind="attrs"
-                        min="1"
-                        type="number"
-                        class="white--text px-2 py-2 ml-2 accent"
-                        style="width: 60px; border-radius: 3px"
-                        v-on="on"
+                  <v-row no-gutters>
+                    <v-col cols="3">
+                      <v-combobox
+                        :items="qtyOptions"
                         @change="updateQuantity"
-                      />
-                      <!-- Perhaps set the maximum quantity by calculating maximum shipment weight? Might be unnecesary though since if it's a large order manual action can be taken. -->
-                    </template>
-                    <span>Daudzums</span>
-                  </v-tooltip>
-                  <v-btn
-                    v-if="!inCart"
-                    color="primary"
-                    style="margin-top: -2px"
-                    class="py-5 ml-1"
-                    :loading="addingToCart"
-                    v-bind="{ disabled: !isAvailable }"
-                    @click="addToCart"
-                  >
-                    pievienot grozam
-                    <v-icon>mdi-cart-plus</v-icon>
-                    <!-- <v-icon>mdi-cart-arrow-down</v-icon> -->
-                  </v-btn>
-                  <!-- <v-btn
-                    v-else-if="false"
-                    style="margin-top: -2px"
-                    class="py-5 ml-1"
-                    color="info"
-                  >
-                    mainit daudzumu
-                    <v-icon>mdi-cart-plus</v-icon>
-                  </v-btn> -->
-                  <v-btn
-                    v-else
-                    color="success"
-                    style="margin-top: -2px"
-                    class="py-5 ml-1"
-                  >
-                    produkts ir groza
-                    <v-icon>mdi-check-circle-outline</v-icon>
-                  </v-btn>
-                  {{ quantity + '/' + setQuantity }}
-                  <!-- </v-card-actions>
-                  </v-card> -->
+                        v-model="quantity"
+                        filled
+                        height="40px"
+                        style="margin-top: -2px"
+                        dense
+                      >
+                      </v-combobox>
+                    </v-col>
+                    <v-col>
+                      <v-btn
+                        v-if="!inCart"
+                        color="primary"
+                        style="margin-top: 0px"
+                        class="py-5 ml-1"
+                        :loading="addingToCart"
+                        v-bind="{ disabled: !isAvailable }"
+                        @click="addToCart"
+                      >
+                        pievienot grozam
+                        <v-icon>mdi-cart-plus</v-icon>
+                      </v-btn>
+                      <v-btn
+                        v-else
+                        color="success"
+                        style="margin-top: -2px"
+                        class="py-5 ml-1"
+                      >
+                        produkts ir groza
+                        <v-icon>mdi-check-circle-outline</v-icon>
+                      </v-btn>
+                      <!-- {{ quantity + '/' + setQuantity }} -->
+                    </v-col>
+                  </v-row>
                 </v-col>
               </v-row>
             </v-col>
@@ -573,7 +558,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['product', 'shippingOptions']),
+    ...mapState(['product', 'shippingOptions', 'qtyOptions']),
     // product() {
     //   return this.products.find(
     //     (product) => product.id == this.$route.params.id
@@ -986,6 +971,14 @@ export default {
 }
 </script>
 <style>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}
 /* 
 
 need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
@@ -999,6 +992,8 @@ If product is already in cart get the quantity of it and change the btn to a suc
 Should add like a cool and gratifying animation for adding a product to the cart
 
 If there is a gender which has less than two sizes then do not display sizes at all. Or perhaps to simplify only display sizes after a gender has been selected.
+
+Make the item quantity combobox of the cart and the /id page numbers only and only positive numbers or zero to remove.
 
  */
 </style>

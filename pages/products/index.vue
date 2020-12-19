@@ -72,19 +72,17 @@
                 <v-row>
                   <v-col v-for="(prod, i) in cat.products" :key="i" cols="4">
                     <NuxtLink :to="'/products/' + prod.id">
-                      <!-- @wheel.prevent="prod.cPage += 1"
-                        @mouseenter.once="prod.cPage += 1" -->
+                      <!-- @wheel.prevent="prod.cPage += 1" -->
                       <!-- Perhaps you can show some kind of progress bar indicating the time untill the next image is loaded -->
                       <v-card
+                        @mouseenter.once="prod.cPage += 1"
                         height="100%"
                         style="z-index: 0"
-                        @mouseenter="
-                          ;(prod.hover = true), (prod.interval = 2000)
-                        "
-                        @mouseleave="
-                          ;(prod.hover = false), (prod.interval = 9999999)
-                        "
                       >
+                      <!-- To make this work you need to be able to cycle the images of only one product at a time, display a hover progress bar, prevent the last cycle,  -->
+                      <!-- check if mouse is on, start loader (fade in) and set timeout, if mouse is still on by the end of the timeout then cycle image -->
+                        <!-- @mouseenter=" ;(prod.hover = true), (prod.interval = 2000) " -->
+                        <!-- @mouseleave=" ;(prod.hover = false), (prod.interval = 9999999) " -->
                         <v-carousel
                           v-model="prod.cPage"
                           height="315px"
@@ -231,12 +229,12 @@ export default {
     },
     currentGender: {
       get() {
-        console.log(this.$store.state.currentGender)
-        console.log(this.$store.state.categories[this.$store.state.currentCategory].genders[this.$store.state.currentGender])
+        // console.log(this.$store.state.currentGender)
+        // console.log(this.$store.state.categories[this.$store.state.currentCategory].genders[this.$store.state.currentGender])
         return this.$store.state.currentGender
       },
       set(v) {
-        console.log(v)
+        // console.log(v)
         this.$store.commit('UPDATE_GENDER', v)
       },
     },
@@ -265,22 +263,6 @@ export default {
     // this.getProducts()
   },
   methods: {
-    // cycleImages(productIndex) {
-    //   this.products[productIndex].currentImage =
-    //     'http://127.0.0.1:8000/notfound.jpg'
-    //   console.log(this.products[productIndex])
-    //   // if (this.products[0].images[0] != undefined) {
-    //   //   // 'http://127.0.0.1:8000/' + product.images[1].fileName
-    //   //   this.products[0].currentImage =
-    //   // } else {
-    //   //   this.products[productIndex].currentImage =
-    //   //     'http://127.0.0.1:8000/notfound.jpg'
-    //   //   // product.currentImage =
-    //   //   // 'http://127.0.0.1:8000/' + product.images[0].fileName
-    //   //   console.log('else')
-    //   // }
-    //   // console.log(this.product[productIndex].currentImage)
-    // },
     salePrice(price) {
       let returnThis = null
       if (price != undefined) {
@@ -288,32 +270,7 @@ export default {
       }
       return returnThis
     },
-    // getProducts() {
-    //   const categoryName = this.categories[this.currentCategory].text
-    //   const subcategoryName = this.categories[this.currentCategory]
-    //     .subcategories[this.currentSubcategory]
-    //   const genderName = this.categories[this.currentCategory].genders[
-    //     this.currentGender
-    //   ]
-    //   this.$axios
-    //     .get('products', {
-    //       params: {
-    //         page: this.currentPage,
-    //         category: categoryName,
-    //         subcategory: subcategoryName,
-    //         gender: genderName,
-    //       },
-    //     })
-    //     .then((res) => {
-    //       console.log(res.data.data)
-    //       this.products = res.data.data
-    //       this.totalPages = res.data.meta.last_page
-    //     })
-    //     .catch((err) =>
-    //       console.log(err.response.data.message, err.response.data.exception)
-    //     )
-    // },
-  },
+   },
   head() {
     return {
       title: 'DEVINI X PERKONI',
@@ -335,8 +292,6 @@ export default {
 Tag sorting could be done client side instead of server. We'll just need to figure out how to deal with pagination.
 
 Perhaps instead of returning only those products that match selected taggs return all but sort those that match first if that's possible then on client side simply highlight them.
-
-Add the ability to scroll both up and down on product images sometime
 
 Add a green checkmark on the products page to indicate which items have already been placed in the cart (and also as a reminder for the user that they have commited to buying)
 

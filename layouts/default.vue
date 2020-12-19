@@ -2,7 +2,6 @@
   <v-app>
     <vendor-nav />
     <!-- Could add a background image to this app bar -->
-    <!-- Could place both sign in and register under the same profile icon next to the cart which would really clean up that section -->
     <v-app-bar elevate-on-scroll clipped-left fixed app clipped-right>
       <v-col md="3">
         <v-toolbar-title v-text="title" />
@@ -61,15 +60,17 @@
                   </v-list-item-subtitle>
                 </v-list-item-content>
                 <v-list-item-action>
-                  <input
-                    type="number"
-                    min="1"
-                    class="white--text px-2 py-2 mx-3"
-                    style="width: 60px; border-radius: 3px"
-                    :value="item.quantity"
-                  />
+                  <v-combobox
+                  :items="qtyOptions"
+                  @change="updateQuantity(item.id, item.key)"
+                  v-model="item.quantity"
+                  height="40px"
+                  style="width: 64px"
+                  dense
+                >
+                </v-combobox>
                 </v-list-item-action>
-                <v-list-item-avatar class="py-0" size="80" right>
+                <v-list-item-avatar class="py-0" size="50" style="border-radius: 0px !important" right>
                   <v-img src="http://localhost:8000/notfound.jpg"></v-img>
                 </v-list-item-avatar>
               </v-list-item>
@@ -183,6 +184,9 @@ export default {
     }
   },
   computed: {
+    qtyOptions() {
+      return this.$store.state.qtyOptions
+    },
     cart() {
       const update = this.update
       if (this.$auth.loggedIn) {
