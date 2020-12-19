@@ -118,19 +118,22 @@
                     label="Modelis"
                     @change="selectedSize = 0"
                   ></v-select>
-                    <!-- @change="productSizesArray = 0" -->
+                  <!-- @change="productSizesArray = 0" -->
                   <!-- should be if selectedSize on the new gender doesn't exist then it gets reset -->
 
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
+                    v-if="productSizesArray[0].text"
                     v-model="selectedSize"
                     class="my-n1"
-                    v-if="productSizesArray[0].text"
-                    :disabled="productSizesArray[0].text == 'Izvelies modeli' || !productSizesArray[0].text"
+                    :disabled="
+                      productSizesArray[0].text == 'Izvelies modeli' ||
+                      !productSizesArray[0].text
+                    "
                     :items="productSizesArray"
                     label="Izmers"
                   ></v-select>
-                    <!-- v-if="productSizesArray[0].text != 'Izvelies modeli' && productSizesArray[0].text" -->
+                  <!-- v-if="productSizesArray[0].text != 'Izvelies modeli' && productSizesArray[0].text" -->
                   <v-select
                     v-show="product.variations[1] != undefined"
                     v-model="selectedVariation"
@@ -197,11 +200,14 @@
                       <input
                         v-model="quantity"
                         v-bind="attrs"
+                        min="1"
                         type="number"
                         class="white--text px-2 py-2 ml-2 accent"
                         style="width: 60px; border-radius: 3px"
                         v-on="on"
+                        @change="updateQuantity"
                       />
+                      <!-- Perhaps set the maximum quantity by calculating maximum shipment weight? Might be unnecesary though since if it's a large order manual action can be taken. -->
                     </template>
                     <span>Daudzums</span>
                   </v-tooltip>
@@ -211,19 +217,32 @@
                     style="margin-top: -2px"
                     class="py-5 ml-1"
                     :loading="addingToCart"
-                    v-bind="{disabled: !isAvailable}"
+                    v-bind="{ disabled: !isAvailable }"
                     @click="addToCart"
                   >
                     pievienot grozam
                     <v-icon>mdi-cart-plus</v-icon>
+                    <!-- <v-icon>mdi-cart-arrow-down</v-icon> -->
                   </v-btn>
-                  <v-btn v-else color="success"
+                  <!-- <v-btn
+                    v-else-if="false"
+                    style="margin-top: -2px"
+                    class="py-5 ml-1"
+                    color="info"
+                  >
+                    mainit daudzumu
+                    <v-icon>mdi-cart-plus</v-icon>
+                  </v-btn> -->
+                  <v-btn
+                    v-else
+                    color="success"
                     style="margin-top: -2px"
                     class="py-5 ml-1"
                   >
                     produkts ir groza
                     <v-icon>mdi-check-circle-outline</v-icon>
                   </v-btn>
+                  {{ quantity + '/' + setQuantity }}
                   <!-- </v-card-actions>
                   </v-card> -->
                 </v-col>
@@ -231,11 +250,15 @@
             </v-col>
             <!-- Long description -->
             <v-col cols="6" xl="5">
-              <v-card v-for="(match, i) in targetMatch" :key="i" class="primary mb-4">
-                <v-card-title class="" >
+              <v-card
+                v-for="(match, i) in targetMatch"
+                :key="i"
+                class="primary mb-4"
+              >
+                <v-card-title class="">
                   {{ match.message }}
                 </v-card-title>
-                  <!-- {{ targetMatch }} -->
+                <!-- {{ targetMatch }} -->
               </v-card>
               <v-card>
                 <v-card-title>Apraksts:</v-card-title>
@@ -528,12 +551,14 @@ export default {
     return {
       errors: {},
       addingToCart: false,
+      cartItemId: 0,
       update: false,
       lsTest: false,
       isAvailable: true,
       typePrice: 0,
       sizePrice: 0,
       quantity: 1,
+      setQuantity: 0,
       selectedGender: '',
       selectedSize: 0,
       selectedVariation: '',
@@ -556,46 +581,55 @@ export default {
     // },
     selectedCombination() {
       this.addingToCart = false
-      let gender      = 'G'
-      let size        = 'S'
-      let variation   = 'V'
-      let type        = 'T'
-      let subtype     = 'Y'
+      let gender = 'ANY-1337'
+      let size = 'ANY-1337'
+      let variation = 'ANY-1337'
+      let type = 'ANY-1337'
+      let subtype = 'ANY-1337'
 
       this.selectedSizes
       // console.log(this.product)
-      
+
       if (this.selectedGender != '') {
         gender = this.selectedGender
       } else {
-        gender = 'G'
+        gender = 'ANY-1337'
       }
-      if (this.productSizesArray[this.selectedSize].text != 'Izvelies modeli' && this.productSizesArray[this.selectedSize].text != null) {
+      if (
+        this.productSizesArray[this.selectedSize].text != 'Izvelies modeli' &&
+        this.productSizesArray[this.selectedSize].text != null
+      ) {
         size = this.productSizesArray[this.selectedSize].text
       } else {
-        size = 'S'
+        size = 'ANY-1337'
       }
-      if(this.selectedVariation != '') {
+      if (this.selectedVariation != '') {
         variation = this.selectedVariation
       } else {
-        variation = 'V'
+        variation = 'ANY-1337'
       }
-      if (this.productTypesArray[this.selectedType].text != 'singleTypeProduct') {
+      if (
+        this.productTypesArray[this.selectedType].text != 'singleTypeProduct'
+      ) {
         type = this.productTypesArray[this.selectedType].text
       } else {
-        type = 'T'
+        type = 'ANY-1337'
       }
       if (this.selectedSubtypeName != null) {
         subtype = this.selectedSubtypeName
       } else {
-        subtype = 'Y'
+        subtype = 'ANY-1337'
       }
 
-      let combination = 
-        gender      + '_//__' + 
-        size        + '_//__' +
-        variation   + '_//__' +
-        type        + '_//__' +
+      const combination =
+        gender +
+        '_//__' +
+        size +
+        '_//__' +
+        variation +
+        '_//__' +
+        type +
+        '_//__' +
         subtype
 
       return combination
@@ -617,30 +651,30 @@ export default {
     },
     productSizesArray: {
       get() {
-      const arr = []
-      if (this.selectedSizes != undefined) {
-        this.selectedSizes.sizes.forEach((size, i) => {
-          arr.push({
-            text: size.sizeName,
-            price: size.sizePrice,
-            value: i,
-            weight: size.weight,
-            customShipping: size.customShipping,
-            shippingOptions: size.shippingOptions,
+        const arr = []
+        if (this.selectedSizes != undefined) {
+          this.selectedSizes.sizes.forEach((size, i) => {
+            arr.push({
+              text: size.sizeName,
+              price: size.sizePrice,
+              value: i,
+              weight: size.weight,
+              customShipping: size.customShipping,
+              shippingOptions: size.shippingOptions,
+            })
           })
-        })
-      } else {
-        arr.push({
-          text: 'Izvelies modeli',
-          price: 0,
-          value: 0,
-          weight: 0,
-          customShipping: false,
-          shippingOptions: 0,
-        })
-      }
-      // console.log(arr)
-      return arr
+        } else {
+          arr.push({
+            text: 'Izvelies modeli',
+            price: 0,
+            value: 0,
+            weight: 0,
+            customShipping: false,
+            shippingOptions: 0,
+          })
+        }
+        // console.log(arr)
+        return arr
       },
       // set(num) {
       //   const arr = [{
@@ -709,38 +743,40 @@ export default {
     //   return arr
     // },
     targetMatch() {
-      let val = []
+      const val = []
 
-      this.product.targets.forEach(t => {
+      this.product.targets.forEach((t) => {
         let match = true
 
         const splitKey = t.key.split('_//__')
         const splitCurrent = this.selectedCombination.split('_//__')
-        
-        for (let index = 0; index < splitKey.length;) {
-          if (splitKey[index] !== "ANY-1337" && splitKey[index] !== splitCurrent[index]) {
+
+        for (let index = 0; index < splitKey.length; ) {
+          if (
+            splitKey[index] !== 'ANY-1337' &&
+            splitKey[index] !== splitCurrent[index]
+          ) {
             match = false
             break
           }
-          index ++
+          index++
         }
 
         if (match && t.active) {
           console.log(match)
           val.push(t)
         }
-
       })
 
       if (val.length > 0) {
         for (const match of val) {
           if (match.available) {
             this.isAvailable = true
-        } else {
-          this.isAvailable = false
-          break
+          } else {
+            this.isAvailable = false
+            break
+          }
         }
-      }
       } else {
         this.isAvailable = true
       }
@@ -755,21 +791,25 @@ export default {
         cartItems = Object.values(JSON.parse(localStorage.getItem('cart')))
       }
 
-      let update = this.update
+      const update = this.update
       let returnThis
 
       for (const cartItem of cartItems) {
         if (cartItem.key == this.selectedCombination) {
           returnThis = true
+          console.log(cartItem)
+          this.cartItemId = cartItem.id
+          this.quantity = cartItem.quantity
+          this.setQuantity = cartItem.quantity
           break
         } else {
           returnThis = false
+          this.quantity = 1
+          this.setQuantity = 0
         }
-      };
+      }
 
-      // this.addingToCart = false
       return returnThis
-
     },
   },
   watch: {
@@ -787,6 +827,22 @@ export default {
     this.isInCartQuestion()
   },
   methods: {
+    updateQuantity() {
+      if (
+        this.inCart &&
+        this.quantity !== this.setQuantity &&
+        this.setQuantity !== 0
+      ) {
+        if (this.$auth.loggedIn) {
+          this.$store.dispatch('updateCartQuantity', {
+            cartItemId: this.cartItemId,
+            quantity: this.quantity,
+          })
+        } else if (this.lsTest) {
+          this.addToCart()
+        }
+      }
+    },
     displayPrice(price) {
       if (this.product.types[0] != undefined) {
         this.typePrice = parseFloat(
@@ -812,27 +868,28 @@ export default {
       }
 
       if (this.targetMatch.length > 0) {
-        this.targetMatch.forEach(match => {
+        this.targetMatch.forEach((match) => {
           if (match.available) {
-            if (match.overridePriceType === "set") {
+            if (match.overridePriceType === 'set') {
               val = parseFloat(match.overridePrice)
-            } else if (match.overridePriceType === "add") {
+            } else if (match.overridePriceType === 'add') {
               val = val + parseFloat(match.overridePrice)
-            } else if (match.overridePriceType === "multiply") {
+            } else if (match.overridePriceType === 'multiply') {
               val = val * parseFloat(match.overridePrice)
             }
           }
         })
       }
 
-    return val.toFixed(2)
-    // Under this setup a SET price can be altered by another later targetMatch.
-    // It can be added to or multiplied but most dangerously it can 
-    // be set to something completly different.
-    // Two set prices should never be allowed to overlap
-    // The likeliest solution to this is some kind of checking and validation on /create
+      return val.toFixed(2)
+      // Under this setup a SET price can be altered by another later targetMatch.
+      // It can be added to or multiplied but most dangerously it can
+      // be set to something completly different.
+      // Two set prices should never be allowed to overlap
+      // The likeliest solution to this is some kind of checking and validation on /create
     },
     addToCart() {
+      this.setQuantity = this.quantity
       if (this.$auth.loggedIn) {
         this.addingToCart = true
         this.$axios
@@ -844,15 +901,15 @@ export default {
             selectedSubtype: this.selectedSubtypeIndex,
             selectedSize: this.selectedSize,
             quantity: this.quantity,
-            key: this.selectedCombination
+            key: this.selectedCombination,
           })
           .then((res) => {
             this.$store.dispatch('getCart')
-          // this.$nuxt.$emit('refreshCart')
-        })
-        .catch((err) =>
-          console.log(err.response.data.message, err.response.data.exception)
-        )
+            // this.$nuxt.$emit('refreshCart')
+          })
+          .catch((err) =>
+            console.log(err.response.data.message, err.response.data.exception)
+          )
       } else {
         // console.log(1)
         let current = JSON.parse(localStorage.getItem('cart'))
@@ -860,14 +917,14 @@ export default {
           current = {}
         }
         current[`${this.productId}_//__${this.selectedCombination}`] = {
-            product_id: this.productId,
-            title: this.product.title,
-            price: this.displayPrice(this.activePrice),
-            selected_type: this.selectedType,
-            selectedSubtypeIndex: this.selectedSubtypeIndex,
-            selected_size: this.selectedSize,
-            quantity: this.quantity,
-            key: this.selectedCombination
+          product_id: this.productId,
+          title: this.product.title,
+          price: this.displayPrice(this.activePrice),
+          selected_type: this.selectedType,
+          selectedSubtypeIndex: this.selectedSubtypeIndex,
+          selected_size: this.selectedSize,
+          quantity: this.quantity,
+          key: this.selectedCombination,
         }
         localStorage.setItem('cart', JSON.stringify(current))
         // this.$nuxt.$emit('refreshCart')
@@ -908,11 +965,12 @@ export default {
         res.forEach((cartItem) => {
           if (cartItem.product_id == this.productId) {
             this.quantity = cartItem.quantity
-          this.selectedSize = cartItem.selected_size
-          this.selectedType = cartItem.selected_type
-          this.selectedSubtypeIndex = cartItem.selectedSubtypeIndex
-        }
-      })
+            this.setQuantity = cartItem.quantity
+            this.selectedSize = cartItem.selected_size
+            this.selectedType = cartItem.selected_type
+            this.selectedSubtypeIndex = cartItem.selectedSubtypeIndex
+          }
+        })
       }
     },
     getRelated() {

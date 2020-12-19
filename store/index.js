@@ -227,6 +227,16 @@ export const actions = {
       commit('SET_CART', res.data)
     }
   },
+  async updateCartQuantity({ commit }, { cartItemId, quantity }) {
+    this.$axios
+      .patch(`cart/${cartItemId}`, { quantity: quantity })
+      .then((res) => {
+        this.dispatch('getCart')
+        console.log(res)
+      })
+      .catch((err) => console.log(err.response.data))
+
+  }
   // updateCart({ request }) {
   //   if (this.$auth.loggedIn) {
   //     this.$axios[request.method](`cart/${requestUrl}`, { data: request.data })

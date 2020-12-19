@@ -1,4 +1,6 @@
 {
     "editor.formatOnPaste": true,
     "guides.normal.width": 3,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
 }

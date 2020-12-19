@@ -25,33 +25,55 @@
       <v-spacer />
       <v-col md="3">
         <div class="float-right">
-          <v-menu open-on-hover close-delay="500" offset-y>
+          <v-menu min-width="220" open-on-hover close-delay="100" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" class="mr-3" v-on="on">
                 <v-icon size="30">mdi-cart-outline</v-icon>
-                <!-- badge indicates how many items in cart-->
-                <v-badge v-if="cart.length > 0" :content="cart.length"></v-badge>
+                <v-badge
+                  v-if="cart.length > 0"
+                  :content="cart.length"
+                ></v-badge>
               </v-btn>
             </template>
             <v-list dense>
-              <v-list-item
-                v-for="(item, i) in cart"
-                :key="i"
-                :to="'/products/' + item.product_id"
-              >
-                <v-list-item-title>
-                  <span>
-                    <span v-show="item.quantity > 1">
-                      {{ item.quantity }}&times;
+              <v-list-item v-for="(item, i) in cart" :key="i" class="py-2">
+                <!-- :to="'/products/' + item.product_id" -->
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <span class="text-h6">
+                      {{ item.title }}
                     </span>
-                    {{ item.title }}
-                  </span>
-                  <p>
-                    {{ (parseFloat(item.price) * item.quantity).toFixed(2) }}
-                    &#8364;
-                  </p>
-                </v-list-item-title>
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span
+                      v-for="(property, i) in decodedKey(item.key)"
+                      :key="i"
+                    >
+                      <span v-if="property !== 'ANY-1337'">
+                        {{ property }} /
+                      </span>
+                    </span>
+                  </v-list-item-subtitle>
+                  <v-list-item-subtitle>
+                    {{
+                      (parseFloat(item.price) * item.quantity).toFixed(2)
+                    }}&#8364;
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <input
+                    type="number"
+                    min="1"
+                    class="white--text px-2 py-2 mx-3"
+                    style="width: 60px; border-radius: 3px"
+                    :value="item.quantity"
+                  />
+                </v-list-item-action>
+                <v-list-item-avatar class="py-0" size="80" right>
+                  <v-img src="http://localhost:8000/notfound.jpg"></v-img>
+                </v-list-item-avatar>
               </v-list-item>
+              <v-divider></v-divider>
               <!-- for item in cart echo them all here with some minor details, perhaps calculate a total price -->
               <!-- item quantity, price, total price, (on click go to product/id),  -->
               <v-list-item v-if="cart.length > 0">
@@ -71,7 +93,7 @@
           <v-menu
             v-if="$auth.loggedIn"
             open-on-hover
-            close-delay="500"
+            close-delay="100"
             offset-y
           >
             <template v-slot:activator="{ on, attrs }">
@@ -114,28 +136,28 @@
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
-        <v-container>
-          <div style="width: 100%; height: 50%">
-            <v-overlay z-index="4" :value="searchActive">
-              <v-card @keydown.esc="searchActive = false">
-                <v-card-title primary-title>
-                  <v-text-field
-                    outlined
-                    autofocus
-                    class="mt-4"
-                    label="Meklet produktu"
-                    append-icon="mdi-magnify"
-                    dense
-                  ></v-text-field>
-                </v-card-title>
-                <!-- list of search results - image, name, price, category -->
-                <v-card-text> Dzemperis </v-card-text>
-              </v-card>
-            </v-overlay>
-          </div>
-          <nuxt />
-          <!--------------------------------------------->
-        </v-container>
+      <v-container>
+        <div style="width: 100%; height: 50%">
+          <v-overlay z-index="4" :value="searchActive">
+            <v-card @keydown.esc="searchActive = false">
+              <v-card-title primary-title>
+                <v-text-field
+                  outlined
+                  autofocus
+                  class="mt-4"
+                  label="Meklet produktu"
+                  append-icon="mdi-magnify"
+                  dense
+                ></v-text-field>
+              </v-card-title>
+              <!-- list of search results - image, name, price, category -->
+              <v-card-text> Dzemperis </v-card-text>
+            </v-card>
+          </v-overlay>
+        </div>
+        <nuxt />
+        <!--------------------------------------------->
+      </v-container>
       <!-- </form> -->
     </v-main>
     <!--  -->
@@ -162,11 +184,11 @@ export default {
   },
   computed: {
     cart() {
-      let update = this.update
+      const update = this.update
       if (this.$auth.loggedIn) {
         return this.$store.state.cart
       } else if (!this.$auth.loggedIn && this.lsTest) {
-        let val = JSON.parse(localStorage.getItem('cart'))
+        const val = JSON.parse(localStorage.getItem('cart'))
         if (!val) {
           return []
         } else {
@@ -206,9 +228,10 @@ export default {
   },
   created() {},
   mounted() {
-    this.$root.$on('refreshCart'), () => {
-      this.update = !this.update
-    }
+    this.$root.$on('refreshCart'),
+      () => {
+        this.update = !this.update
+      }
     // this.getLocalCart()
     this.lsTest = true
     // function checkLS() {
@@ -219,7 +242,9 @@ export default {
     // }
   },
   methods: {
-
+    decodedKey(key) {
+      return key.split('_//__')
+    },
   },
 }
 </script>
