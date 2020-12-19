@@ -64,13 +64,31 @@ export default {
     }
   },
   methods: {
-    submit(registrationInfo) {
+    async submit(registrationInfo) {
       this.$axios
         .post('auth/register', registrationInfo)
         .catch((err) => console.log(err.message))
-      this.$auth.loginWith('local', {
+      await this.$auth.loginWith('local', {
         data: registrationInfo,
       })
+      const local = JSON.parse(localStorage.getItem('cart'))
+      if (local) {
+        for (const item of Object.values(local)) {
+          this.$axios
+            .post('cart', {
+              productId: item.product_id,
+              title: item.title,
+              price: item.price,
+              selectedType: item.selected_type,
+              selectedSubtype: item.selectedSubtypeIndex,
+              selectedSize: item.selected_size,
+              quantity: item.quantity,
+              key: item.key,
+            })
+            .catch((err) => console.log(err.response.data))
+        }
+        localStorage.setItem('cart', '{}')
+      }
     },
   },
 }
