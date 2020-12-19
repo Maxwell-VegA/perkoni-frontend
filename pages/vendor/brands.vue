@@ -25,6 +25,7 @@
             label="Razotaja websaite"
             hint="Pievieno linku uz razotaja facebook profilu"
             prepend-inner-icon="mdi-link-variant"
+            class="mt-n2"
           ></v-text-field>
           <v-text-field
             v-model="brand.facebook"
@@ -32,6 +33,7 @@
             label="Facebook"
             hint="Pievieno linku uz razotaja facebook profilu"
             prepend-inner-icon="mdi-facebook"
+            class="mt-n1"
           ></v-text-field>
           <!-- Links must be full (include the https://www. part) so I'll need some validation for that -->
           <!-- Perhaps I should force prepend the site links and only allow sublinks to their profiles to be added so as to prevent anything else than facebook and instagram links being placed in there -->
@@ -41,12 +43,14 @@
             label="Instagram"
             hint="Pievieno linku uz razotaja instagram profilu"
             prepend-inner-icon="mdi-instagram"
+            class="mt-n1"
           ></v-text-field>
           <v-text-field
             label="Piegade (LV) par brivu no:"
             type="number"
             v-model="brand.freeShipping"
             outlined
+            dense
             prepend-inner-icon="mdi-currency-eur"
           ></v-text-field>
           <!-- Note: if two shipping partners have different free shipping minimums then the heighest one will be used -->
@@ -60,9 +64,11 @@
             hint="Citi razotaji ar kuriem kopa iespejams izsutit pasutijumus"
             multiple
             outlined
+            dense
           ></v-select>
           <!-- Note: both brands must list each other as shipping partners -->
           <v-file-input
+            v-if="changeLogo || !editing"
             filled
             label="File input"
             placeholder="Razotaja logo"
@@ -71,8 +77,9 @@
             @change="onImageSelected"
           >
           </v-file-input>
+          <v-btn v-else @click="changeLogo = true" width="100%" outlined class="mt-n1 mb-6 py-7">Nomainit logo</v-btn>
           <v-btn v-if="!editing" width="100%" @click="createBrand">Izveidot razotaju</v-btn>
-          <v-btn v-else width="100%" @click="updateBrand">Saglabat izmainas</v-btn>
+          <v-btn class="py-5" v-else :disabled="changesMade" width="100%" @click="updateBrand">Saglabat izmainas</v-btn>
           </form>
         </v-col>
         <v-col
@@ -127,6 +134,9 @@
         </v-col>
       </v-row>
     </div>
+    {{ brand.id }}
+    {{ brand.name }}
+    {{ brand.description }}
   </div>
 </template>
 
@@ -137,6 +147,7 @@ export default {
   data() {
     return {
       editing: false,
+      changeLogo: false,
       selectedFile: null,
       brand: {
         id: null,
@@ -162,7 +173,10 @@ export default {
         })
       })
       return arr
-    }
+    },
+    changesMade() {
+      return false
+    },
   },
   mounted() {
     this.getUserBrands()
@@ -170,18 +184,14 @@ export default {
   methods: {
     createBrand() {
       const fd = new FormData()
-      if (this.brand.id != null) {
-        fd.append('id', this.brand.id)
-      }
-      if (this.selectedFile != null) {
-        fd.append('image', this.selectedFile)
-      } else {
-        fd.append('logo', this.brand.logo)
-      }
-      if (this.brand.shippingPartners != null) {
+      fd.append('image', this.selectedFile)
+      // if (this.selectedFile != null) {
+      // } else {
+      //   fd.append('logo', this.brand.logo)
+      // }
+      if (this.brand.shippingPartners) {
         fd.append('shippingPartners', this.brand.shippingPartners)
       }
-      fd.append('user_id', this.$auth.user.id)
       fd.append('name', this.brand.name)
       fd.append('description', this.brand.description)
       fd.append('facebook', this.brand.facebook)
@@ -203,7 +213,29 @@ export default {
     edit(index) {
       this.brand = this.brands[index]
       this.editing = true
+      this.changeLogo = false
+      this.selectedFile = null
     },
+    updateBrand() {
+      console.log(this.brand.id)
+      const fd = new FormData()
+      if (this.selectedFile != null) {
+        fd.append('image', this.selectedFile)
+      }
+      if (this.brand.shippingPartners != null) {
+        fd.append('shippingPartners', this.brand.shippingPartners)
+      }
+      fd.append('name', 'hey')
+      // fd.append('name', this.brand.name)
+      fd.append('description', this.brand.description)
+      fd.append('facebook', this.brand.facebook)
+      fd.append('instagram', this.brand.instagram)
+      fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      fd.append('custom_link', this.brand.custom_link)
+      this.$axios.patch(`brand/${this.brand.id}`, fd)
+        .catch(err => console.log(err.response.data))
+      this.getUserBrands()
+    }
   },
 }
 </script>
