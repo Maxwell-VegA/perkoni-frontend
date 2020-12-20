@@ -168,7 +168,8 @@ export const mutations = {
       // }
   },
   SET_PRODUCT (state, product) {
-      state.product = product
+    state.product = product
+    
       // state.product.related.forEach(id => {
       // async () => {
       //   await actions.getRelated({productId: 10})
@@ -218,7 +219,12 @@ export const actions = {
   },
   async getProduct({commit}, {productId}) {
     // let {data} = await getData(this.$axios, `products/${productId}`)
-    let res = await this.$axios(`products/${productId}`)
+    let res
+    try {
+      res = await this.$axios(`products/${productId}`)
+    } catch (err) {
+      console.log(err.response.data)
+    }
     commit('SET_PRODUCT', res.data.data)
   },
   async getCart({commit}) {

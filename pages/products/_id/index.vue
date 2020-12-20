@@ -191,9 +191,9 @@
                   </v-row>
                 </v-col>
                 <!-- Add to cart -->
-                <v-col cols="12" class="pr-8 ml-n1">
+                <v-col offset="1" cols="9" offset-md="0" md="12" class="pr-8 ml-n1">
                   <v-row no-gutters>
-                    <v-col cols="3">
+                    <v-col sm="2" md="3" xl="2">
                       <v-combobox
                         :items="qtyOptions"
                         @change="updateQuantity"
@@ -234,7 +234,7 @@
               </v-row>
             </v-col>
             <!-- Long description -->
-            <v-col cols="6" xl="5">
+            <v-col cols="12" class="pr-9">
               <v-card
                 v-for="(match, i) in targetMatch"
                 :key="i"
@@ -253,28 +253,12 @@
               </v-card>
             </v-col>
             <!-- Related products -->
-            <v-col cols="6" xl="7" class="pr-9">
-              <v-card>
-                <v-card-title> Lidzigie produkti </v-card-title>
-                <v-card-text>
-                  <v-row>
-                    <v-col v-for="(prod, i) in relatedProducts" :key="i" md="4">
-                      <v-card>
-                        <v-card-title class="">
-                          {{ prod.title }}
-                        </v-card-title>
-                        <v-img
-                          aspect-ratio="1"
-                          :src="
-                            'http://localhost:8000/' + prod.images[0].fileName
-                          "
-                        >
-                        </v-img>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
+            <v-col cols="12" class="pr-9">
+              <v-row>
+                <v-col v-for="(prod, i) in relatedProducts" :key="i" md="4">
+                  <product-card :product="prod" />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-col>
@@ -390,7 +374,7 @@
                 <v-expand-transition>
                   <div v-show="shippingCardExpanded">
                     <v-divider></v-divider>
-                    <v-card-subtitle>
+                    <v-card-subtitle v-if="product.brand_freeShipping">
                       Pirkumiem virs
                       {{ product.brand_freeShipping }}
                       &#8364; no
@@ -517,20 +501,18 @@
         <v-spacer></v-spacer>
       </v-row>
     </div>
-    <v-btn @click="getRelated()">text</v-btn>
-    <p>{{ errors }}</p>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import ProductCard from '~/components/ProductCard.vue'
 //
 
 export default {
+  components: { ProductCard },
   async fetch({ store, params }) {
     await store.dispatch('getProduct', { productId: params.id })
-
-    // await store.dispatch('getRelated')
   },
   data() {
     return {
@@ -559,11 +541,6 @@ export default {
   },
   computed: {
     ...mapState(['product', 'shippingOptions', 'qtyOptions']),
-    // product() {
-    //   return this.products.find(
-    //     (product) => product.id == this.$route.params.id
-    //   )
-    // },
     selectedCombination() {
       this.addingToCart = false
       let gender = 'ANY-1337'
@@ -661,17 +638,6 @@ export default {
         // console.log(arr)
         return arr
       },
-      // set(num) {
-      //   const arr = [{
-      //     text: 'Izvelies modeli',
-      //     price: 0,
-      //     value: 0,
-      //     weight: 0,
-      //     customShipping: false,
-      //     shippingOptions: 0,
-      //   }]
-      //   return arr
-      // }
     },
     productTypesArray() {
       const arr = []
@@ -807,6 +773,7 @@ export default {
   },
   mounted() {
     // this.getProduct()
+    this.getRelated()
     // this.localStorage.setItem('cart', "{}")
     this.lsTest = true
     this.isInCartQuestion()
@@ -995,5 +962,7 @@ If there is a gender which has less than two sizes then do not display sizes at 
 
 Make the item quantity combobox of the cart and the /id page numbers only and only positive numbers or zero to remove.
 
- */
+If a product is not public and confirmed you shouldn't be able to add it to cart.
+
+*/
 </style>

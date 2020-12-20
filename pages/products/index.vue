@@ -71,91 +71,7 @@
               <v-tab-item v-for="cat in categories" :key="cat.value">
                 <v-row>
                   <v-col v-for="(prod, i) in cat.products" :key="i" cols="4">
-                    <NuxtLink :to="'/products/' + prod.id">
-                      <!-- @wheel.prevent="prod.cPage += 1" -->
-                      <!-- Perhaps you can show some kind of progress bar indicating the time untill the next image is loaded -->
-                      <v-card
-                        @mouseenter.once="prod.cPage += 1"
-                        height="100%"
-                        style="z-index: 0"
-                      >
-                      <!-- To make this work you need to be able to cycle the images of only one product at a time, display a hover progress bar, prevent the last cycle,  -->
-                      <!-- check if mouse is on, start loader (fade in) and set timeout, if mouse is still on by the end of the timeout then cycle image -->
-                        <!-- @mouseenter=" ;(prod.hover = true), (prod.interval = 2000) " -->
-                        <!-- @mouseleave=" ;(prod.hover = false), (prod.interval = 9999999) " -->
-                        <v-carousel
-                          v-model="prod.cPage"
-                          height="315px"
-                          width="100%"
-                          style="z-index: -1"
-                          hide-delimiters
-                          :interval="prod.interval"
-                          :cycle="prod.hover"
-                          vertical
-                          class="mb-n8"
-                          :show-arrows="false"
-                        >
-                          <v-carousel-item
-                            v-for="(image, idx) in prod.images"
-                            :key="idx"
-                          >
-                            <!-- gradient="#1e1e1e00 60%,  #1e1e1e 90%" -->
-                            <v-img
-                              gradient="#1e1e1e00 65%,  #1e1e1e 95%"
-                              height="100%"
-                              aspect-ratio="1"
-                              :src="
-                                'http://127.0.0.1:8000/' +
-                                prod.images[idx].fileName
-                              "
-                            >
-                              <template #placeholder>
-                                <v-img
-                                  aspect-ratio="1"
-                                  gradient="#1e1e1e00 65%,  #1e1e1e"
-                                  src="http://127.0.0.1:8000/notfound.jpg"
-                                >
-                                </v-img>
-                              </template>
-                            </v-img>
-                          </v-carousel-item>
-                        </v-carousel>
-                        <v-row
-                          no-gutters
-                          align-content="space-between"
-                          style="height: 115px"
-                          class=""
-                        >
-                          <v-col cols="12">
-                            <v-card-title style="line-height: 1.1" class="py-0">
-                              {{ prod.title }}
-                            </v-card-title>
-                          </v-col>
-                          <v-col cols="12" class="mb-n2">
-                            <v-card-subtitle
-                              class="white--text text-h5 py-0 font-weight-light"
-                            >
-                              <p v-show="prod.on_sale" class="mb-3">
-                                {{ salePrice(prod.sale_price) }}
-                                <v-icon dense>mdi-currency-eur</v-icon>
-                              </p>
-                              <p
-                                :class="{
-                                  'text-decoration-line-through red--text mt-n5 text-h6 font-weight-light':
-                                    prod.on_sale,
-                                }"
-                              >
-                                {{ prod.base_price.toFixed(2) }}
-                                <v-icon v-show="!prod.on_sale" dense>
-                                  mdi-currency-eur
-                                </v-icon>
-                              </p>
-                              <br v-show="!prod.on_sale" />
-                            </v-card-subtitle>
-                          </v-col>
-                        </v-row>
-                      </v-card>
-                    </NuxtLink>
+                    <product-card :product="prod" />
                   </v-col>
                 </v-row>
               </v-tab-item>
@@ -188,10 +104,11 @@
 <script>
 import { mapState } from 'vuex'
 import callToAction from '~/components/callToAction.vue'
+import ProductCard from '~/components/ProductCard.vue'
 //
 
 export default {
-  components: { callToAction },
+  components: { callToAction, ProductCard },
   async fetch({ store }) {
     await store.dispatch('getProducts')
   },
@@ -262,15 +179,6 @@ export default {
     this.categoryName = this.categories[this.currentCategory]
     // this.getProducts()
   },
-  methods: {
-    salePrice(price) {
-      let returnThis = null
-      if (price != undefined) {
-        returnThis = price.toFixed(2)
-      }
-      return returnThis
-    },
-   },
   head() {
     return {
       title: 'DEVINI X PERKONI',

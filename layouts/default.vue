@@ -11,9 +11,9 @@
       <v-col md="5">
         <v-row justify="center">
           <v-btn-toggle group tile>
-            <v-btn>Veikals</v-btn>
+            <v-btn to="/products">Veikals</v-btn>
             <v-btn>Razotaji</v-btn>
-            <v-btn>Kontakti</v-btn>
+            <v-btn to="/contacts">Kontakti</v-btn>
             <v-btn @click="searchActive = !searchActive">
               Meklesana
               <v-icon>mdi-magnify</v-icon>
@@ -158,6 +158,7 @@
         </div>
         <nuxt />
         <!--------------------------------------------->
+        <n_footer />
       </v-container>
       <!-- </form> -->
     </v-main>
@@ -169,11 +170,11 @@
 <script>
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
-// import { mapState } from 'vuex'
-//
+import n_footer from '@/components/Footer'
+// 
 
 export default {
-  components: { VendorNav, AdminNav },
+  components: { VendorNav, AdminNav, n_footer},
   middleware: 'load-cart',
   data() {
     return {

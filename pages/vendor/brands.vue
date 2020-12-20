@@ -80,6 +80,7 @@
           <v-btn v-else @click="changeLogo = true" width="100%" outlined class="mt-n1 mb-6 py-7">Nomainit logo</v-btn>
           <v-btn v-if="!editing" width="100%" @click="createBrand">Izveidot razotaju</v-btn>
           <v-btn class="py-5" v-else :disabled="changesMade" width="100%" @click="updateBrand">Saglabat izmainas</v-btn>
+          <!-- A btn to cancel editing and clear data -->
           </form>
         </v-col>
         <v-col
