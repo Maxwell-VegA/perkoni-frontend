@@ -136,7 +136,7 @@
     </div>
     {{ brand.id }}
     {{ brand.name }}
-    {{ brand.description }}
+    {{ brand.shippingPartners }}
   </div>
 </template>
 
@@ -196,7 +196,9 @@ export default {
       fd.append('description', this.brand.description)
       fd.append('facebook', this.brand.facebook)
       fd.append('instagram', this.brand.instagram)
-      fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      if (this.brand.freeShipping) {
+        fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      }
       fd.append('custom_link', this.brand.custom_link)
       this.$axios.post('brand', fd)
         .catch(err => console.log(err.response.data))
@@ -217,7 +219,6 @@ export default {
       this.selectedFile = null
     },
     updateBrand() {
-      console.log(this.brand.id)
       const fd = new FormData()
       if (this.selectedFile != null) {
         fd.append('image', this.selectedFile)
@@ -225,14 +226,15 @@ export default {
       if (this.brand.shippingPartners != null) {
         fd.append('shippingPartners', this.brand.shippingPartners)
       }
-      fd.append('name', 'hey')
-      // fd.append('name', this.brand.name)
+      fd.append('name', this.brand.name)
       fd.append('description', this.brand.description)
       fd.append('facebook', this.brand.facebook)
       fd.append('instagram', this.brand.instagram)
-      fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      if (this.brand.freeShipping) {
+        fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      }
       fd.append('custom_link', this.brand.custom_link)
-      this.$axios.patch(`brand/${this.brand.id}`, fd)
+      this.$axios.post(`brand/${this.brand.id}`, fd)
         .catch(err => console.log(err.response.data))
       this.getUserBrands()
     }
