@@ -5,4 +5,9 @@ export default async function({$auth, redirect}) {
     } else {
         redirect('/')        
     }
+
+    // const blockedRoute = /\/vendor\/*/g;
+    // if (!user.is_vendor && route.path.match(blockedRoute)) {
+    //     redirect('/')
+    // }
 }
