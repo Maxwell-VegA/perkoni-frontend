@@ -12,7 +12,7 @@
       <v-col md="8" lg="9">
         <v-row>
           <v-col v-for="(product, idx) in brand.products" :key="idx" md="4">
-            {{ product.title }}
+            {{ product }}
           </v-col>
         </v-row>
       </v-col>
@@ -42,18 +42,27 @@ export default {
       this.getProducts()
     },
     async getProducts() {
+      const brandIds = []
       this.brands.forEach((brand, i) => {
-        console.log(brand.id)
-        // brand.products = []
-        this.$axios('products', {
-          params: {
-            brandId: brand.id,
-          },
-        })
-          // .then((res) => console.log(res.data.data))
-          //   .then((res) => (this.brands[i].products = res.data.data))
-          .then((res) => (brand.products = res.data.data))
+        // console.log(brand.id)
+        brandIds.push(brand.id)
+        brand.products = []
       })
+      const res = await this.$axios('products', {
+        params: { brandIds },
+      })
+      const products = res.data.data
+      products.forEach((product) => {
+        const brandId = product.brand_id
+        this.brands.forEach((brand) => {
+          if (brand.id === brandId) {
+            brand.product.push(product)
+          }
+        })
+      })
+
+      // .then((res) => (brand.products = res.data.data))
+      //   .then((res) => (this.brands[i].products = res.data.data))
     },
   },
 }
