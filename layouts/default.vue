@@ -12,7 +12,7 @@
         <v-row justify="center">
           <v-btn-toggle group tile>
             <v-btn to="/products">Veikals</v-btn>
-            <v-btn>Razotaji</v-btn>
+            <v-btn to="/brands">Razotaji</v-btn>
             <v-btn to="/contacts">Kontakti</v-btn>
             <v-btn @click="searchActive = !searchActive">
               Meklesana
@@ -157,8 +157,9 @@
           </v-overlay>
         </div>
         <nuxt />
-        <!--------------------------------------------->
-        <n_footer />
+        <v-row>
+          <n_footer />
+        </v-row>
       </v-container>
       <!-- </form> -->
     </v-main>

@@ -168,6 +168,7 @@ export const mutations = {
       // }
   },
   SET_PRODUCT (state, product) {
+    state.product = {}
     state.product = product
     
       // state.product.related.forEach(id => {

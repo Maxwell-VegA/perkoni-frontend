@@ -534,7 +534,7 @@ export default {
       selectedImageIndex: 0,
       fullscreenImage: false,
       brandCardExpanded: false,
-      shippingCardExpanded: false,
+      shippingCardExpanded: true,
       bookmarked: false,
       relatedProducts: [],
     }

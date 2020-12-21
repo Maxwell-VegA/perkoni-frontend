@@ -10,6 +10,7 @@
             label="Nosaukums:"
             counter="20"
           ></v-text-field>
+          {{ brand.description }}
           <v-textarea
             v-model="brand.description"
             label="Apraksts:"
@@ -23,27 +24,32 @@
             type="url"
             placeholder="https://www.rotapats.lv"
             label="Razotaja websaite"
-            hint="Pievieno linku uz razotaja facebook profilu"
+            hint="Pievieno linku uz razotaja websaiti"
             prepend-inner-icon="mdi-link-variant"
-            class="mt-n2"
+            class="mt-n3"
+          ></v-text-field>
+          <v-text-field
+            v-model="brand.email"
+            type="email"
+            label="E-pasts"
+            hint="E-pasts klientu jautajumiem"
+            prepend-inner-icon="mdi-email"
+            class="mt-0"
           ></v-text-field>
           <v-text-field
             v-model="brand.facebook"
             type="url"
             label="Facebook"
-            hint="Pievieno linku uz razotaja facebook profilu"
             prepend-inner-icon="mdi-facebook"
-            class="mt-n1"
+            class="mt-0"
           ></v-text-field>
           <!-- Links must be full (include the https://www. part) so I'll need some validation for that -->
-          <!-- Perhaps I should force prepend the site links and only allow sublinks to their profiles to be added so as to prevent anything else than facebook and instagram links being placed in there -->
           <v-text-field
             v-model="brand.instagram"
             type="url"
             label="Instagram"
-            hint="Pievieno linku uz razotaja instagram profilu"
             prepend-inner-icon="mdi-instagram"
-            class="mt-n1"
+            class="mt-0"
           ></v-text-field>
           <v-text-field
             label="Piegade (LV) par brivu no:"
@@ -51,10 +57,10 @@
             v-model="brand.freeShipping"
             outlined
             dense
+            class="mt-n1"
             prepend-inner-icon="mdi-currency-eur"
           ></v-text-field>
           <!-- Note: if two shipping partners have different free shipping minimums then the heighest one will be used -->
-          <!-- Note: free shipping only applies to Latvia -->
           <v-select
             :items="allBrands"
             :disabled="allBrands.length == 0"
@@ -65,6 +71,7 @@
             multiple
             outlined
             dense
+            class="mt-n2"
           ></v-select>
           <!-- Note: both brands must list each other as shipping partners -->
           <v-file-input
@@ -74,12 +81,16 @@
             placeholder="Razotaja logo"
             prepend-icon=""
             dense
+            class="my-n2"
             @change="onImageSelected"
           >
           </v-file-input>
-          <v-btn v-else @click="changeLogo = true" width="100%" outlined class="mt-n1 mb-6 py-7">Nomainit logo</v-btn>
+          <v-btn v-else @click="changeLogo = true" width="100%" outlined class="mt-n2 mb-4 py-6">Nomainit logo</v-btn>
           <v-btn v-if="!editing" width="100%" @click="createBrand">Izveidot razotaju</v-btn>
-          <v-btn class="py-5" v-else :disabled="changesMade" width="100%" @click="updateBrand">Saglabat izmainas</v-btn>
+          <div v-else style="display: flex; justify-content: space-between">
+          <v-btn class="py-5" width="49%" color="" @click="cancelEditing">Atcelt izmainas</v-btn>
+          <v-btn class="py-5" :disabled="changesMade" width="49%" @click="updateBrand">Saglabat izmainas</v-btn>
+          </div>
           <!-- A btn to cancel editing and clear data -->
           </form>
         </v-col>
@@ -88,7 +99,7 @@
           :key="brand.id"
           cols="6"
           sm="6"
-          md="5"
+          md="6"
           lg="4"
           xl="3"
         >
@@ -110,7 +121,7 @@
             <v-card-text>
               {{ brand.description }}
             </v-card-text>
-            <v-card-text>
+            <v-card-text v-if="brand.freeShipping">
               Piegade par brivu no {{ brand.freeShipping }} &#8364;
             </v-card-text>
             <v-card-text>
@@ -150,17 +161,6 @@ export default {
       editing: false,
       changeLogo: false,
       selectedFile: null,
-      brand: {
-        id: null,
-        logo: '',
-        name: '',
-        description: '',
-        facebook: 'https://www.facebook.com/',
-        instagram: 'https://www.instagram.com/',
-        custom_link: '',
-        freeShipping: null,
-        shippingPartners: [],
-      },
       brands: [],
     }
   },
@@ -179,28 +179,31 @@ export default {
       return false
     },
   },
-  mounted() {
+  created() {
+    this.cancelEditing()
     this.getUserBrands()
   },
   methods: {
     createBrand() {
+      const { freeShipping, email, facebook, instagram, description, name, custom_link,shippingPartners } = this.brand
       const fd = new FormData()
       fd.append('image', this.selectedFile)
       // if (this.selectedFile != null) {
       // } else {
       //   fd.append('logo', this.brand.logo)
       // }
-      if (this.brand.shippingPartners) {
-        fd.append('shippingPartners', this.brand.shippingPartners)
+      if (shippingPartners) {
+        fd.append('shippingPartners', shippingPartners)
       }
-      fd.append('name', this.brand.name)
-      fd.append('description', this.brand.description)
-      fd.append('facebook', this.brand.facebook)
-      fd.append('instagram', this.brand.instagram)
-      if (this.brand.freeShipping) {
-        fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      fd.append('name', name)
+      fd.append('description', description)
+      fd.append('email', email)
+      fd.append('facebook', facebook)
+      fd.append('instagram', instagram)
+      fd.append('custom_link', custom_link)
+      if (freeShipping) {
+        fd.append('freeShipping', parseFloat(freeShipping))
       }
-      fd.append('custom_link', this.brand.custom_link)
       this.$axios.post('brand', fd)
         .catch(err => console.log(err.response.data))
       this.getUserBrands()
@@ -214,28 +217,51 @@ export default {
         .then((res) => (this.brands = res.data))
     },
     edit(index) {
+      this.cancelEditing()
       this.brand = this.brands[index]
       this.editing = true
       this.changeLogo = false
       this.selectedFile = null
     },
+    cancelEditing() {
+      this.brand = {
+        id: null,
+        logo: '',
+        name: '',
+        description: '',
+        email: null,
+        facebook: 'https://www.facebook.com/',
+        instagram: 'https://www.instagram.com/',
+        custom_link: '',
+        freeShipping: null,
+        shippingPartners: [],
+      },
+      this.editing = false
+      this.changeLogo = false
+      this.selectedFile = null
+    },
     updateBrand() {
+      const { freeShipping, email, facebook, instagram, description, name, custom_link, shippingPartners } = this.brand
       const fd = new FormData()
       if (this.selectedFile != null) {
         fd.append('image', this.selectedFile)
       }
-      if (this.brand.shippingPartners != null) {
-        fd.append('shippingPartners', this.brand.shippingPartners)
+      if (shippingPartners != null) {
+        fd.append('shippingPartners', shippingPartners)
       }
-      fd.append('name', this.brand.name)
-      fd.append('description', this.brand.description)
-      fd.append('facebook', this.brand.facebook)
-      fd.append('instagram', this.brand.instagram)
-      if (this.brand.freeShipping) {
-        fd.append('freeShipping', parseFloat(this.brand.freeShipping))
+      if(email) {
+        fd.append('email', email)
       }
-      fd.append('custom_link', this.brand.custom_link)
+      fd.append('name', name)
+      fd.append('description', description)
+      fd.append('facebook', facebook)
+      fd.append('instagram', instagram)
+      if (freeShipping) {
+        fd.append('freeShipping', parseFloat(freeShipping))
+      }
+      fd.append('custom_link', custom_link)
       this.$axios.post(`brand/${this.brand.id}`, fd)
+        .then(res => this.cancelEditing())
         .catch(err => console.log(err.response.data))
       this.getUserBrands()
     }
