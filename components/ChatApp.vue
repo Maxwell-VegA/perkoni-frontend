@@ -1,17 +1,29 @@
 <template>
   <v-col cols="4" class="chatbox-container">
-    <!-- <v-row align-content="end">
-      <v-spacer></v-spacer>
-      <v-col cols="6"> -->
     <div class="chatbox">
       <v-container>
-        <p>Hey</p>
-        <!-- <v-spacer></v-spacer> -->
-        <v-btn icon @click="chatExpanded = !chatExpanded">
-          <v-icon>{{
-            chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
-          }}</v-icon>
-        </v-btn>
+        <v-row no-gutters>
+          <v-col cols="11">
+            <p>
+              <v-badge
+                v-if="unreadMessages && !chatExpanded"
+                right
+                color="primary"
+              >
+                <span slot="badge">{{ unreadMessages }}</span>
+                <span> Čats </span>
+              </v-badge>
+              <span v-else> Čats </span>
+            </p>
+          </v-col>
+          <v-col cols="1">
+            <v-btn icon @click="chatExpanded = !chatExpanded">
+              <v-icon>{{
+                chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
+              }}</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-container>
       <v-divider></v-divider>
       <v-expand-transition>
@@ -25,7 +37,7 @@
             >
               <p class="msg-text">{{ msg.message }}</p>
               <p class="msg-time">
-                {{ convertTime(msg.time) }} // {{ msg.user_id }}
+                {{ convertTime(msg.time) }}
               </p>
             </div>
           </div>
@@ -33,7 +45,8 @@
           <v-textarea
             v-model="message"
             class="text-input"
-            rows="1"
+            hint="Spied enter lai nosūtītu"
+            rows="2"
             auto-grow
             outlined
             @keyup.enter="write"
@@ -41,9 +54,10 @@
           </v-textarea>
         </div>
       </v-expand-transition>
+      <v-btn color="primary" @click="get">text</v-btn>
+      {{ messages.length }}
+      {{ seenMessages }}
     </div>
-    <!-- </v-col>
-    </v-row> -->
   </v-col>
 </template>
 
@@ -71,45 +85,79 @@ const db = firebase.firestore()
 export default {
   data() {
     return {
-      chatExpanded: false,
-      messages: [],
+      chatExpanded: true,
+      seenMessages: 0,
+      activeChats: [],
+      messages: [
+        {
+          message:
+            'Šobrīd esam tiešsaistē. Ja Tev ir jautājumi, tad vaicā droši! :)',
+        },
+      ],
       message: '',
       output: '',
     }
   },
-  computed: {},
+  computed: {
+    unreadMessages() {
+      if (this.messages.length > this.seenMessages) {
+        return this.messages.length - this.seenMessages
+      }
+      return null
+    },
+  },
+  watch: {
+    chatExpanded() {
+      this.seenMessages = this.messages.length
+    },
+  },
   mounted() {
     this.listen()
   },
   methods: {
     write() {
-      const today = new Date()
-      const date =
-        today.getFullYear() +
-        '-' +
-        (today.getMonth() + 1) +
-        '-' +
-        today.getDate()
-      const time =
-        today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
-      const dateTime = date + ' ' + time
-      db.collection(`chat/${this.$auth.user.id}|-|admin/messages`).add({
-        message: this.message,
-        user_id: this.$auth.user.id,
-        time: dateTime,
-      })
+      if (this.message.length > 1) {
+        db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
+          .add({
+            message: this.message,
+            user_id: this.$auth.user.id,
+            time: firebase.firestore.FieldValue.serverTimestamp(),
+          })
+          .then((docRef) => {
+            // console.log(docRef.id)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+        // if (this.messages.length === 1) {
+        //   db.collection(`chat`).add({
+        //     user_id: this.$auth.user.id,
+        //   })
+        // }
+      }
       this.message = ''
+    },
+    get() {
+      db.collection('chat')
+        .get()
+        .then((snapshot) => {
+          this.activeChats = []
+          snapshot.forEach((chat) => {
+            // console.log(chat.id)
+            this.activeChats.push(chat.id)
+          })
+          console.log(this.activeChats)
+        })
     },
     listen() {
       db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
         .orderBy('time')
         .onSnapshot((doc) => {
-          // if (doc && doc.exists) {
           const changes = doc.docChanges()
-          // console.log(changes)
           changes.forEach((change) => {
-            console.log(change.doc.data())
+            console.log(change.type)
             if (change.type === 'added') {
+              // console.log(change.doc.data())
               this.messages.push({
                 message: change.doc.data().message,
                 user_id: change.doc.data().user_id,
@@ -120,8 +168,18 @@ export default {
         })
     },
     convertTime(time) {
-      const split = time.split(' ')
-      return split[1]
+      if (time) {
+        const min = new Date(time.seconds).getMinutes()
+        const hr = new Date(time.seconds).getHours()
+        return `${hr}:${min}`
+      } else {
+        return this.now()
+      }
+    },
+    now() {
+      const now = new Date()
+      const time = now.getHours() + ':' + now.getMinutes()
+      return time
     },
   },
 }
@@ -138,7 +196,7 @@ export default {
 .chatbox
   padding: 1.25rem
   border-radius: 5px
-  background: rgba(30, 30, 30, 0.85)
+  background: rgba(30, 30, 30, 0.93)
 
   .messages-container
     position: relative
