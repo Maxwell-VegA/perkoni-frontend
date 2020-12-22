@@ -61,16 +61,21 @@
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-combobox
-                  :items="qtyOptions"
-                  @change="updateQuantity(item.id, item.key)"
-                  v-model="item.quantity"
-                  height="40px"
-                  style="width: 64px"
-                  dense
-                >
-                </v-combobox>
+                    v-model="item.quantity"
+                    :items="qtyOptions"
+                    height="40px"
+                    style="width: 64px"
+                    dense
+                    @change="updateQuantity(item.id, item.key)"
+                  >
+                  </v-combobox>
                 </v-list-item-action>
-                <v-list-item-avatar class="py-0" size="50" style="border-radius: 0px !important" right>
+                <v-list-item-avatar
+                  class="py-0"
+                  size="50"
+                  style="border-radius: 0px !important"
+                  right
+                >
                   <v-img src="http://localhost:8000/notfound.jpg"></v-img>
                 </v-list-item-avatar>
               </v-list-item>
@@ -134,6 +139,8 @@
         </div>
       </v-col>
     </v-app-bar>
+    <admin-nav />
+    <chat-app />
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
@@ -164,7 +171,6 @@
       <!-- </form> -->
     </v-main>
     <!--  -->
-    <admin-nav />
   </v-app>
 </template>
 
@@ -172,11 +178,12 @@
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
 import n_footer from '@/components/Footer'
-// 
+import ChatApp from '~/components/ChatApp.vue'
+//
 
 export default {
-  components: { VendorNav, AdminNav, n_footer},
-  middleware: 'load-cart',
+  components: { VendorNav, AdminNav, n_footer, ChatApp },
+  middlewre: 'load-cart',
   data() {
     return {
       title: 'DEVINI X PERKONI',
@@ -256,6 +263,9 @@ export default {
 </script>
 
 <style lang="sass">
+*
+  scroll-behavior: smooth
+
 .v-card__text, .v-card__title
   word-break: normal !important
 a

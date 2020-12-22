@@ -2,7 +2,6 @@
   <v-row>
     <v-col md="6">
       <ps-contact-form to="asd@asd.com" />
-      <v-btn color="success" @click="pressed">text</v-btn>
     </v-col>
     <v-col md="6">
       <p>Biedrība Deviņi pērkoni</p>
@@ -14,16 +13,11 @@
       <p>E-pasts: veikals@9perkoni.lv</p>
       <p>GSM: +371 2979 2529 / Telegram, WhatsApp</p>
     </v-col>
-    {{ mess }}
   </v-row>
 </template>
 
 <script>
 import pscontactform from '~/components/psContactForm.vue'
-// import 'firebase/messaging'
-import 'firebase/firestore'
-
-import firebase from 'firebase/app'
 
 // const firebaseConfig = {
 //   apiKey: 'AIzaSyBb8WzLvdnvpEM75oF-k1j4Vfo3IZFK5ew',
@@ -42,7 +36,6 @@ import firebase from 'firebase/app'
 //     ? firebase.apps[0]
 //     : firebase.initializeApp(config)
 
-const db = firebase.firestore()
 // const fb = firebase
 
 export default {
@@ -52,44 +45,7 @@ export default {
       messages: null,
     }
   },
-  computed: {
-    mess() {
-      db.collection('chat').onSnapshot(function (doc) {
-        return console.log(`Snapshot: ${doc.data()}`)
-      })
-    },
-  },
-  mounted() {
-    // this.messages = db(query)
-    // db.collection('chat')
-    //   .get()
-    //   .then((res) => {
-    //     const allMessages = []
-    //     res.forEach((doc) => {
-    //       allMessages.push(doc.data)
-    //     })
-    //     this.messages = allMessages
-    //   })
-  },
-  methods: {
-    pressed() {
-      db.collection('chat').add({
-        message: 'hello where',
-      })
-      // const messaging = firebase.messaging
-      // Notification.requestPermission()
-      //   .then(function () {
-      //     return messaging.getToken()
-      //   })
-      //   .then(function (token) {
-      //     console.log(token)
-      //   })
-      // messaging.requestPermission()
-      // messaging.requestPermission().then(function () {
-      //   console.log(1222)
-      // })
-    },
-  },
+  computed: {},
 }
 </script>
 
