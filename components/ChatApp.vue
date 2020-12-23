@@ -1,7 +1,7 @@
 <template>
   <v-col cols="4" class="chatbox-container">
     <div class="chatbox">
-      <v-container>
+      <v-container class="pa-0">
         <v-row no-gutters>
           <v-col cols="11">
             <div>

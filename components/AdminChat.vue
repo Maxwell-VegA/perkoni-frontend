@@ -1,49 +1,62 @@
 <template>
   <v-col cols="4" class="chatbox-container">
     <div class="chatbox">
-      <v-container>
-        <v-row no-gutters>
-          <v-col cols="11">
-            <p>
-              <v-badge
-                v-if="unreadMessages && !chatExpanded"
-                right
-                color="primary"
+      <v-container class="pa-0">
+        <v-row no-gutters align="center">
+          <v-col cols="1">
+            <v-badge
+              v-if="unreadMessages && !chatExpanded"
+              right
+              color="primary"
+            >
+              <span slot="badge">{{ unreadMessages }}</span>
+              <v-icon>mdi-message-outline</v-icon>
+            </v-badge>
+            <span v-else>
+              <v-icon>mdi-message-outline</v-icon>
+            </span>
+          </v-col>
+          <v-col cols="10">
+            <v-tabs v-model="currentChat">
+              <v-tab
+                v-for="(chat, i) in activeChats"
+                :key="i"
+                @click="chatExpanded = true"
               >
-                <span slot="badge">{{ unreadMessages }}</span>
-                <v-icon>mdi-message-outline</v-icon>
-              </v-badge>
-              <span v-else>
-                <v-icon>mdi-message-outline</v-icon>
-              </span>
-            </p>
+                {{ chat }}
+              </v-tab>
+            </v-tabs>
           </v-col>
           <v-col cols="1">
             <v-btn icon @click="chatExpanded = !chatExpanded">
-              <v-icon>{{
-                chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
-              }}</v-icon>
+              <v-icon>
+                {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+              </v-icon>
             </v-btn>
           </v-col>
         </v-row>
       </v-container>
       <v-divider></v-divider>
       <v-expand-transition>
-        <div v-show="chatExpanded">
-          <div class="messages-container">
-            <div
-              v-for="(msg, i) in messages"
-              :key="i"
-              class="chat-msg"
-              :class="{ myMessage: $auth.user.id == msg.user_id }"
-            >
-              <p class="msg-text">{{ msg.message }}</p>
-              <p class="msg-time">
-                {{ convertTime(msg.time) }}
-              </p>
+        <v-tabs-items v-show="chatExpanded" v-model="currentChat">
+          <v-tab-item v-for="chat in activeChats" :key="chat">
+            <div>
+              <div class="messages-container">
+                <div
+                  v-for="(msg, i) in messages"
+                  :key="i"
+                  class="chat-msg"
+                  :class="{ myMessage: $auth.user.id == msg.user_id }"
+                >
+                  <p class="msg-text">{{ msg.message }}</p>
+                  <p class="msg-time">
+                    {{ convertTime(msg.time) }}
+                  </p>
+                </div>
+              </div>
+              <v-divider></v-divider>
             </div>
-          </div>
-          <v-divider></v-divider>
+          </v-tab-item>
           <v-textarea
             v-model="message"
             class="text-input"
@@ -54,11 +67,8 @@
             @keyup.enter="write"
           >
           </v-textarea>
-        </div>
+        </v-tabs-items>
       </v-expand-transition>
-      <!-- <v-btn color="primary" @click="get">text</v-btn> -->
-      <!-- {{ messages.length }}
-      {{ seenMessages }} -->
     </div>
   </v-col>
 </template>
@@ -87,10 +97,11 @@ const db = firebase.firestore()
 export default {
   data() {
     return {
+      currentChat: 0,
       chatExpanded: true,
       seenMessages: 0,
       activeChats: [],
-      messages: [],
+      messages: [[{ message: 'hey' }]],
       message: '',
       output: '',
     }
@@ -110,6 +121,7 @@ export default {
   },
   mounted() {
     this.listen()
+    this.get()
   },
   methods: {
     write() {
