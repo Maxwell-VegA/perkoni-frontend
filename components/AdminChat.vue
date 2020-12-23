@@ -4,7 +4,7 @@
       <v-container>
         <v-row no-gutters>
           <v-col cols="11">
-            <div>
+            <p>
               <v-badge
                 v-if="unreadMessages && !chatExpanded"
                 right
@@ -16,7 +16,7 @@
               <span v-else>
                 <v-icon>mdi-message-outline</v-icon>
               </span>
-            </div>
+            </p>
           </v-col>
           <v-col cols="1">
             <v-btn icon @click="chatExpanded = !chatExpanded">
@@ -56,6 +56,7 @@
           </v-textarea>
         </div>
       </v-expand-transition>
+      <!-- <v-btn color="primary" @click="get">text</v-btn> -->
       <!-- {{ messages.length }}
       {{ seenMessages }} -->
     </div>
@@ -88,12 +89,8 @@ export default {
     return {
       chatExpanded: true,
       seenMessages: 0,
-      messages: [
-        {
-          message:
-            'Šobrīd esam tiešsaistē. Ja Tev ir jautājumi, tad vaicā droši! :)',
-        },
-      ],
+      activeChats: [],
+      messages: [],
       message: '',
       output: '',
     }
@@ -132,6 +129,18 @@ export default {
       }
       this.message = ''
     },
+    get() {
+      db.collection('chat')
+        .get()
+        .then((snapshot) => {
+          this.activeChats = []
+          snapshot.forEach((chat) => {
+            // console.log(chat.id)
+            this.activeChats.push(chat.id)
+          })
+          console.log(this.activeChats)
+        })
+    },
     listen() {
       db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
         .orderBy('time')
@@ -168,8 +177,9 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .chatbox-container
+  left: 0
 
 .chatbox
 

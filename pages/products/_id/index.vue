@@ -255,7 +255,7 @@
             <!-- Related products -->
             <v-col cols="12" class="pr-9">
               <v-row>
-                <v-col v-for="(prod, i) in relatedProducts" :key="i" md="4">
+                <v-col v-for="(prod, i) in relatedProducts" :key="i" md="4" xl="3">
                   <product-card :product="prod" />
                 </v-col>
               </v-row>

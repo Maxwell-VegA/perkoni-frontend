@@ -140,7 +140,8 @@
       </v-col>
     </v-app-bar>
     <admin-nav />
-    <chat-app />
+    <chat-app v-if="$auth.loggedIn && !$auth.user.is_admin" />
+    <admin-chat v-if="$auth.loggedIn && $auth.user.is_admin" />
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
@@ -170,7 +171,6 @@
       </v-container>
       <!-- </form> -->
     </v-main>
-    <!--  -->
   </v-app>
 </template>
 
@@ -179,10 +179,11 @@ import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
 import n_footer from '@/components/Footer'
 import ChatApp from '~/components/ChatApp.vue'
+import AdminChat from '~/components/AdminChat.vue'
 //
 
 export default {
-  components: { VendorNav, AdminNav, n_footer, ChatApp },
+  components: { VendorNav, AdminNav, n_footer, ChatApp, AdminChat },
   middlewre: 'load-cart',
   data() {
     return {
@@ -264,10 +265,59 @@ export default {
 
 <style lang="sass">
 *
-  scroll-behavior: smooth
+  // scroll-behavior: smooth
 
 .v-card__text, .v-card__title
   word-break: normal !important
 a
   text-decoration: none
+
+.chatbox-container
+  z-index: 100
+  bottom: 0
+  right: 0
+  position: fixed
+  margin: 0 3.5rem
+
+.chatbox
+  padding: 1.25rem
+  border-radius: 5px
+  background: rgba(30, 30, 30, 0.96)
+  // could try glassmorphism here as well
+
+  .messages-container
+    position: relative
+    display: flex
+    flex-direction: column
+    max-height: 40vh
+    overflow-y: scroll
+    padding-right: 1rem
+    // overflow-y: hidden
+
+  .chat-msg
+    position: relative
+    max-width: 90%
+    align-self: flex-end
+    border-radius: 4px
+    margin: .5rem 0
+    border: 2px solid #363636
+
+  .msg-text
+    margin: .5rem 1rem
+
+  .msg-time
+    font-size: .85rem
+    padding: 0 1rem
+    opacity: 70%
+
+  .myMessage
+    align-self: start
+    background: rgba(54, 54, 54, 0.8)
+    border: none
+
+  .text-input
+    width: 100%
+    margin-bottom: -1.5rem
+    // margin-top: .25rem
+    // margin-top: 2rem
 </style>
