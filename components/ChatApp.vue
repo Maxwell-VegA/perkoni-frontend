@@ -35,7 +35,7 @@
               v-for="(msg, i) in messages"
               :key="i"
               class="chat-msg"
-              :class="{ myMessage: $auth.user.id == msg.user_id }"
+              :class="{ myMessage: $auth.user.username == msg.from }"
             >
               <p class="msg-text">{{ msg.message }}</p>
               <p class="msg-time">
@@ -44,16 +44,25 @@
             </div>
           </div>
           <v-divider></v-divider>
-          <v-textarea
-            v-model="message"
-            class="text-input"
-            hint="Spied enter lai nosūtītu"
-            rows="2"
-            auto-grow
-            outlined
-            @keyup.enter="write"
-          >
-          </v-textarea>
+          <v-row align="center" no-gutters>
+            <v-col md="10" lg="11">
+              <v-textarea
+                v-model="message"
+                class="text-input"
+                hint="Spied enter lai nosūtītu"
+                rows="2"
+                auto-grow
+                outlined
+                @keyup.enter="write"
+              >
+              </v-textarea>
+            </v-col>
+            <v-col cols="1">
+              <v-btn large class="pl-2" icon color="primary">
+                <v-icon size="30">mdi-send</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
         </div>
       </v-expand-transition>
       <!-- {{ messages.length }}
@@ -117,10 +126,11 @@ export default {
   methods: {
     write() {
       if (this.message.length > 1) {
-        db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
+        db.collection(`chat/room/messages`)
           .add({
             message: this.message,
             user_id: this.$auth.user.id,
+            from: this.$auth.user.username,
             time: firebase.firestore.FieldValue.serverTimestamp(),
           })
           .then((docRef) => {
@@ -133,27 +143,34 @@ export default {
       this.message = ''
     },
     listen() {
-      db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
+      db.collection(`chat/room/messages`)
+        .where('user_id', '==', this.$auth.user.id)
         .orderBy('time')
         .onSnapshot((doc) => {
           const changes = doc.docChanges()
           changes.forEach((change) => {
             console.log(change.type)
             if (change.type === 'added') {
-              // console.log(change.doc.data())
               this.messages.push({
                 message: change.doc.data().message,
                 user_id: change.doc.data().user_id,
+                from: change.doc.data().from,
                 time: change.doc.data().time,
               })
             }
           })
+          setTimeout(() => {
+            this.scroll()
+          }, 150)
         })
     },
     convertTime(time) {
       if (time) {
-        const min = new Date(time.seconds).getMinutes()
-        const hr = new Date(time.seconds).getHours()
+        let min = new Date(time.seconds * 1000).getMinutes()
+        const hr = new Date(time.seconds * 1000).getHours()
+        if (min.toFixed().length === 1) {
+          min = '0' + min
+        }
         return `${hr}:${min}`
       } else {
         return this.now()
@@ -161,8 +178,17 @@ export default {
     },
     now() {
       const now = new Date()
-      const time = now.getHours() + ':' + now.getMinutes()
+      let minutes = now.getMinutes()
+      console.log('On second entry this gets weird')
+      if (minutes.toFixed().length === 1) {
+        minutes = '0' + minutes
+      }
+      const time = now.getHours() + ':' + minutes
       return time
+    },
+    scroll() {
+      const box = document.querySelector('.messages-container')
+      box.scrollTop = box.scrollHeight
     },
   },
 }

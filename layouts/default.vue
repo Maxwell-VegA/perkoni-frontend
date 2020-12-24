@@ -307,6 +307,7 @@ a
 
   .msg-time
     font-size: .85rem
+    margin: -0.5rem 0 .6rem 0
     padding: 0 1rem
     opacity: 70%
 

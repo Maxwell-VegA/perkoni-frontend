@@ -1,52 +1,46 @@
 <template>
   <v-col cols="4" class="chatbox-container">
     <div class="chatbox">
-      <v-container class="pa-0">
-        <v-row no-gutters align="center">
-          <v-col cols="1">
-            <v-badge
-              v-if="unreadMessages && !chatExpanded"
-              right
-              color="primary"
+      <v-row no-gutters align="center">
+        <v-col cols="1">
+          <v-badge v-if="unreadMessages && !chatExpanded" right color="primary">
+            <span slot="badge">{{ unreadMessages }}</span>
+            <v-icon>mdi-message-outline</v-icon>
+          </v-badge>
+          <span v-else>
+            <v-icon>mdi-message-outline</v-icon>
+          </span>
+        </v-col>
+        <v-col cols="10">
+          <v-tabs v-model="currentChatWindow" center-active show-arrows>
+            <v-tab
+              v-for="(chat, i) in activeChats"
+              :key="i"
+              @click=";(chatExpanded = true), (toUser = chat.value), scroll()"
             >
-              <span slot="badge">{{ unreadMessages }}</span>
-              <v-icon>mdi-message-outline</v-icon>
-            </v-badge>
-            <span v-else>
-              <v-icon>mdi-message-outline</v-icon>
-            </span>
-          </v-col>
-          <v-col cols="10">
-            <v-tabs v-model="currentChatWindow">
-              <v-tab
-                v-for="(chat, i) in activeChats"
-                :key="i"
-                @click="chatExpanded = true"
-              >
-                {{ chat.text }}
-              </v-tab>
-            </v-tabs>
-          </v-col>
-          <v-col cols="1">
-            <v-btn icon @click="chatExpanded = !chatExpanded">
-              <v-icon>
-                {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-              </v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
+              {{ chat.text }}
+            </v-tab>
+          </v-tabs>
+        </v-col>
+        <v-col cols="1">
+          <v-btn icon @click="chatExpanded = !chatExpanded">
+            <v-icon>
+              {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-divider></v-divider>
       <v-expand-transition>
         <v-tabs-items v-show="chatExpanded" v-model="currentChatWindow">
-          <v-tab-item v-for="chat in activeChats" :key="chat.value">
+          <v-tab-item v-for="(chat, idx) in compMessages" :key="idx">
             <div>
               <div class="messages-container">
                 <div
-                  v-for="(msg, i) in messages"
+                  v-for="(msg, i) in chat"
                   :key="i"
                   class="chat-msg"
-                  :class="{ myMessage: $auth.user.id == msg.user_id }"
+                  :class="{ myMessage: $auth.user.username == msg.from }"
                 >
                   <p class="msg-text">{{ msg.message }}</p>
                   <p class="msg-time">
@@ -57,6 +51,10 @@
               <v-divider></v-divider>
             </div>
           </v-tab-item>
+        </v-tabs-items>
+      </v-expand-transition>
+      <v-row v-if="chatExpanded" align="center" no-gutters>
+        <v-col cols="11">
           <v-textarea
             v-model="message"
             class="text-input"
@@ -64,11 +62,17 @@
             rows="2"
             auto-grow
             outlined
+            @focus="toUser = compMessages[currentChatWindow][0].user_id"
             @keyup.enter="write"
           >
           </v-textarea>
-        </v-tabs-items>
-      </v-expand-transition>
+        </v-col>
+        <v-col cols="1">
+          <v-btn large class="pl-2" icon color="primary">
+            <v-icon size="30">mdi-send</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
     </div>
   </v-col>
 </template>
@@ -100,6 +104,7 @@ export default {
       currentChatWindow: 0,
       chatExpanded: true,
       seenMessages: 0,
+      toUser: 0,
       activeChats: [],
       messages: [],
       message: '',
@@ -113,34 +118,52 @@ export default {
       }
       return null
     },
+    compMessages() {
+      const arr = []
+      this.activeChats.forEach((chat, i) => {
+        arr.push([])
+        this.messages.forEach((msg) => {
+          if (msg.user_id === chat.value) {
+            arr[i].push(msg)
+          }
+        })
+      })
+      return arr
+    },
   },
   watch: {
     chatExpanded() {
       this.seenMessages = this.messages.length
     },
-    // messages() {
-    //   this.scroll()
-    // },
   },
   mounted() {
     this.listen()
   },
   methods: {
+    // toUser(tab) {},
     write() {
       if (this.message.length > 1) {
-        db.collection(`chat/room/messages`)
-          .add({
-            message: this.message,
-            from: this.$auth.user.id,
-            to: 3,
-            time: firebase.firestore.FieldValue.serverTimestamp(),
-          })
-          .then((docRef) => {
-            // console.log(docRef.id)
-          })
-          .catch((err) => {
-            console.error(err)
-          })
+        if (this.message == '/clearmc\n') {
+          if (confirm('Delete all messages?')) {
+            alert('Destroying Messages')
+            // This is a bit stupid since if you mistyped it the
+            // message would get sent out to someone
+          }
+        } else {
+          db.collection(`chat/room/messages`)
+            .add({
+              message: this.message,
+              user_id: this.toUser,
+              from: this.$auth.user.username,
+              time: firebase.firestore.FieldValue.serverTimestamp(),
+            })
+            .then((docRef) => {
+              // console.log(docRef.id)
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
       }
       this.message = ''
     },
@@ -153,23 +176,28 @@ export default {
             console.log(change.type)
             if (change.type === 'added') {
               // console.log(change.doc.data())
-              const id = change.doc.data().from
+              const id = change.doc.data().user_id
+              const from = change.doc.data().from
               this.messages.push({
                 message: change.doc.data().message,
                 user_id: id,
-                to: change.doc.data().to,
+                from,
                 time: change.doc.data().time,
               })
               if (this.activeChats.find((chat) => chat.value !== id)) {
-                this.activeChats.push({
-                  value: id,
-                  text: '',
-                })
+                if (this.$auth.user.username !== from) {
+                  this.activeChats.push({
+                    value: id,
+                    text: from,
+                  })
+                }
               } else if (this.activeChats.length === 0) {
-                this.activeChats.push({
-                  value: id,
-                  text: 'James',
-                })
+                if (this.$auth.user.username !== from) {
+                  this.activeChats.push({
+                    value: id,
+                    text: from,
+                  })
+                }
               }
               setTimeout(() => {
                 this.scroll()
@@ -215,7 +243,7 @@ export default {
 .chatbox
 
   .messages-container
-
+    height: 40vh
   .chat-msg
 
   .msg-text
