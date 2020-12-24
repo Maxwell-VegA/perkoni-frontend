@@ -22,7 +22,7 @@
                   </p>
                 </div>
               </div>
-              <v-divider></v-divider>
+              <!-- <v-divider></v-divider> -->
             </div>
           </v-tab-item>
         </v-tabs-items>
@@ -48,9 +48,8 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-divider></v-divider>
-      <v-row no-gutters align="center">
-        <v-col cols="11">
+      <v-row no-gutters>
+        <v-col cols="12">
           <v-tabs
             v-model="currentChatWindow"
             background-color="transparent"
@@ -60,7 +59,11 @@
               v-for="(chat, i) in activeChats"
               :key="i"
               :class="{ unreadMsg: chat.notif > 0 }"
-              @click=";(chatExpanded = true), (toUser = chat.value), scroll()"
+              @click="
+                ;(chatExpanded = openOrClose(i)),
+                  (toUser = chat.value),
+                  scroll()
+              "
             >
               <v-badge v-if="chat.notif">
                 <template v-slot:badge>
@@ -73,13 +76,6 @@
               </span>
             </v-tab>
           </v-tabs>
-        </v-col>
-        <v-col cols="1">
-          <v-btn icon @click="chatExpanded = !chatExpanded">
-            <v-icon>
-              {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-            </v-icon>
-          </v-btn>
         </v-col>
       </v-row>
     </div>
@@ -111,7 +107,7 @@ export default {
   data() {
     return {
       currentChatWindow: 0,
-      chatExpanded: true,
+      chatExpanded: false,
       toUser: 0,
       activeChats: [],
       messages: [],
@@ -238,6 +234,14 @@ export default {
     },
     clearNotifications() {
       this.activeChats[this.currentChatWindow].notif = 0
+    },
+    openOrClose(index) {
+      if (this.currentChatWindow === index && this.chatExpanded) {
+        return false
+      } else {
+        this.clearNotifications()
+        return true
+      }
     },
   },
 }

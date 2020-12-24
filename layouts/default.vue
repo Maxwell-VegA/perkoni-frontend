@@ -283,6 +283,7 @@ a
   padding: 1.25rem
   border-radius: 7px
   background: rgba(30, 30, 30, 0.96)
+  border: 1px solid gray
   // could try glassmorphism here as well
 
   .messages-container
