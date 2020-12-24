@@ -72,25 +72,26 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/firestore'
+// import firebase from 'firebase/app'
+// import 'firebase/firestore'
 
-const config = {
-  apiKey: 'AIzaSyBb8WzLvdnvpEM75oF-k1j4Vfo3IZFK5ew',
-  authDomain: 'rt-chat-3902a.firebaseapp.com',
-  projectId: 'rt-chat-3902a',
-  storageBucket: 'rt-chat-3902a.appspot.com',
-  messagingSenderId: '555688664693',
-  appId: '1:555688664693:web:66c57dcfb4952ef8f0e23c',
-  measurementId: 'G-BCQ2HLL4Y6',
-}
+// const config = {
+//   apiKey: 'AIzaSyBb8WzLvdnvpEM75oF-k1j4Vfo3IZFK5ew',
+//   authDomain: 'rt-chat-3902a.firebaseapp.com',
+//   projectId: 'rt-chat-3902a',
+//   storageBucket: 'rt-chat-3902a.appspot.com',
+//   messagingSenderId: '555688664693',
+//   appId: '1:555688664693:web:66c57dcfb4952ef8f0e23c',
+//   measurementId: 'G-BCQ2HLL4Y6',
+// }
 
-let app = null
-if (!firebase.apps.length) {
-  app = firebase.initializeApp(config)
-}
+// let app = null
+// if (!firebase.apps.length) {
+//   app = firebase.initializeApp(config)
+// }
 
-const db = firebase.firestore()
+// const db = firebase.firestore()
+// const db = $fire.firestore
 
 export default {
   data() {
@@ -124,14 +125,16 @@ export default {
     this.listen()
   },
   methods: {
-    write() {
+    async write() {
       if (this.message.length > 0 && this.message[0] != '\n') {
-        db.collection(`chat/room/messages`)
+        const time = Date.now()
+        await this.$fire.firestore
+          .collection(`chat/room/messages`)
           .add({
             message: this.message,
             user_id: this.$auth.user.id,
             from: this.$auth.user.username,
-            time: firebase.firestore.FieldValue.serverTimestamp(),
+            time,
           })
           .then((docRef) => {
             // console.log(docRef.id)
@@ -142,8 +145,9 @@ export default {
       }
       this.message = ''
     },
-    listen() {
-      db.collection(`chat/room/messages`)
+    async listen() {
+      await this.$fire.firestore
+        .collection(`chat/room/messages`)
         .where('user_id', '==', this.$auth.user.id)
         .orderBy('time')
         .onSnapshot((doc) => {
@@ -166,8 +170,8 @@ export default {
     },
     convertTime(time) {
       if (time) {
-        let min = new Date(time.seconds * 1000).getMinutes()
-        const hr = new Date(time.seconds * 1000).getHours()
+        let min = new Date(time).getMinutes()
+        const hr = new Date(time).getHours()
         if (min.toFixed().length === 1) {
           min = '0' + min
         }

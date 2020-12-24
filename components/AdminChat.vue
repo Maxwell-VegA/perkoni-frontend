@@ -83,29 +83,10 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-
-const config = {
-  apiKey: 'AIzaSyBb8WzLvdnvpEM75oF-k1j4Vfo3IZFK5ew',
-  authDomain: 'rt-chat-3902a.firebaseapp.com',
-  projectId: 'rt-chat-3902a',
-  storageBucket: 'rt-chat-3902a.appspot.com',
-  messagingSenderId: '555688664693',
-  appId: '1:555688664693:web:66c57dcfb4952ef8f0e23c',
-  measurementId: 'G-BCQ2HLL4Y6',
-}
-
-let app = null
-if (!firebase.apps.length) {
-  app = firebase.initializeApp(config)
-}
-
-const db = firebase.firestore()
-
 export default {
   data() {
     return {
+      initialClear: true,
       currentChatWindow: 0,
       chatExpanded: false,
       toUser: 0,
@@ -139,34 +120,29 @@ export default {
   },
   methods: {
     // toUser(tab) {},
-    write() {
+    async write() {
       if (this.message.length > 0 && this.message[0] != '\n') {
-        if (this.message == '/clearmc\n') {
-          if (confirm('Delete all messages?')) {
-            alert('Destroying Messages')
-            // This is a bit stupid since if you mistyped it the
-            // message would get sent out to someone
-          }
-        } else {
-          db.collection(`chat/room/messages`)
-            .add({
-              message: this.message,
-              user_id: this.toUser,
-              from: this.$auth.user.username,
-              time: firebase.firestore.FieldValue.serverTimestamp(),
-            })
-            .then((docRef) => {
-              // console.log(docRef.id)
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }
+        const time = Date.now()
+        await this.$fire.firestore
+          .collection(`chat/room/messages`)
+          .add({
+            message: this.message,
+            user_id: this.toUser,
+            from: this.$auth.user.username,
+            time,
+          })
+          .then((docRef) => {
+            // console.log(docRef.id)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
       }
       this.message = ''
     },
-    listen() {
-      db.collection(`chat/room/messages`)
+    async listen() {
+      await this.$fire.firestore
+        .collection(`chat/room/messages`)
         .orderBy('time')
         .onSnapshot((doc) => {
           const changes = doc.docChanges()
@@ -201,13 +177,19 @@ export default {
               this.scroll()
             }
           })
+          if (this.initialClear) {
+            arr.forEach((chat) => {
+              chat.notif = 0
+            })
+            this.initialClear = false
+          }
           this.activeChats = arr
         })
     },
     convertTime(time) {
       if (time) {
-        let min = new Date(time.seconds * 1000).getMinutes()
-        const hr = new Date(time.seconds * 1000).getHours()
+        let min = new Date(time).getMinutes()
+        const hr = new Date(time).getHours()
         if (min.toFixed().length === 1) {
           min = '0' + min
         }
