@@ -321,4 +321,7 @@ a
     margin-bottom: -1.5rem
     // margin-top: .25rem
     // margin-top: 2rem
+
+  .unreadMsg
+    background: linear-gradient(135deg, rgba(212, 32, 14, 0.31) 0%, rgba(212, 32, 14, 0.05) 110%)
 </style>

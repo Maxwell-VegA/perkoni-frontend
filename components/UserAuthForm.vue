@@ -21,6 +21,7 @@
       counter="true"
       :rules="[required('password'), minLength('password', 7)]"
       @click:append="showPassword = !showPassword"
+      @keyup.enter="submitForm(userInfo)"
     />
 
     <v-btn :disabled="!valid" @click="submitForm(userInfo)">{{

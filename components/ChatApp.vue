@@ -19,7 +19,7 @@
             </div>
           </v-col>
           <v-col cols="1">
-            <v-btn icon @click="chatExpanded = !chatExpanded">
+            <v-btn icon @click=";(chatExpanded = !chatExpanded), scroll()">
               <v-icon>{{
                 chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
               }}</v-icon>
@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     write() {
-      if (this.message.length > 1) {
+      if (this.message.length > 0 && this.message[0] != '\n') {
         db.collection(`chat/room/messages`)
           .add({
             message: this.message,

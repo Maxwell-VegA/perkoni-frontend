@@ -1,41 +1,15 @@
 <template>
   <v-col cols="4" class="chatbox-container">
     <div class="chatbox">
-      <v-row no-gutters align="center">
-        <v-col cols="1">
-          <v-badge v-if="unreadMessages && !chatExpanded" right color="primary">
-            <span slot="badge">{{ unreadMessages }}</span>
-            <v-icon>mdi-message-outline</v-icon>
-          </v-badge>
-          <span v-else>
-            <v-icon>mdi-message-outline</v-icon>
-          </span>
-        </v-col>
-        <v-col cols="10">
-          <v-tabs v-model="currentChatWindow" center-active show-arrows>
-            <v-tab
-              v-for="(chat, i) in activeChats"
-              :key="i"
-              @click=";(chatExpanded = true), (toUser = chat.value), scroll()"
-            >
-              {{ chat.text }}
-            </v-tab>
-          </v-tabs>
-        </v-col>
-        <v-col cols="1">
-          <v-btn icon @click="chatExpanded = !chatExpanded">
-            <v-icon>
-              {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
-            </v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-divider></v-divider>
       <v-expand-transition>
         <v-tabs-items v-show="chatExpanded" v-model="currentChatWindow">
-          <v-tab-item v-for="(chat, idx) in compMessages" :key="idx">
+          <v-tab-item
+            v-for="(chat, idx) in compMessages"
+            :key="idx"
+            @mouseenter="clearNotifications()"
+          >
             <div>
-              <div class="messages-container">
+              <div :id="'1337' + idx" class="messages-container">
                 <div
                   v-for="(msg, i) in chat"
                   :key="i"
@@ -62,6 +36,7 @@
             rows="2"
             auto-grow
             outlined
+            @keyup="clearNotifications"
             @focus="toUser = compMessages[currentChatWindow][0].user_id"
             @keyup.enter="write"
           >
@@ -70,6 +45,40 @@
         <v-col cols="1">
           <v-btn large class="pl-2" icon color="primary">
             <v-icon size="30">mdi-send</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-divider></v-divider>
+      <v-row no-gutters align="center">
+        <v-col cols="11">
+          <v-tabs
+            v-model="currentChatWindow"
+            background-color="transparent"
+            vertical
+          >
+            <v-tab
+              v-for="(chat, i) in activeChats"
+              :key="i"
+              :class="{ unreadMsg: chat.notif > 0 }"
+              @click=";(chatExpanded = true), (toUser = chat.value), scroll()"
+            >
+              <v-badge v-if="chat.notif">
+                <template v-slot:badge>
+                  {{ chat.notif }}
+                </template>
+                {{ chat.text }}
+              </v-badge>
+              <span v-else>
+                {{ chat.text }}
+              </span>
+            </v-tab>
+          </v-tabs>
+        </v-col>
+        <v-col cols="1">
+          <v-btn icon @click="chatExpanded = !chatExpanded">
+            <v-icon>
+              {{ chatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -103,7 +112,6 @@ export default {
     return {
       currentChatWindow: 0,
       chatExpanded: true,
-      seenMessages: 0,
       toUser: 0,
       activeChats: [],
       messages: [],
@@ -112,12 +120,6 @@ export default {
     }
   },
   computed: {
-    unreadMessages() {
-      if (this.messages.length > this.seenMessages) {
-        return this.messages.length - this.seenMessages
-      }
-      return null
-    },
     compMessages() {
       const arr = []
       this.activeChats.forEach((chat, i) => {
@@ -132,8 +134,8 @@ export default {
     },
   },
   watch: {
-    chatExpanded() {
-      this.seenMessages = this.messages.length
+    currentChatWindow() {
+      this.clearNotifications()
     },
   },
   mounted() {
@@ -142,7 +144,7 @@ export default {
   methods: {
     // toUser(tab) {},
     write() {
-      if (this.message.length > 1) {
+      if (this.message.length > 0 && this.message[0] != '\n') {
         if (this.message == '/clearmc\n') {
           if (confirm('Delete all messages?')) {
             alert('Destroying Messages')
@@ -172,8 +174,9 @@ export default {
         .orderBy('time')
         .onSnapshot((doc) => {
           const changes = doc.docChanges()
+          const arr = this.activeChats
           changes.forEach((change) => {
-            console.log(change.type)
+            // console.log(change.type)
             if (change.type === 'added') {
               // console.log(change.doc.data())
               const id = change.doc.data().user_id
@@ -184,26 +187,25 @@ export default {
                 from,
                 time: change.doc.data().time,
               })
-              if (this.activeChats.find((chat) => chat.value !== id)) {
-                if (this.$auth.user.username !== from) {
-                  this.activeChats.push({
-                    value: id,
-                    text: from,
-                  })
+              if (arr.find((chat) => chat.value === id)) {
+                if (from != this.$auth.user.username) {
+                  arr[arr.findIndex((chat) => chat.value === id)].notif++
                 }
-              } else if (this.activeChats.length === 0) {
-                if (this.$auth.user.username !== from) {
-                  this.activeChats.push({
-                    value: id,
-                    text: from,
-                  })
-                }
+              } else {
+                // if (this.$auth.user.username !== from) {
+                arr.push({
+                  value: id,
+                  text: from,
+                  msgs: 1,
+                  notif: 1,
+                })
+                // }
               }
-              setTimeout(() => {
-                this.scroll()
-              }, 150)
+
+              this.scroll()
             }
           })
+          this.activeChats = arr
         })
     },
     convertTime(time) {
@@ -229,8 +231,13 @@ export default {
       return time
     },
     scroll() {
-      const box = document.querySelector('.messages-container')
-      box.scrollTop = box.scrollHeight
+      setTimeout(() => {
+        const box = document.getElementById('1337' + this.currentChatWindow)
+        box.scrollTop = box.scrollHeight
+      }, 100)
+    },
+    clearNotifications() {
+      this.activeChats[this.currentChatWindow].notif = 0
     },
   },
 }

@@ -29,6 +29,7 @@
       :rules="[required('password'), minLength('password', 7)]"
       validate-on-blur
       @click:append="showPassword = !showPassword"
+      @keyup.enter="submit(userInfo)"
     />
 
     <!-- <v-text-field
