@@ -17,13 +17,13 @@
             </span>
           </v-col>
           <v-col cols="10">
-            <v-tabs v-model="currentChat">
+            <v-tabs v-model="currentChatWindow">
               <v-tab
                 v-for="(chat, i) in activeChats"
                 :key="i"
                 @click="chatExpanded = true"
               >
-                {{ chat }}
+                {{ chat.text }}
               </v-tab>
             </v-tabs>
           </v-col>
@@ -38,8 +38,8 @@
       </v-container>
       <v-divider></v-divider>
       <v-expand-transition>
-        <v-tabs-items v-show="chatExpanded" v-model="currentChat">
-          <v-tab-item v-for="chat in activeChats" :key="chat">
+        <v-tabs-items v-show="chatExpanded" v-model="currentChatWindow">
+          <v-tab-item v-for="chat in activeChats" :key="chat.value">
             <div>
               <div class="messages-container">
                 <div
@@ -97,11 +97,11 @@ const db = firebase.firestore()
 export default {
   data() {
     return {
-      currentChat: 0,
+      currentChatWindow: 0,
       chatExpanded: true,
       seenMessages: 0,
       activeChats: [],
-      messages: [[{ message: 'hey' }]],
+      messages: [],
       message: '',
       output: '',
     }
@@ -118,18 +118,21 @@ export default {
     chatExpanded() {
       this.seenMessages = this.messages.length
     },
+    // messages() {
+    //   this.scroll()
+    // },
   },
   mounted() {
     this.listen()
-    this.get()
   },
   methods: {
     write() {
       if (this.message.length > 1) {
-        db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
+        db.collection(`chat/room/messages`)
           .add({
             message: this.message,
-            user_id: this.$auth.user.id,
+            from: this.$auth.user.id,
+            to: 3,
             time: firebase.firestore.FieldValue.serverTimestamp(),
           })
           .then((docRef) => {
@@ -141,20 +144,8 @@ export default {
       }
       this.message = ''
     },
-    get() {
-      db.collection('chat')
-        .get()
-        .then((snapshot) => {
-          this.activeChats = []
-          snapshot.forEach((chat) => {
-            // console.log(chat.id)
-            this.activeChats.push(chat.id)
-          })
-          console.log(this.activeChats)
-        })
-    },
     listen() {
-      db.collection(`chat/${this.$auth.user.id}|-|admin/messages`)
+      db.collection(`chat/room/messages`)
         .orderBy('time')
         .onSnapshot((doc) => {
           const changes = doc.docChanges()
@@ -162,19 +153,38 @@ export default {
             console.log(change.type)
             if (change.type === 'added') {
               // console.log(change.doc.data())
+              const id = change.doc.data().from
               this.messages.push({
                 message: change.doc.data().message,
-                user_id: change.doc.data().user_id,
+                user_id: id,
+                to: change.doc.data().to,
                 time: change.doc.data().time,
               })
+              if (this.activeChats.find((chat) => chat.value !== id)) {
+                this.activeChats.push({
+                  value: id,
+                  text: '',
+                })
+              } else if (this.activeChats.length === 0) {
+                this.activeChats.push({
+                  value: id,
+                  text: 'James',
+                })
+              }
+              setTimeout(() => {
+                this.scroll()
+              }, 150)
             }
           })
         })
     },
     convertTime(time) {
       if (time) {
-        const min = new Date(time.seconds).getMinutes()
-        const hr = new Date(time.seconds).getHours()
+        let min = new Date(time.seconds * 1000).getMinutes()
+        const hr = new Date(time.seconds * 1000).getHours()
+        if (min.toFixed().length === 1) {
+          min = '0' + min
+        }
         return `${hr}:${min}`
       } else {
         return this.now()
@@ -182,8 +192,17 @@ export default {
     },
     now() {
       const now = new Date()
-      const time = now.getHours() + ':' + now.getMinutes()
+      let minutes = now.getMinutes()
+      console.log('On second entry this gets weird')
+      if (minutes.toFixed().length === 1) {
+        minutes = '0' + minutes
+      }
+      const time = now.getHours() + ':' + minutes
       return time
+    },
+    scroll() {
+      const box = document.querySelector('.messages-container')
+      box.scrollTop = box.scrollHeight
     },
   },
 }

@@ -277,11 +277,11 @@ a
   bottom: 0
   right: 0
   position: fixed
-  margin: 0 3.5rem
+  margin: -0.5rem 3.5rem
 
 .chatbox
   padding: 1.25rem
-  border-radius: 5px
+  border-radius: 7px
   background: rgba(30, 30, 30, 0.96)
   // could try glassmorphism here as well
 
