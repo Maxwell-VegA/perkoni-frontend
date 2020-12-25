@@ -1,47 +1,45 @@
 <template>
-  <v-row>
-    <v-col offset="2" cols="4">
+  <div>
+    <v-time-picker
+      v-model="time"
+      format="24hr"
+      :min="new Date().toLocaleTimeString()"
+      scrollable
+    ></v-time-picker>
+    <v-row>
       <v-col>
-        <h3>
-          Lidz izslegsanai:
+        <v-btn
+          v-if="!chatStatus"
+          :disabled="!time"
+          color="success"
+          @click="setChatStatus(true)"
+        >
+          Ieslegt Catu
+        </v-btn>
+        <v-btn v-else color="error" @click="setChatStatus(false)">
+          Izslegt Catu
+        </v-btn>
+        <v-btn
+          v-if="time != end_time && time != null && chatStatus"
+          style="margin-left: 7px"
+          color="info"
+          @click="setChatStatus(true)"
+        >
+          Mainit Laiku
+        </v-btn>
+      </v-col>
+      <v-col cols="12">
+        <div>
+          <h3 class="mb-n6">Lidz izslegsanai:</h3>
           <br />
-          <h1>
+          <h1 v-if="chatStatus">
             {{ timeLeft }}
           </h1>
-        </h3>
+          <h1 v-else>--:--:--</h1>
+        </div>
       </v-col>
-      <v-time-picker
-        v-model="time"
-        format="24hr"
-        :min="new Date().toLocaleTimeString()"
-        scrollable
-      ></v-time-picker>
-      <v-row>
-        <v-col>
-          <v-btn
-            v-if="!chatStatus"
-            :disabled="!validTime"
-            color="success"
-            @click="setChatStatus(true)"
-          >
-            Ieslegt Catu
-          </v-btn>
-          <v-btn v-else color="error" @click="setChatStatus(false)">
-            Izslegt Catu
-          </v-btn>
-          <v-btn
-            v-if="time != end_time && time != null && chatStatus"
-            style="margin-left: 7px"
-            color="info"
-            @click="setChatStatus(true)"
-          >
-            Mainit Laiku
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-col>
-    <!-- <v-col class="red" cols="6"> </v-col> -->
-  </v-row>
+    </v-row>
+  </div>
 </template>
 
 <script>

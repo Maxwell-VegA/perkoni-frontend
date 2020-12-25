@@ -1,15 +1,15 @@
 <template>
   <div>
-    <chat-app v-if="$auth.loggedIn && !$auth.user.is_admin && chatStatus" />
+    <user-chat v-if="$auth.loggedIn && !$auth.user.is_admin && chatStatus" />
     <admin-chat v-if="$auth.loggedIn && $auth.user.is_admin && chatStatus" />
   </div>
 </template>
 
 <script>
-import ChatApp from '~/components/ChatApp.vue'
+import UserChat from '~/components/UserChat.vue'
 import AdminChat from '~/components/AdminChat.vue'
 export default {
-  components: { ChatApp, AdminChat },
+  components: { UserChat, AdminChat },
   data() {
     return {
       chatStatus: false,

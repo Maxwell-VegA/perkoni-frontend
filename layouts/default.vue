@@ -140,7 +140,7 @@
       </v-col>
     </v-app-bar>
     <admin-nav />
-    <chat-box />
+    <chat-router />
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
@@ -164,12 +164,14 @@
           </v-overlay>
         </div>
         <nuxt />
-        <v-row>
-          <n_footer />
-        </v-row>
       </v-container>
       <!-- </form> -->
     </v-main>
+    <!-- <v-footer>
+      <v-row style="bottom: 0; width: 100vw; position: relative">
+        <n_footer />
+      </v-row>
+    </v-footer> -->
   </v-app>
 </template>
 
@@ -177,11 +179,11 @@
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
 import n_footer from '@/components/Footer'
-import ChatBox from '~/components/ChatBox.vue'
+import ChatRouter from '~/components/ChatRouter.vue'
 //
 
 export default {
-  components: { VendorNav, AdminNav, n_footer, ChatBox },
+  components: { VendorNav, AdminNav, n_footer, ChatRouter },
   middleware: ['load-cart'],
   data() {
     return {
