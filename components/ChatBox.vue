@@ -16,10 +16,19 @@ export default {
       end_time: '1608913800000',
     }
   },
+  computed: {},
   mounted() {
     this.watchChatStatus()
+    this.expired()
   },
   methods: {
+    expired() {
+      const x = setInterval(() => {
+        if (this.end_time < Date.now()) {
+          this.chatStatus = false
+        }
+      }, 5000)
+    },
     async watchChatStatus() {
       await this.$fire.firestore
         .collection(`chat`)
