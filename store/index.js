@@ -1,5 +1,4 @@
 export const state = () => ({
-    chatStatus: false,
     currentPage: 1,
     currentCategory: 2,
     currentSubcategory: undefined,
@@ -196,9 +195,9 @@ export const mutations = {
   // SET_RELATED (state, products) {
   //     state.relatedProducts = products
   // },
-  SET_CHAT_STATUS(state, status) {
-      state.chatStatus = status.chat_status
-  }
+  // SET_CHAT_STATUS(state, status) {
+  //     state.chatStatus = status.chat_status
+  // }
 }
 
 export const actions = {
@@ -249,15 +248,15 @@ export const actions = {
       .catch((err) => console.log(err.response.data))
 
   },
-  async checkChat({ commit }) {
-    await this.$fire.firestore
-      .collection(`chat`)
-      .doc('room')
-      .get()
-      .then(doc => {
-        commit('SET_CHAT_STATUS', doc.data())
-      })
-  }
+  // async checkChat({ commit }) {
+  //   await this.$fire.firestore
+  //     .collection(`chat`)
+  //     .doc('room')
+  //     .get()
+  //     .then(doc => {
+  //       commit('SET_CHAT_STATUS', doc.data())
+  //     })
+  // }
   // updateCart({ request }) {
   //   if (this.$auth.loggedIn) {
   //     this.$axios[request.method](`cart/${requestUrl}`, { data: request.data })

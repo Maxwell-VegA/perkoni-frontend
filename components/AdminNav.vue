@@ -49,6 +49,11 @@ export default {
           title: 'Customize CTA',
           to: '/admin/customize/cta',
         },
+        {
+          icon: 'mdi-view-dashboard-variant',
+          title: 'Customize CTA',
+          to: '/admin/chat',
+        },
         // mdi-truck-outline - for shipping
         // mdi-badge-account-horizontal-outline - driver's license
       ],

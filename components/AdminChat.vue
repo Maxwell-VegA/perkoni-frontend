@@ -109,6 +109,9 @@ export default {
       })
       return arr
     },
+    time() {
+      return Date.now()
+    },
   },
   watch: {
     currentChatWindow() {
@@ -122,14 +125,13 @@ export default {
     // toUser(tab) {},
     async write() {
       if (this.message.length > 0 && this.message[0] != '\n') {
-        const time = Date.now()
         await this.$fire.firestore
           .collection(`chat/room/messages`)
           .add({
             message: this.message,
             user_id: this.toUser,
             from: this.$auth.user.username,
-            time,
+            time: this.time,
           })
           .then((docRef) => {
             // console.log(docRef.id)
@@ -234,16 +236,16 @@ export default {
   left: 0
 
 .chatbox
-
   .messages-container
     height: 40vh
-  .chat-msg
 
-  .msg-text
+  // .chat-msg
 
-  .msg-time
+  // .msg-text
 
-  .myMessage
+  // .msg-time
 
-  .text-input
+  // .myMessage
+
+  // .text-input
 </style>

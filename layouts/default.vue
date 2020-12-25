@@ -140,12 +140,7 @@
       </v-col>
     </v-app-bar>
     <admin-nav />
-    <chat-app
-      v-if="$auth.loggedIn && !$auth.user.is_admin && $store.state.chatStatus"
-    />
-    <admin-chat
-      v-if="$auth.loggedIn && $auth.user.is_admin && $store.state.chatStatus"
-    />
+    <chat-box />
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
@@ -182,13 +177,12 @@
 import VendorNav from '@/components/VendorNav'
 import AdminNav from '@/components/AdminNav'
 import n_footer from '@/components/Footer'
-import ChatApp from '~/components/ChatApp.vue'
-import AdminChat from '~/components/AdminChat.vue'
+import ChatBox from '~/components/ChatBox.vue'
 //
 
 export default {
-  components: { VendorNav, AdminNav, n_footer, ChatApp, AdminChat },
-  middleware: ['load-cart', 'check-chat'],
+  components: { VendorNav, AdminNav, n_footer, ChatBox },
+  middleware: ['load-cart'],
   data() {
     return {
       title: 'DEVINI X PERKONI',

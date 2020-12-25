@@ -2,8 +2,8 @@
   <v-col cols="4" class="chatbox-container">
     <div class="chatbox">
       <v-container class="pa-0">
-        <v-row no-gutters>
-          <v-col cols="11">
+        <v-row no-gutters align="center">
+          <v-col cols="1">
             <div>
               <v-badge
                 v-if="unreadMessages && !chatExpanded"
@@ -17,6 +17,11 @@
                 <v-icon>mdi-message-outline</v-icon>
               </span>
             </div>
+          </v-col>
+          <v-col cols="10">
+            <span v-if="from" class="ml-4">
+              {{ from.from }}
+            </span>
           </v-col>
           <v-col cols="1">
             <v-btn icon @click=";(chatExpanded = !chatExpanded), scroll()">
@@ -109,6 +114,14 @@ export default {
     }
   },
   computed: {
+    from() {
+      if (this.messages.length > 1) {
+        return this.messages.find(
+          (msg) => msg.from !== this.$auth.user.username && msg.from
+        )
+      }
+      return { from: '' }
+    },
     unreadMessages() {
       if (this.messages.length > this.seenMessages) {
         return this.messages.length - this.seenMessages
@@ -199,19 +212,19 @@ export default {
 </script>
 
 <style lang="sass">
-.chatbox-container
+// .chatbox-container
 
-.chatbox
+// .chatbox
 
-  .messages-container
+//   .messages-container
 
-  .chat-msg
+//   .chat-msg
 
-  .msg-text
+//   .msg-text
 
-  .msg-time
+//   .msg-time
 
-  .myMessage
+//   .myMessage
 
-  .text-input
+//   .text-input
 </style>
