@@ -140,8 +140,12 @@
       </v-col>
     </v-app-bar>
     <admin-nav />
-    <chat-app v-if="$auth.loggedIn && !$auth.user.is_admin" />
-    <admin-chat v-if="$auth.loggedIn && $auth.user.is_admin" />
+    <chat-app
+      v-if="$auth.loggedIn && !$auth.user.is_admin && $store.state.chatStatus"
+    />
+    <admin-chat
+      v-if="$auth.loggedIn && $auth.user.is_admin && $store.state.chatStatus"
+    />
     <!--  -->
     <v-main>
       <!-- <form autocomplete="off"> -->
@@ -184,7 +188,7 @@ import AdminChat from '~/components/AdminChat.vue'
 
 export default {
   components: { VendorNav, AdminNav, n_footer, ChatApp, AdminChat },
-  middlewre: 'load-cart',
+  middleware: ['load-cart', 'check-chat'],
   data() {
     return {
       title: 'DEVINI X PERKONI',
