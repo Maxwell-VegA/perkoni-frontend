@@ -59,6 +59,7 @@ export default {
         firestore: true,
         analytics: true,
         messaging: true,
+        performance: true,
       }
   },
 

@@ -15,12 +15,15 @@
             <v-col md="6">
               <v-select
                 v-model="product.mainCategory"
-                @change="product.gender = [product.mainCategory.genders[0]], sizeGenders()"
                 :items="categories"
                 label="Kategorija"
                 return-object
+                @change="
+                  ;(product.gender = [product.mainCategory.genders[0]]),
+                    sizeGenders()
+                "
               ></v-select>
-            <!-- {{ product.gender }}
+              <!-- {{ product.gender }}
             <br>
             {{ product.sizes }} -->
             </v-col>
@@ -115,8 +118,8 @@
           <!-- Btw currently it is possible to set a sale price which is higher than the base price -->
         </p>
         <v-select
-          style="margin-top: 14px"
           v-model="selectedGender"
+          style="margin-top: 14px"
           :items="tableSelectGender"
         ></v-select>
         <v-data-table
@@ -136,9 +139,13 @@
       </v-col>
     </v-row>
 
-    <v-row style="border-bottom: white solid 2px" >
+    <v-row style="border-bottom: white solid 2px">
       <!-- sizes -->
-      <v-col md="12" class="px-8" v-if="product.sizes[0].gender != 'genderUndefined'">
+      <v-col
+        v-if="product.sizes[0].gender != 'genderUndefined'"
+        md="12"
+        class="px-8"
+      >
         <v-checkbox
           label=" Radit svara-specifiskas piegades iespejas "
           @click="showCustomShipping = !showCustomShipping"
@@ -166,7 +173,7 @@
                 lg="3"
                 xl="2"
               >
-                <v-row dense v-if="gender.sizes.length > 1">
+                <v-row v-if="gender.sizes.length > 1" dense>
                   <v-col cols="8">
                     <v-text-field
                       v-model="size.sizeName"
@@ -253,9 +260,7 @@
                     </v-btn>
                   </v-col>
                 </v-row>
-                <v-row v-else>
-                  Dzimums are vienu izmeru
-                </v-row>
+                <v-row v-else> Dzimums are vienu izmeru </v-row>
               </v-col>
             </v-row>
           </v-col>
@@ -582,28 +587,31 @@
         ></v-select>
         <v-spacer></v-spacer>
         <!-- :disabled="product.shipping != 'Sanemt uz vietas'" -->
-        <v-text-field v-model="product.address" label="Adrese kur var sanemt produktu"></v-text-field>
+        <v-text-field
+          v-model="product.address"
+          label="Adrese kur var sanemt produktu"
+        ></v-text-field>
         {{ product.shipping.Latvija }}
       </v-col>
     </v-row>
 
     <v-row>
       <v-col md="12">
-        <manual-override 
+        <manual-override
           :sizes="product.sizes"
           :variations="product.variations"
           :types="product.types"
-          :varName="product.variationsName"
-          :typesName="product.typesName"
-          :subtypesName="product.subtypesName"
+          :var-name="product.variationsName"
+          :types-name="product.typesName"
+          :subtypes-name="product.subtypesName"
           @updateRules="updateOverrideRules($event)"
         ></manual-override>
-          <!-- will have to pass all five parameters -->
-          <!-- will have to pass the three parameter names -->
+        <!-- will have to pass all five parameters -->
+        <!-- will have to pass the three parameter names -->
       </v-col>
     </v-row>
 
-    <div>
+    <v-row>
       <!-- controlls -->
       <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
@@ -621,7 +629,7 @@
       ></v-checkbox>
       {{ product.targets }}
       {{ errors }}
-    </div>
+    </v-row>
 
     <!-- <v-snackbar v-model="showErrorsSnackbar" timeout="-1"
       >{{ errors }}hey</v-snackbar
@@ -631,8 +639,9 @@
 
 <script>
 import ManualOverride from '~/components/ManualOverride'
-// 
+//
 
+/* eslint-disable */
 export default {
   components: { ManualOverride },
   data() {
@@ -662,9 +671,9 @@ export default {
             'Kleitas',
             'Cepures',
             'Šalles',
-            'Bez apdrukas',
+            'Bez apdrukas'
           ],
-          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem']
         },
         subcategory: '',
         description:
@@ -701,16 +710,16 @@ export default {
                 sizePrice: 0,
                 weight: 0,
                 customShipping: false,
-                shippingOptions: [],
-              },
-            ],
-          },
+                shippingOptions: []
+              }
+            ]
+          }
         ],
         related: [],
         weight: 0,
         shipping: [],
-        address: "",
-        targets: [],
+        address: '',
+        targets: []
       },
       categories: [
         {
@@ -722,9 +731,9 @@ export default {
             'Kleitas',
             'Cepures',
             'Šalles',
-            'Bez apdrukas',
+            'Bez apdrukas'
           ],
-          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem'],
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem']
         },
         {
           text: 'Termouzlīmes',
@@ -733,9 +742,9 @@ export default {
             'Rakstu joslas',
             'Latvija / Rīga / latvietis',
             'Teksti',
-            'Citas',
+            'Citas'
           ],
-          genders: ['Bezdzimuma'],
+          genders: ['Bezdzimuma']
         },
         {
           text: 'Uzlīmes',
@@ -743,20 +752,20 @@ export default {
             'Spēka zīmes',
             'Rakstu joslas',
             'Latvija / Rīga / latvietis',
-            'Citas',
+            'Citas'
           ],
-          genders: ['Bezdzimuma'],
+          genders: ['Bezdzimuma']
         },
         {
           text: 'Tetovējumi',
           subcategories: [],
-          genders: ['Bezdzimuma'],
+          genders: ['Bezdzimuma']
         },
         {
           text: 'Citi',
           subcategories: ['Rotas', 'Somas', 'Lietussargi'],
-          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem', 'Bezdzimuma'],
-        },
+          genders: ['Unisex', 'Vīriešiem', 'Sievietēm', 'Bērniem', 'Bezdzimuma']
+        }
       ],
       taggs: [
         //   this should probably be a generated collection of the most popular taggs on the site instead of being a predefined collection
@@ -767,12 +776,12 @@ export default {
         'Latvia',
         'Easter',
         'Cool',
-        'DIY',
+        'DIY'
       ],
       relatedProducts: [],
       rules: {
-        required: (value) => !!value || 'Field is required / can not be empty.',
-      },
+        required: (value) => !!value || 'Field is required / can not be empty.'
+      }
     }
   },
   computed: {
@@ -780,7 +789,7 @@ export default {
       return this.$store.state.shippingOptions
     },
     categoryHasGenders() {
-      let returnThis = false 
+      let returnThis = false
       if (this.product.mainCategory.genders.length > 1) {
         returnThis = true
       }
@@ -804,7 +813,7 @@ export default {
         })
         this.product.related = arr
         return input
-      },
+      }
     },
     allSubtypes() {
       const arr = []
@@ -820,7 +829,7 @@ export default {
       this.userBrands.forEach((brand) => {
         arr.push({
           text: brand.name,
-          value: brand.id,
+          value: brand.id
         })
       })
       return arr
@@ -869,18 +878,19 @@ export default {
       )
       let shipping = {
         name: 'Custom shipping'
-      };
+      }
       let weight = {
         name: 'Svars'
-      };
-      let output = undefined 
-      this.product.sizes[this.selectedGender].sizes.forEach((size, i) => 
-        // this.shippingOptions.forEach((locale) => (locale.options.find(option => option.value === size.shippingOptions))) 
-        shipping['price' + i] = size.customShipping,
-      );
-      
+      }
+      let output = undefined
+      this.product.sizes[this.selectedGender].sizes.forEach(
+        (size, i) =>
+          // this.shippingOptions.forEach((locale) => (locale.options.find(option => option.value === size.shippingOptions)))
+          (shipping['price' + i] = size.customShipping)
+      )
+
       arr.push(shipping)
-      
+
       // this.product.sizes[this.selectedGender].sizes.forEach(function (size, i) {
       //   if (shipping['price' + i] === true) {
       //     weight['price' + i] = size.weight
@@ -899,14 +909,14 @@ export default {
         {
           text: 'Tipu / izmeeru cenas',
           value: 'name',
-          align: 'start',
-        },
+          align: 'start'
+        }
       ]
       this.product.sizes[this.selectedGender].sizes.forEach((size, i) =>
         arr.push({
           text: size.sizeName,
           price: size.sizePrice,
-          value: 'price' + i,
+          value: 'price' + i
         })
       )
       return arr
@@ -918,7 +928,7 @@ export default {
           text: gen,
           value: i
         })
-      });
+      })
       return arr
     }
   },
@@ -929,35 +939,35 @@ export default {
   methods: {
     sizeGenders() {
       const arr = []
-        if (this.product.gender[0] != undefined) {
-          this.product.gender.forEach((gen, i) => {
-            arr.push({
-              gender: gen,
-              sizes: [
-                {
-                  sizeName: '',
-                  sizePrice: 0,
-                  weight: 0,
-                  customShipping: false,
-                  shippingOptions: [],
-                },
-              ],
-            })
-          })
-        } else {
+      if (this.product.gender[0] != undefined) {
+        this.product.gender.forEach((gen, i) => {
           arr.push({
-            gender: 'genderUndefined',
-              sizes: [
-                {
-                  sizeName: 'singleSizeProduct',
-                  sizePrice: 0,
-                  weight: 0,
-                  customShipping: false,
-                  shippingOptions: [],
-                },
-              ],
+            gender: gen,
+            sizes: [
+              {
+                sizeName: '',
+                sizePrice: 0,
+                weight: 0,
+                customShipping: false,
+                shippingOptions: []
+              }
+            ]
           })
-        }
+        })
+      } else {
+        arr.push({
+          gender: 'genderUndefined',
+          sizes: [
+            {
+              sizeName: 'singleSizeProduct',
+              sizePrice: 0,
+              weight: 0,
+              customShipping: false,
+              shippingOptions: []
+            }
+          ]
+        })
+      }
       this.product.sizes = arr
     },
     log(v) {
@@ -1004,21 +1014,25 @@ export default {
       let sizesFound = this.product.sizes
 
       if (typesFound.length <= 1) {
-        typesFound = [{
-          typeName: 'singleTypeProduct',
-          typePrice: 0,
-          typeSecondary: [null],
-        }]
+        typesFound = [
+          {
+            typeName: 'singleTypeProduct',
+            typePrice: 0,
+            typeSecondary: [null]
+          }
+        ]
       }
-      sizesFound.forEach(gen => {
+      sizesFound.forEach((gen) => {
         if (gen.sizes.length <= 1) {
-          gen = [{
-            sizeName: 'singleSizeProduct',
-            sizePrice: 0,
-            weight: 0,
-            customShipping: false,
-            shippingOptions: [],
-          }]
+          gen = [
+            {
+              sizeName: 'singleSizeProduct',
+              sizePrice: 0,
+              weight: 0,
+              customShipping: false,
+              shippingOptions: []
+            }
+          ]
         }
       })
       // console.log(this.product.types)
@@ -1042,7 +1056,7 @@ export default {
           variationsName: this.product.variationsName,
           typesName: this.product.typesName,
           subtypesName: this.product.subtypesName,
-          variations: this.product.variations,  
+          variations: this.product.variations,
           types: typesFound,
           sizes: sizesFound,
           taggs: this.product.taggs,
@@ -1052,11 +1066,15 @@ export default {
           weight: this.product.weight,
           shipping: this.product.shipping,
           address: this.product.address,
-          targets: this.product.targets,
+          targets: this.product.targets
         })
         .then((res) => console.log(res))
-        .catch((err) => console.log(err.response.data.errors, err.response.data.message))
-        .catch((err) => this.errors.push(err.response.data.message, err.response.data.errors))
+        .catch((err) =>
+          console.log(err.response.data.errors, err.response.data.message)
+        )
+        .catch((err) =>
+          this.errors.push(err.response.data.message, err.response.data.errors)
+        )
         .catch((err) => this.errors.push(err.response.data.errors))
     },
     onImagesSelected(event) {
@@ -1072,7 +1090,7 @@ export default {
           fileName: null,
           title: imageNameNoExt[0],
           description: '',
-          order: (index + 1) * 10,
+          order: (index + 1) * 10
         })
         this.$axios
           .post('img', fd)
@@ -1091,21 +1109,21 @@ export default {
     getUserBrands() {
       this.$axios
         .get('brand', {
-          headers: { Authorization: this.$auth.getToken('local') },
+          headers: { Authorization: this.$auth.getToken('local') }
         })
         .then((res) => (this.userBrands = res.data))
     },
     getUserProducts() {
       this.$axios
         .get('products/related', {
-          headers: { Authorization: this.$auth.getToken('local') },
+          headers: { Authorization: this.$auth.getToken('local') }
         })
         .then((res) => {
           res.data.forEach((product) => {
             if (product.brand_id === this.product.brand_id) {
               this.relatedProducts.push({
                 text: product.title,
-                value: product.id,
+                value: product.id
               })
             }
           })
@@ -1113,7 +1131,7 @@ export default {
             if (product.brand_id !== this.product.brand_id) {
               this.relatedProducts.push({
                 text: product.title,
-                value: product.id,
+                value: product.id
               })
             }
           })
@@ -1125,7 +1143,7 @@ export default {
       this.product.types.push({
         typeName: 'New Type',
         typePrice: 0,
-        typeSecondary: [],
+        typeSecondary: []
       })
     },
     removeType(i) {
@@ -1139,7 +1157,7 @@ export default {
         sizePrice: 0,
         weight: 0,
         customShipping: false,
-        shippingOptions: [],
+        shippingOptions: []
       })
     },
     removeSize(idx, i) {
@@ -1153,13 +1171,13 @@ export default {
       this.product.targets = targets
     },
     computeTargetsKeys(targets) {
-      targets.forEach(t => {
-        let gender      = 'ANY-1337'
-        let size        = 'ANY-1337'
-        let variation   = 'ANY-1337'
-        let type        = 'ANY-1337'
-        let subtype     = 'ANY-1337'
-        
+      targets.forEach((t) => {
+        let gender = 'ANY-1337'
+        let size = 'ANY-1337'
+        let variation = 'ANY-1337'
+        let type = 'ANY-1337'
+        let subtype = 'ANY-1337'
+
         if (t.gender.text) {
           gender = t.gender.text
         } else {
@@ -1170,7 +1188,7 @@ export default {
         } else {
           size = 'ANY-1337'
         }
-        if(t.variation != 'Visi') {
+        if (t.variation != 'Visi') {
           variation = t.variation
         } else {
           variation = 'ANY-1337'
@@ -1186,11 +1204,15 @@ export default {
           subtype = 'ANY-1337'
         }
 
-        let key = 
-          gender      + '_//__' + 
-          size        + '_//__' +
-          variation   + '_//__' +
-          type        + '_//__' +
+        let key =
+          gender +
+          '_//__' +
+          size +
+          '_//__' +
+          variation +
+          '_//__' +
+          type +
+          '_//__' +
           subtype
 
         t.key = key
@@ -1198,8 +1220,10 @@ export default {
         console.log(t.key)
       })
     }
-  },
+  }
 }
+
+/* eslint-disable */
 </script>
 
 <style lang="scss">
