@@ -56,11 +56,19 @@ export default {
         measurementId: 'G-BCQ2HLL4Y6',
       },
       services: {
+        auth: true,
         firestore: true,
         analytics: true,
         messaging: true,
         performance: true,
       }
+  },
+
+  vue: {
+    config: {
+      productionTip: false,
+      devtools: true,
+    }
   },
 
   // Content module configuration (https://go.nuxtjs.dev/config-content)
@@ -88,6 +96,10 @@ export default {
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
 
+  env: {
+    baseUrl: process.env.BASE_URL || 'http://localhost:8000/api/'
+  },
+
   auth: {
     redirect: {
       home: '/vendor',
@@ -98,8 +110,6 @@ export default {
     local: {
       token: {
         property: 'token',
-        // required: true,
-        // type: 'Bearer'
       },
       user: {
         property: 'user',
@@ -110,7 +120,7 @@ export default {
         logout: { url: '/auth/signout', method: 'post', propertyName: 'token'},
         user: { url: '/auth/user', method: 'get'}
       }
-    }
+    },
   }
 }
 }

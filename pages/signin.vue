@@ -2,6 +2,10 @@
   <v-container>
     <h1>Sign in</h1>
     <user-auth-form button-text="Sign in" :submit-form="submit" />
+    <v-btn href="http://localhost:8000/api/auth/signin/google">Google</v-btn>
+    <v-btn href="http://localhost:8000/api/auth/signin/facebook">
+      Facebook
+    </v-btn>
   </v-container>
 </template>
 
@@ -31,8 +35,6 @@ export default {
             // I could in php check if product_id, user_id and key of the new addition match any existing entry (set quantity to the higher one if it does), but I could also leave it as is letting it create duplicate entries if the user added an item to cart while logged out though he already had this item in cart while logged in.
           }
           localStorage.setItem('cart', '{}')
-          // Here I could wipe the local cart but I don't know if I really need to. Actually yes I should since otherwise the same items would be getting added to the user's cart every time he loggs in. (This would not be the case however if I was checking in PHP if an equivalent of the local entry already existed on the database).
-          // If you do change something here remember to update this in the register form as well
         }
       } catch (err) {
         console.log(err, 'failed to authenticate')

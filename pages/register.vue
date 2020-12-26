@@ -44,6 +44,8 @@
 
     <!-- <v-btn :disabled="!valid" @click="submitForm(userInfo)"> Register </v-btn> -->
     <v-btn @click="submit(userInfo)"> Register </v-btn>
+    <v-btn color="success">Google</v-btn>
+    <v-btn color="primary">Facebook</v-btn>
   </v-container>
 </template>
 
@@ -66,12 +68,26 @@ export default {
   },
   methods: {
     async submit(registrationInfo) {
-      this.$axios
-        .post('auth/register', registrationInfo)
-        .catch((err) => console.log(err.message))
-      await this.$auth.loginWith('local', {
-        data: registrationInfo,
-      })
+      this.$fire.auth
+        .createUserWithEmailAndPassword(
+          this.userInfo.email,
+          this.userInfo.password
+        )
+        .then((user) => {
+          console.log(user)
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+
+      // this.$axios
+      //   .post('auth/register', registrationInfo)
+      //   .catch((err) => console.log(err.message))
+
+      // await this.$auth.loginWith('local', {
+      //   data: registrationInfo,
+      // })
+
       const local = JSON.parse(localStorage.getItem('cart'))
       if (local) {
         for (const item of Object.values(local)) {

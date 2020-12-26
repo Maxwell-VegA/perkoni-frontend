@@ -167,11 +167,11 @@
       </v-container>
       <!-- </form> -->
     </v-main>
-    <!-- <v-footer>
+    <v-footer>
       <v-row style="bottom: 0; width: 100vw; position: relative">
         <n_footer />
       </v-row>
-    </v-footer> -->
+    </v-footer>
   </v-app>
 </template>
 
