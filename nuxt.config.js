@@ -56,7 +56,7 @@ export default {
         measurementId: 'G-BCQ2HLL4Y6',
       },
       services: {
-        auth: true,
+        auth: false,
         firestore: true,
         analytics: true,
         messaging: true,
