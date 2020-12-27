@@ -54,14 +54,14 @@ export default {
         messagingSenderId: '555688664693',
         appId: '1:555688664693:web:66c57dcfb4952ef8f0e23c',
         measurementId: 'G-BCQ2HLL4Y6',
-      },
-      services: {
-        auth: false,
-        firestore: true,
-        analytics: true,
-        messaging: true,
-        performance: true,
-      }
+    },
+    services: {
+      auth: false,
+      firestore: true,
+      analytics: true,
+      messaging: true,
+      performance: true,
+    }
   },
 
   vue: {

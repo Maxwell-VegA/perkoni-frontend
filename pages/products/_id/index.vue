@@ -1,7 +1,15 @@
 <template>
   <div>
-    <v-col class="my-n8 my-sm-n6 my-md-n4 my-lg-n2" offset-sm="1" offset-md="0" offset-lg="0" offset-xl="1">
-      <h1 class="text-h4 text-sm-h3 text-md-h2 text-xl-h1 my-8">{{ product.title }}</h1>
+    <v-col
+      class="my-n8 my-sm-n6 my-md-n4 my-lg-n2"
+      offset-sm="1"
+      offset-md="0"
+      offset-lg="0"
+      offset-xl="1"
+    >
+      <h1 class="text-h4 text-sm-h3 text-md-h2 text-xl-h1 my-8">
+        {{ product.title }}
+      </h1>
       <!-- <h3 class="font-weight-light">
         {{ product.mainCategory }} / {{ product.subcategory }} /
       </h3> -->
@@ -45,7 +53,7 @@
         </v-card>
       </v-dialog>
 
-      <v-row class="mr-0 mr-lg-6 " no-gutters>
+      <v-row class="mr-0 mr-lg-6" no-gutters>
         <v-spacer></v-spacer>
         <v-col cols="12" lg="9" xl="8">
           <v-row class="mr-lg-3 ml-lg-3">
@@ -193,15 +201,22 @@
                 <!-- Add to cart -->
                 <v-col md="12" class="pr-8 ml-n1">
                   <v-row no-gutters>
-                    <v-col offset="1" offset-md="0" cols="5" sm="2" md="3" xl="2">
+                    <v-col
+                      offset="1"
+                      offset-md="0"
+                      cols="5"
+                      sm="2"
+                      md="3"
+                      xl="2"
+                    >
                       <v-combobox
-                        :items="qtyOptions"
-                        @change="updateQuantity"
                         v-model="quantity"
+                        :items="qtyOptions"
                         filled
                         height="40px"
                         style="margin-top: -2px"
                         dense
+                        @change="updateQuantity"
                       >
                       </v-combobox>
                     </v-col>
@@ -236,28 +251,37 @@
               </v-row>
             </v-col>
             <!-- Long description -->
-            <v-col cols="12" class="mb-n6 mb-md-n3" >
+            <v-col cols="12" class="mb-n6 mb-md-n3">
               <v-card
                 v-for="(match, i) in targetMatch"
                 :key="i"
                 class="primary mb-4"
               >
-                <v-card-title class="">
+                <v-card-title>
                   {{ match.message }}
                 </v-card-title>
                 <!-- {{ targetMatch }} -->
               </v-card>
-              <v-card>
+              <v-card v-if="product.longDescription">
                 <v-card-title>Apraksts:</v-card-title>
                 <v-card-text>
                   <p v-html="product.longDescription"></p>
                 </v-card-text>
               </v-card>
+              <v-divider v-else class="mb-1"></v-divider>
             </v-col>
             <!-- Related products -->
             <v-col cols="12">
               <v-row :dense="$vuetify.breakpoint.smAndDown">
-                <v-col v-for="(prod, i) in relatedProducts" :key="i" cols="6" sm="4" md="3" lg="4" xl="3">
+                <v-col
+                  v-for="(prod, i) in relatedProducts"
+                  :key="i"
+                  cols="6"
+                  sm="4"
+                  md="3"
+                  lg="4"
+                  xl="3"
+                >
                   <product-card :product="prod" />
                 </v-col>
               </v-row>
@@ -267,7 +291,7 @@
         <!-- Sidebar --------------------------------------------------- -->
         <v-col cols="12" lg="3" xl="2">
           <v-row no-gutters>
-              <v-col cols="12">
+            <v-col cols="12">
               <!-- Bookmark / Share -->
               <v-card class="mb-2">
                 <v-card-actions>
@@ -308,9 +332,16 @@
                   </v-tooltip>
                 </v-card-actions>
               </v-card>
-              </v-col>
+            </v-col>
 
-              <v-col class="pr-sm-1 pr-lg-0" offset="1" offset-sm="0" cols="10" sm="6" lg="12">
+            <v-col
+              class="pr-sm-1 pr-lg-0"
+              offset="1"
+              offset-sm="0"
+              cols="10"
+              sm="6"
+              lg="12"
+            >
               <!-- Brand -->
               <v-card class="mb-2">
                 <v-card-subtitle class="mb-n8" primary-title>
@@ -360,9 +391,16 @@
                   </div>
                 </v-expand-transition>
               </v-card>
-              </v-col>
+            </v-col>
 
-              <v-col class="pl-sm-1 pl-lg-0" offset="1" offset-sm="0" cols="10" sm="6" lg="12">
+            <v-col
+              class="pl-sm-1 pl-lg-0"
+              offset="1"
+              offset-sm="0"
+              cols="10"
+              sm="6"
+              lg="12"
+            >
               <!-- Shipping -->
               <v-card>
                 <v-card-title>
@@ -503,7 +541,7 @@
                   </div>
                 </v-expand-transition>
               </v-card>
-              </v-col>
+            </v-col>
           </v-row>
         </v-col>
         <v-spacer></v-spacer>
@@ -544,12 +582,12 @@ export default {
       brandCardExpanded: false,
       bookmarked: false,
       relatedProducts: [],
-      shippingCardExpanded: true
+      shippingCardExpanded: true,
     }
   },
   computed: {
     ...mapState(['product', 'shippingOptions', 'qtyOptions']),
-      
+
     selectedCombination() {
       this.addingToCart = false
       let gender = 'ANY-1337'
@@ -560,7 +598,6 @@ export default {
 
       this.selectedSizes
       // console.log(this.product)
-
 
       if (this.selectedGender != '') {
         gender = this.selectedGender
@@ -785,11 +822,11 @@ export default {
     this.getRelated()
     this.lsTest = true
     this.isInCartQuestion()
-    if (this.$vuetify.breakpoint.name == "sm") {
-        this.shippingCardExpanded = false
+    if (this.$vuetify.breakpoint.name == 'sm') {
+      this.shippingCardExpanded = false
     }
     // if (this.$vuetify.breakpoint.name == "md") {
-      // this.shippingCardExpanded = false
+    // this.shippingCardExpanded = false
     // }
   },
   methods: {
