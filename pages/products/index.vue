@@ -1,25 +1,36 @@
 <template>
   <div>
     <call-to-action />
-
-    <v-row no-gutters>
+    <v-row class="mt-n4 mt-sm-n2 mt-md-0" no-gutters>
       <v-spacer></v-spacer>
       <v-col cols="12" xl="9">
         <v-row>
-          <v-tabs v-model="currentCategory" grow>
-            <v-tab v-for="category in categories" :key="category.value">
-              {{ category.text }}
-            </v-tab>
-          </v-tabs>
+          <v-col>
+            <v-tabs v-model="currentCategory" grow center-active>
+              <v-tab
+                v-for="category in categories"
+                :key="category.value"
+                class="pa-0 px-sm-2 px-md-4"
+              >
+                <span class="tab-text">
+                  {{ category.text }}
+                </span>
+              </v-tab>
+            </v-tabs>
+          </v-col>
         </v-row>
 
         <v-row no-gutters>
           <v-col
             v-show="categories[currentCategory].pages != 1"
-            sm="12"
+            cols="12"
             md="3"
           ></v-col>
-          <v-col v-show="categories[currentCategory].pages != 1" sm="12" md="9">
+          <v-col
+            v-show="categories[currentCategory].pages != 1"
+            cols="12"
+            md="9"
+          >
             <v-pagination
               v-model="currentPage"
               class="my-4"
@@ -29,48 +40,61 @@
             ></v-pagination>
           </v-col>
 
-          <v-col sm="12" md="3">
-            <v-col cols="12" class="ml-n3">
-              <v-card class="transparent">
-                <v-list
-                  v-show="categories[currentCategory].subcategories.length > 0"
-                  class="mb-6"
-                  nav
-                >
-                  <v-subheader>Subkategorija</v-subheader>
-                  <v-list-item-group v-model="currentSubcategory">
-                    <v-list-item
-                      v-for="(subcategory, i) in categories[currentCategory]
-                        .subcategories"
-                      :key="i"
-                    >
-                      {{ subcategory }}
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-                <v-list
-                  v-show="categories[currentCategory].genders.length > 0"
-                  nav
-                >
-                  <v-subheader>Dzimums</v-subheader>
-                  <v-list-item-group v-model="currentGender">
-                    <v-list-item
-                      v-for="(gender, i) in categories[currentCategory].genders"
-                      :key="i"
-                    >
-                      {{ gender }}
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-card>
-            </v-col>
+          <v-col cols="12" md="3">
+            <v-row>
+              <v-col>
+                <v-card class="transparent">
+                  <v-list
+                    v-show="
+                      categories[currentCategory].subcategories.length > 0
+                    "
+                    class="mb-6"
+                    nav
+                  >
+                    <v-subheader>Subkategorija</v-subheader>
+                    <v-list-item-group v-model="currentSubcategory">
+                      <v-list-item
+                        v-for="(subcategory, i) in categories[currentCategory]
+                          .subcategories"
+                        :key="i"
+                      >
+                        {{ subcategory }}
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                  <v-list
+                    v-show="categories[currentCategory].genders.length > 0"
+                    nav
+                  >
+                    <v-subheader>Modelis</v-subheader>
+                    <v-list-item-group v-model="currentGender">
+                      <v-list-item
+                        v-for="(gender, i) in categories[currentCategory]
+                          .genders"
+                        :key="i"
+                      >
+                        {{ gender }}
+                      </v-list-item>
+                    </v-list-item-group>
+                  </v-list>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-col>
 
           <v-col sm="12" md="9">
             <v-tabs-items v-model="currentCategory" class="transparent">
               <v-tab-item v-for="cat in categories" :key="cat.value">
-                <v-row>
-                  <v-col v-for="(prod, i) in cat.products" :key="i" cols="4">
+                <v-row
+                  :dense="$vuetify.breakpoint.xsOnly"
+                  class="ml-md-3 mr-md-n3"
+                >
+                  <v-col
+                    v-for="(prod, i) in cat.products"
+                    :key="i"
+                    cols="6"
+                    sm="4"
+                  >
                     <product-card :product="prod" />
                   </v-col>
                 </v-row>
@@ -195,6 +219,17 @@ export default {
 </script>
 
 <style>
+@media only screen and (max-width: 600px) {
+  .tab-text {
+    /* background: red !important; */
+    letter-spacing: normal;
+  }
+  .v-slide-group__next,
+  .v-slide-group__prev {
+    flex: 0 1 0px;
+    min-width: 0px;
+  }
+}
 /* 
 
 Tag sorting could be done client side instead of server. We'll just need to figure out how to deal with pagination.

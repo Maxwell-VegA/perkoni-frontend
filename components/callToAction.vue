@@ -1,13 +1,15 @@
 <template>
   <v-row>
     <v-spacer />
-    <v-col cols="12" xl="9">
+    <v-col class="carousel-container" cols="12" xl="9">
       <v-carousel
         vertical-delimiters="right"
+        :hide-delimiters="$vuetify.breakpoint.smAndDown"
         continuous
         :show-arrows-on-hover="true"
         vertical
         cycle
+        height="100%"
         hide-delimiter-background
         interval="1113000"
       >
@@ -22,7 +24,7 @@
             bottom
             right
             :class="{ 'light-btn-bg': slide.light }"
-            class="glass-btn font-weight-light text-h4 rounded-lg v-btn--outlined py-9 px-15 ma-12"
+            class="glass-btn font-weight-light text-md-h4 text-sm-h5 text-h6 rounded-lg v-btn--outlined py-5 py-sm-6 px-6 px-sm-10 mb-0 mb-sm-6 mr-0 mr-md-12 py-md-8 px-md-13 ma-md-10"
             >{{ slide.text }}</v-btn
           >
         </v-carousel-item>
@@ -67,7 +69,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .glass-btn {
   background: rgba(15, 15, 15, 0.2);
   backdrop-filter: blur(7px);
@@ -77,5 +79,26 @@ export default {
 }
 .light-btn-bg {
   background: rgba(255, 255, 255, 0.2);
+}
+.carousel-container {
+  height: 38vh;
+  min-height: 285px;
+}
+
+@media only screen and (max-width: 600px) {
+  .carousel-container {
+    height: 30vh;
+    min-height: auto;
+    .v-window__container {
+      .v-carousel__controls {
+        // button {
+        //   display: none !important;
+        //   visibility: hidden !important;
+        //   z-index: -100 !important;
+        //   background: red;
+        // }
+      }
+    }
+  }
 }
 </style>

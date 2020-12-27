@@ -1,6 +1,6 @@
 export const state = () => ({
     currentPage: 1,
-    currentCategory: 2,
+    currentCategory: 0,
     currentSubcategory: undefined,
     currentGender: null,
     product: {},
