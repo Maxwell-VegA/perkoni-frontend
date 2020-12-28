@@ -43,39 +43,69 @@
           <v-col cols="12" md="3">
             <v-row>
               <v-col>
-                <v-card class="transparent">
+                <v-card class="transparent mt-n4 mt-md-0 mb-n2">
                   <v-list
                     v-show="
                       categories[currentCategory].subcategories.length > 0
                     "
-                    class="mb-6"
+                    class="mb-2"
                     nav
                   >
-                    <v-subheader>Subkategorija</v-subheader>
-                    <v-list-item-group v-model="currentSubcategory">
-                      <v-list-item
-                        v-for="(subcategory, i) in categories[currentCategory]
-                          .subcategories"
-                        :key="i"
+                    <v-subheader :class="{ 'my-n2': !subcatExpanded }">
+                      Subkategorija
+                      <v-spacer></v-spacer>
+                      <v-btn icon @click="subcatExpanded = !subcatExpanded">
+                        <v-icon>{{
+                          subcatExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'
+                        }}</v-icon>
+                      </v-btn>
+                    </v-subheader>
+                    <v-expand-transition>
+                      <v-list-item-group
+                        v-show="subcatExpanded"
+                        v-model="currentSubcategory"
                       >
-                        {{ subcategory }}
-                      </v-list-item>
-                    </v-list-item-group>
+                        <v-list-item
+                          v-for="(subcategory, i) in categories[currentCategory]
+                            .subcategories"
+                          :key="i"
+                        >
+                          {{ subcategory }}
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-expand-transition>
                   </v-list>
                   <v-list
                     v-show="categories[currentCategory].genders.length > 0"
                     nav
                   >
-                    <v-subheader>Modelis</v-subheader>
-                    <v-list-item-group v-model="currentGender">
-                      <v-list-item
-                        v-for="(gender, i) in categories[currentCategory]
-                          .genders"
-                        :key="i"
+                    <v-subheader :class="{ 'my-n2': !genderExpanded }">
+                      Modelis
+                      <v-spacer></v-spacer>
+                      <v-btn icon @click="genderExpanded = !genderExpanded">
+                        <v-icon>
+                          {{
+                            genderExpanded
+                              ? 'mdi-chevron-up'
+                              : 'mdi-chevron-down'
+                          }}
+                        </v-icon>
+                      </v-btn>
+                    </v-subheader>
+                    <v-expand-transition>
+                      <v-list-item-group
+                        v-show="genderExpanded"
+                        v-model="currentGender"
                       >
-                        {{ gender }}
-                      </v-list-item>
-                    </v-list-item-group>
+                        <v-list-item
+                          v-for="(gender, i) in categories[currentCategory]
+                            .genders"
+                          :key="i"
+                        >
+                          {{ gender }}
+                        </v-list-item>
+                      </v-list-item-group>
+                    </v-expand-transition>
                   </v-list>
                 </v-card>
               </v-col>
@@ -120,8 +150,6 @@
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
-
-    <p>{{ errors }}</p>
   </div>
 </template>
 
@@ -138,8 +166,9 @@ export default {
   },
   data() {
     return {
-      errors: {},
       products: [],
+      subcatExpanded: true,
+      genderExpanded: true,
     }
   },
   computed: {
@@ -179,6 +208,9 @@ export default {
         this.$store.commit('UPDATE_GENDER', v)
       },
     },
+    breakpoints() {
+      return this.$vuetify.breakpoint.name
+    },
   },
   watch: {
     currentPage() {
@@ -198,9 +230,29 @@ export default {
     currentGender() {
       this.$store.dispatch('getProducts')
     },
+    breakpoints() {
+      if (
+        this.$vuetify.breakpoint.name === 'xs' ||
+        this.$vuetify.breakpoint.name === 'sm'
+      ) {
+        this.genderExpanded = false
+        this.subcatExpanded = false
+      } else {
+        this.genderExpanded = true
+        this.subcatExpanded = true
+      }
+    },
   },
   created() {
     this.categoryName = this.categories[this.currentCategory]
+    if (
+      this.$vuetify.breakpoint.name === 'xs' ||
+      this.$vuetify.breakpoint.name === 'sm'
+    ) {
+      this.genderExpanded = false
+      this.subcatExpanded = false
+    }
+
     // this.getProducts()
   },
   head() {
