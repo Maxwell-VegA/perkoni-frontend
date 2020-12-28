@@ -989,14 +989,6 @@ export default {
 }
 </script>
 <style>
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type='number'] {
-  -moz-appearance: textfield;
-}
 /* 
 
 need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.

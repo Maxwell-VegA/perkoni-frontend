@@ -596,6 +596,7 @@
     </v-row>
 
     <v-row>
+      <!-- manual override -->
       <v-col md="12">
         <manual-override
           :sizes="product.sizes"
@@ -616,13 +617,13 @@
       <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
       <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
       <v-btn @click="storeProduct">Create Product</v-btn>
-      <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn>
-      <v-btn @click="log(product.shipping)">Shipping</v-btn>
+      <!-- <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn> -->
+      <!-- <v-btn @click="log(product.shipping)">Shipping</v-btn> -->
       <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
       <v-btn>Submit for review</v-btn> -->
 
-      <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn -->
-      ><!-- Only visible on edit page -->
+      <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn> -->
+      <!-- Only visible on edit page -->
       <v-checkbox
         v-model="product.isPublic"
         label="Make product publically visable"
@@ -646,7 +647,7 @@ export default {
   components: { ManualOverride },
   data() {
     return {
-      blankArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      // blankArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       devMode: false,
       errors: [],
       showErrorsSnackbar: false,
@@ -789,11 +790,7 @@ export default {
       return this.$store.state.shippingOptions
     },
     categoryHasGenders() {
-      let returnThis = false
-      if (this.product.mainCategory.genders.length > 1) {
-        returnThis = true
-      }
-      return returnThis
+      return this.product.mainCategory.genders.length > 1 ? true : false
     },
     allShippingOptions() {
       const arr = []
@@ -835,25 +832,11 @@ export default {
       return arr
     },
     activePrice() {
-      if (this.product.on_sale) {
-        return this.product.sale_price
-      } else {
-        return this.product.base_price
-      }
+      return this.product.on_sale ? this.product.sale_price : this.product.base_price
     },
     productId() {
       const arr = this.$route.path.split('/')
       return arr[arr.length - 2]
-    },
-    compSizeCardHeight() {
-      if (
-        this.product.types.length > 3
-        // && viewport is less than xl
-      ) {
-        return 'height: 150px'
-      } else {
-        return ''
-      }
     },
     tableTypes() {
       const arr = []
@@ -970,9 +953,6 @@ export default {
       }
       this.product.sizes = arr
     },
-    log(v) {
-      console.log(v)
-    },
     multilined(string) {
       const split = string.split('\n')
       return split.join('<br />')
@@ -1035,8 +1015,6 @@ export default {
           ]
         }
       })
-      // console.log(this.product.types)
-      // console.log(this.product.sizes)
       this.$axios
         .post('products', {
           // user_id: this.product.user_id,
