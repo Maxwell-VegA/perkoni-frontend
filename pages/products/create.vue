@@ -613,17 +613,10 @@
     </v-row>
 
     <v-row>
-      <v-col offset-xl="1" cols="12">
-      <v-checkbox
-        v-model="product.isPublic"
-        label="Make product publically visable"
-      ></v-checkbox>
-      </v-col>
-      <v-col offset-xl="1">
       <!-- controlls -->
-      <!-- <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn> -->
-      <!-- <v-btn @click="devMode = !devMode">Dev Mode</v-btn> -->
-      <v-btn @click="storeProduct" color="primary">Create Product</v-btn>
+      <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn>
+      <v-btn @click="devMode = !devMode">Dev Mode</v-btn>
+      <v-btn @click="storeProduct">Create Product</v-btn>
       <!-- <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn> -->
       <!-- <v-btn @click="log(product.shipping)">Shipping</v-btn> -->
       <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
@@ -631,9 +624,12 @@
 
       <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn> -->
       <!-- Only visible on edit page -->
-              </v-col>
-      <!-- {{ product.targets }} -->
-      <!-- {{ errors }} -->
+      <v-checkbox
+        v-model="product.isPublic"
+        label="Make product publically visable"
+      ></v-checkbox>
+      {{ product.targets }}
+      {{ errors }}
     </v-row>
 
     <!-- <v-snackbar v-model="showErrorsSnackbar" timeout="-1"
@@ -836,9 +832,7 @@ export default {
       return arr
     },
     activePrice() {
-      return this.product.on_sale
-        ? this.product.sale_price
-        : this.product.base_price
+      return this.product.on_sale ? this.product.sale_price : this.product.base_price
     },
     productId() {
       const arr = this.$route.path.split('/')
@@ -1074,7 +1068,7 @@ export default {
           fileName: null,
           title: imageNameNoExt[0],
           description: '',
-          order: (index + 1) 
+          order: (index + 1) * 10
         })
         this.$axios
           .post('img', fd)
@@ -1240,6 +1234,7 @@ Add optional long description and shorten limits on the main description
 Perhaps after a product has been created the user should be asked where he would like to be redirected to - the product/id page of his new product or the product/id/edit page. If he closes out he simply gets back to a clean create product page.
 
 Non mvp: 
+  add the ability to make the pricing table manually editable
   add the ability to express the discounted price as a percentage of the total price (size and type multipliers included)
 
 Should it be possible to have products pre-approved?

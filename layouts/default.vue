@@ -96,14 +96,19 @@
               </v-list-item>
             </v-list>
           </v-menu>
-          <v-menu open-on-hover close-delay="100" offset-y>
+          <v-menu
+            v-if="$auth.loggedIn"
+            open-on-hover
+            close-delay="100"
+            offset-y
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn icon v-bind="attrs" v-on="on">
                 <v-icon size="30">mdi-account-circle-outline</v-icon>
-                <!-- <v-badge content="7"></v-badge> -->
+                <v-badge content="7"></v-badge>
               </v-btn>
             </template>
-            <v-list v-if="$auth.loggedIn" dense>
+            <v-list dense>
               <v-list-item>
                 <v-list-item-title>Zinas</v-list-item-title>
                 <!-- Notifications for new orders (vendors), publication requests (admins), updates on order progress (buyers) -->
@@ -126,17 +131,11 @@
                 <v-icon>mdi-exit-to-app</v-icon>
               </v-list-item>
             </v-list>
-            <v-list v-else>
-              <v-list-item to="/signin">
-                <v-list-item-title> Sign In</v-list-item-title>
-                <v-icon>mdi-login-variant</v-icon>
-              </v-list-item>
-              <v-list-item to="/register">
-                <v-list-item-title class="mr-8"> Register </v-list-item-title>
-                <v-icon>mdi-account-plus-outline</v-icon>
-              </v-list-item>
-            </v-list>
           </v-menu>
+          <div v-else class="float-right">
+            <v-btn to="/signin">Sign In</v-btn>
+            <v-btn to="/register">Register</v-btn>
+          </div>
         </div>
       </v-col>
     </v-app-bar>
@@ -267,12 +266,12 @@ export default {
 <style lang="sass">
 *
   // scroll-behavior: smooth
-
-// input::-webkit-outer-spin-button, input::-webkit-inner-spin-button
+  
+// input::-webkit-outer-spin-button, input::-webkit-inner-spin-button 
 //   -webkit-appearance: none
 //   margin: 0
 
-// input[type='number']
+// input[type='number'] 
 //   -moz-appearance: textfield
 
 

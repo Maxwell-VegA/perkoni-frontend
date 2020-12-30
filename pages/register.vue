@@ -1,40 +1,38 @@
 <template>
   <v-container>
-    <v-row justify="center">
-      <v-col cols="4">
-        <h1>Register</h1>
+    <h1>Register</h1>
 
-        <v-text-field
-          v-model="userInfo.username"
-          :rules="[
-            required('username'),
-            minLength('username', 3),
-            maxLength('username', 20),
-          ]"
-          validate-on-blur
-          label="Username"
-        ></v-text-field>
+    <v-text-field
+      v-model="userInfo.username"
+      :rules="[
+        required('username'),
+        minLength('username', 3),
+        maxLength('username', 20),
+      ]"
+      validate-on-blur
+      label="Username"
+    ></v-text-field>
 
-        <v-text-field
-          v-model="userInfo.email"
-          label="Email"
-          :rules="[required('email'), emailFormat()]"
-          validate-on-blur
-        />
+    <v-text-field
+      v-model="userInfo.email"
+      label="Email"
+      :rules="[required('email'), emailFormat()]"
+      validate-on-blur
+    />
 
-        <v-text-field
-          v-model="userInfo.password"
-          label="Password"
-          :type="showPassword ? 'text' : 'password'"
-          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-          counter="true"
-          :rules="[required('password'), minLength('password', 7)]"
-          validate-on-blur
-          @click:append="showPassword = !showPassword"
-          @keyup.enter="submit(userInfo)"
-        />
+    <v-text-field
+      v-model="userInfo.password"
+      label="Password"
+      :type="showPassword ? 'text' : 'password'"
+      :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+      counter="true"
+      :rules="[required('password'), minLength('password', 7)]"
+      validate-on-blur
+      @click:append="showPassword = !showPassword"
+      @keyup.enter="submit(userInfo)"
+    />
 
-        <!-- <v-text-field
+    <!-- <v-text-field
       v-model="confirmPassword"
       label="Confirm password"
       :type="showPassword2 ? 'text' : 'password'"
@@ -44,12 +42,10 @@
       @click:append="showPassword2 = !showPassword2"
     /> -->
 
-        <!-- <v-btn :disabled="!valid" @click="submitForm(userInfo)"> Register </v-btn> -->
-        <v-btn @click="submit(userInfo)"> Register </v-btn>
-        <!-- <v-btn color="success">Google</v-btn> -->
-        <!-- <v-btn color="primary">Facebook</v-btn> -->
-      </v-col>
-    </v-row>
+    <!-- <v-btn :disabled="!valid" @click="submitForm(userInfo)"> Register </v-btn> -->
+    <v-btn @click="submit(userInfo)"> Register </v-btn>
+    <v-btn color="success">Google</v-btn>
+    <v-btn color="primary">Facebook</v-btn>
   </v-container>
 </template>
 

@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col lg="9">
-        <v-col lg="12"> </v-col>
+        <v-col class="red" lg="12"> </v-col>
       </v-col>
       <v-col lg="3">
         <v-row no-gutters>

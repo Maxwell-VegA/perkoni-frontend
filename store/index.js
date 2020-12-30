@@ -228,7 +228,6 @@ export const actions = {
       res = await this.$axios(`products/${productId}`)
     } catch (err) {
       console.log(err.response.data)
-      // router push?
     }
     commit('SET_PRODUCT', res.data.data)
   },
