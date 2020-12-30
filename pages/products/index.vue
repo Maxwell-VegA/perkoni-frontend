@@ -51,7 +51,10 @@
                     class="mb-2"
                     nav
                   >
-                    <v-subheader :class="{ 'my-n2': !subcatExpanded }">
+                    <v-subheader
+                      style="transition: 0.15s"
+                      :class="{ 'my-n2': !subcatExpanded }"
+                    >
                       Subkategorija
                       <v-spacer></v-spacer>
                       <v-btn icon @click="subcatExpanded = !subcatExpanded">
@@ -79,7 +82,10 @@
                     v-show="categories[currentCategory].genders.length > 0"
                     nav
                   >
-                    <v-subheader :class="{ 'my-n2': !genderExpanded }">
+                    <v-subheader
+                      style="transition: 0.15s"
+                      :class="{ 'my-n2': !genderExpanded }"
+                    >
                       Modelis
                       <v-spacer></v-spacer>
                       <v-btn icon @click="genderExpanded = !genderExpanded">
