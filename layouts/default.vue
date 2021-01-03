@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 <template>
   <v-app>
     <vendor-nav />
@@ -70,17 +71,16 @@
                   >
                   </v-combobox>
                 </v-list-item-action>
-                <v-list-item-avatar
+                <!-- <v-list-item-avatar
                   class="py-0"
                   size="50"
                   style="border-radius: 0px !important"
                   right
                 >
-                  <v-img src="http://localhost:8000/notfound.jpg"></v-img>
-                </v-list-item-avatar>
+                  <v-img src="http://localhost:8000/notfound.gif"></v-img>
+                </v-list-item-avatar> -->
               </v-list-item>
               <v-divider></v-divider>
-              <!-- for item in cart echo them all here with some minor details, perhaps calculate a total price -->
               <!-- item quantity, price, total price, (on click go to product/id),  -->
               <v-list-item v-if="cart.length > 0">
                 <v-list-item-title>Norekinaties</v-list-item-title>

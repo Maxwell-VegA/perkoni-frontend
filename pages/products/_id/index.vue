@@ -7,7 +7,7 @@
       offset-lg="0"
       offset-xl="1"
     >
-      <h1 class="text-h4 text-sm-h3 text-md-h2 text-xl-h1 my-8">
+      <h1 class="text-h4 text-sm-h3 text-md-h2 my-8">
         {{ product.title }}
       </h1>
       <!-- <h3 class="font-weight-light">
@@ -39,7 +39,7 @@
                   <template #placeholder>
                     <v-img
                       aspect-ratio="1"
-                      src="http://127.0.0.1:8000/notfound.jpg"
+                      src="http://127.0.0.1:8000/notfound.gif"
                     >
                     </v-img>
                   </template>
@@ -82,7 +82,7 @@
                         <template #placeholder>
                           <v-img
                             aspect-ratio="1"
-                            src="http://127.0.0.1:8000/notfound.jpg"
+                            src="http://127.0.0.1:8000/notfound.gif"
                           >
                           </v-img>
                         </template>
@@ -257,7 +257,7 @@
                 :key="i"
                 class="primary mb-4"
               >
-                <v-card-title>
+                <v-card-title v-if="match.message">
                   {{ match.message }}
                 </v-card-title>
                 <!-- {{ targetMatch }} -->

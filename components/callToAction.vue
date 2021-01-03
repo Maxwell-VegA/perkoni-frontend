@@ -11,7 +11,7 @@
         cycle
         height="100%"
         hide-delimiter-background
-        interval="1113000"
+        interval="5000"
       >
         <v-carousel-item v-for="slide in slides" :key="slide.index">
           <v-img

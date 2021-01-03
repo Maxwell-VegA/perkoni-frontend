@@ -31,7 +31,7 @@
               <v-img
                 aspect-ratio="1"
                 gradient="#1e1e1e00 65%,  #1e1e1e"
-                src="http://127.0.0.1:8000/notfound.jpg"
+                src="http://127.0.0.1:8000/notfound.gif"
               >
               </v-img>
             </template>

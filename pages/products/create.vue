@@ -420,7 +420,7 @@
                       <template #placeholder>
                         <v-img
                           aspect-ratio="1"
-                          src="http://127.0.0.1:8000/notfound.jpg"
+                          src="http://127.0.0.1:8000/notfound.gif"
                         >
                         </v-img>
                       </template>
@@ -464,6 +464,7 @@
           </v-expansion-panels>
           <br />
         </div>
+        <!-- hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser" -->
         <v-file-input
           v-model="files"
           counter
@@ -471,7 +472,6 @@
           label="File input"
           multiple
           persistent-hint
-          hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser"
           placeholder="Pievieno produkta fotografijas"
           prepend-icon=""
           prepend-inner-icon="mdi-camera"
@@ -614,24 +614,24 @@
 
     <v-row>
       <v-col offset-xl="1" cols="12">
-      <v-checkbox
-        v-model="product.isPublic"
-        label="Make product publically visable"
-      ></v-checkbox>
+        <v-checkbox
+          v-model="product.isPublic"
+          label="Make product publically visable"
+        ></v-checkbox>
       </v-col>
       <v-col offset-xl="1">
-      <!-- controlls -->
-      <!-- <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn> -->
-      <!-- <v-btn @click="devMode = !devMode">Dev Mode</v-btn> -->
-      <v-btn @click="storeProduct" color="primary">Create Product</v-btn>
-      <!-- <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn> -->
-      <!-- <v-btn @click="log(product.shipping)">Shipping</v-btn> -->
-      <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
+        <!-- controlls -->
+        <!-- <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn> -->
+        <!-- <v-btn @click="devMode = !devMode">Dev Mode</v-btn> -->
+        <v-btn color="primary" @click="storeProduct">Create Product</v-btn>
+        <!-- <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn> -->
+        <!-- <v-btn @click="log(product.shipping)">Shipping</v-btn> -->
+        <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
       <v-btn>Submit for review</v-btn> -->
 
-      <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn> -->
-      <!-- Only visible on edit page -->
-              </v-col>
+        <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn> -->
+        <!-- Only visible on edit page -->
+      </v-col>
       <!-- {{ product.targets }} -->
       <!-- {{ errors }} -->
     </v-row>
@@ -651,7 +651,6 @@ export default {
   components: { ManualOverride },
   data() {
     return {
-      // blankArr: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       devMode: false,
       errors: [],
       showErrorsSnackbar: false,

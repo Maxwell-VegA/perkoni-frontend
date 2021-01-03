@@ -22,13 +22,29 @@
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="600px">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn @click="onNewItem()" color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
+            <v-btn
+              @click="onNewItem()"
+              color="primary"
+              dark
+              class="mb-2"
+              v-bind="attrs"
+              v-on="on"
+            >
               Jauns noteikums
             </v-btn>
           </template>
           <v-card>
             <v-card-title>
-              <span class="headline">{{ formTitle }} // {{ editedItem.gender.text + editedItem.size + editedItem.variation + editedItem.type.text + editedItem.subtype}}</span>
+              <!-- <span class="headline"
+                >{{ formTitle }} //
+                {{
+                  editedItem.gender.text +
+                  editedItem.size +
+                  editedItem.variation +
+                  editedItem.type.text +
+                  editedItem.subtype
+                }}</span
+              > -->
             </v-card-title>
 
             <v-card-text>
@@ -36,7 +52,10 @@
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-select
-                      :disabled="compGenders[1].text === 'genderUndefined' || compGenders.length < 3"
+                      :disabled="
+                        compGenders[1].text === 'genderUndefined' ||
+                        compGenders.length < 3
+                      "
                       v-model="editedItem.gender"
                       label="Dzimums"
                       :items="compGenders"
@@ -103,7 +122,7 @@
                       type="number"
                     ></v-text-field>
                   </v-col>
-                  {{ editedItem.overridePriceType }}
+                  <!-- {{ editedItem.overridePriceType }} -->
                 </v-row>
                 <v-row>
                   <v-col cols="12">
@@ -116,8 +135,8 @@
                       counter="144"
                     ></v-textarea>
                   </v-col>
-<!-- on/off, price: auto/custom, price as: multiplicative, addition, constant, message: none/custom, available: t/f, targeted item count (welcome to for loop hell), price -->
-<!-- See if you can get any modified prices displayed in the price table and highlighted (what about types and genders?). -->
+                  <!-- on/off, price: auto/custom, price as: multiplicative, addition, constant, message: none/custom, available: t/f, targeted item count (welcome to for loop hell), price -->
+                  <!-- See if you can get any modified prices displayed in the price table and highlighted (what about types and genders?). -->
                 </v-row>
               </v-container>
             </v-card-text>
@@ -140,7 +159,10 @@
       <span v-else> Visi </span>
     </template>
     <template v-slot:item.overridePriceType="{ item }">
-      <span>{{ overridePriceOptions.find(opt => opt.value == item.overridePriceType).text }}</span>
+      <span>{{
+        overridePriceOptions.find((opt) => opt.value == item.overridePriceType)
+          .text
+      }}</span>
     </template>
     <template v-slot:item.overridePrice="{ item }">
       <span v-if="item.overridePrice">{{ compPrice(item) }}&#8364;</span>
@@ -156,7 +178,7 @@
       <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
-        <span>Nav izveidoti noteikumi</span>
+      <span>Nav izveidoti noteikumi</span>
       <!-- <v-btn color="primary" @click="initialize"> Reset </v-btn> -->
     </template>
   </v-data-table>
@@ -166,43 +188,43 @@
 <script>
 export default {
   props: {
-      sizes: Array,
-      variations: Array,
-      types: Array,
-      varName: String,
-      typesName: String,
-      subtypesName: String,
+    sizes: Array,
+    variations: Array,
+    types: Array,
+    varName: String,
+    typesName: String,
+    subtypesName: String,
   },
   data: () => ({
     expanded: [],
     dialog: false,
     headers: [
-      { text: 'Dzimums',    value: 'gender'     },
-      { text: 'Izmers',     value: 'size'       },
-      { text: 'Variacija',  value: 'variation'  },
-      { text: 'Tips',       value: 'type',      },
-      { text: 'Subtips',    value: 'subtype'    },
-      { text: 'Aprekina metode', value: 'overridePriceType'},
-      { text: 'Cena',       value: 'overridePrice'},
-      { text: 'Pieejams',   value: 'available'  },
-      { text: 'Aktivs',     value: 'active'     },
-      { text: 'Rediget',    value: 'actions',   sortable: false},
+      { text: 'Dzimums', value: 'gender' },
+      { text: 'Izmers', value: 'size' },
+      { text: 'Variacija', value: 'variation' },
+      { text: 'Tips', value: 'type' },
+      { text: 'Subtips', value: 'subtype' },
+      { text: 'Aprekina metode', value: 'overridePriceType' },
+      { text: 'Cena', value: 'overridePrice' },
+      { text: 'Pieejams', value: 'available' },
+      { text: 'Aktivs', value: 'active' },
+      { text: 'Rediget', value: 'actions', sortable: false },
     ],
     targets: [],
     editedIndex: -1,
     editedItem: {
       index: 1,
-      gender: "Visi",
-      size: "Visi",
-      variation: "Visi",
-      type: "Visi",
-      subtype: "Visi",
+      gender: 'Visi',
+      size: 'Visi',
+      variation: 'Visi',
+      type: 'Visi',
+      subtype: 'Visi',
       active: true,
       available: true,
       overridePriceType: 'false',
       overridePrice: null,
       message: '',
-      key: null
+      key: null,
       //   normala, noteikt, pielikt, reizinat,
       //   false, set, add, multiply (multiply what exactly?)
       //   combination price
@@ -220,24 +242,24 @@ export default {
       overridePriceType: 'false',
       overridePrice: null,
       message: '',
-      key: null
+      key: null,
     },
     overridePriceOptions: [
       {
-          text: 'Automatiska',
-          value: 'false',
+        text: 'Automatiska',
+        value: 'false',
       },
       {
-          text: 'Noteikta',
-          value: 'set',
+        text: 'Noteikta',
+        value: 'set',
       },
       {
-          text: 'Saskaitita',
-          value: 'add',
+        text: 'Saskaitita',
+        value: 'add',
       },
       {
-          text: 'Reizinata',
-          value: 'multiply',
+        text: 'Reizinata',
+        value: 'multiply',
       },
     ],
   }),
@@ -247,62 +269,62 @@ export default {
       return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
     },
     compGenders() {
-        let arr = ["Visi"]
-        this.sizes.forEach(size => {
-            arr.push({
-                text: size.gender,
-                sizes: size.sizes
-            })
-        });
-        return arr
+      let arr = ['Visi']
+      this.sizes.forEach((size) => {
+        arr.push({
+          text: size.gender,
+          sizes: size.sizes,
+        })
+      })
+      return arr
     },
     compSizes() {
-        let arr = ["Visi"]
-        if (this.editedItem.gender === "Visi") {
-            this.sizes.forEach(gen => {
-                gen.sizes.forEach(size => {
-                    arr.push(size.sizeName)
-                })
-            })
-        } else if (this.editedItem.gender != '') {
-            this.editedItem.gender.sizes.forEach(size => {
-                arr.push(size.sizeName)
+      let arr = ['Visi']
+      if (this.editedItem.gender === 'Visi') {
+        this.sizes.forEach((gen) => {
+          gen.sizes.forEach((size) => {
+            arr.push(size.sizeName)
+          })
         })
-        }
-        return arr
+      } else if (this.editedItem.gender != '') {
+        this.editedItem.gender.sizes.forEach((size) => {
+          arr.push(size.sizeName)
+        })
+      }
+      return arr
     },
     compTypes() {
-        let arr = ["Visi"]
-        this.types.forEach(type => {
-            arr.push({
-                text: type.typeName,
-                subtypes: type.typeSecondary,
-            })
+      let arr = ['Visi']
+      this.types.forEach((type) => {
+        arr.push({
+          text: type.typeName,
+          subtypes: type.typeSecondary,
         })
-        return arr
+      })
+      return arr
     },
     compSubtypes() {
-        let arr = ["Visi"]
-        if (this.editedItem.type === "Visi") {
-            this.types.forEach(type => {
-                type.typeSecondary.forEach(subtype => {
-                    arr.push(subtype)
-                })
-            });
-        } else if (this.editedItem.type != 0) {
-            this.editedItem.type.subtypes.forEach(subtype => {
-                arr.push(subtype)
+      let arr = ['Visi']
+      if (this.editedItem.type === 'Visi') {
+        this.types.forEach((type) => {
+          type.typeSecondary.forEach((subtype) => {
+            arr.push(subtype)
+          })
         })
-        }
-        return arr
+      } else if (this.editedItem.type != 0) {
+        this.editedItem.type.subtypes.forEach((subtype) => {
+          arr.push(subtype)
+        })
+      }
+      return arr
     },
     compIndex() {
-        let lastIndex = 0
-        if (this.targets[this.targets.length - 1] != undefined) {
-            lastIndex = this.targets[this.targets.length - 1].index
-        }
-        return 1 + lastIndex
-    }
+      let lastIndex = 0
+      if (this.targets[this.targets.length - 1] != undefined) {
+        lastIndex = this.targets[this.targets.length - 1].index
+      }
+      return 1 + lastIndex
+    },
   },
 
   watch: {
@@ -310,62 +332,40 @@ export default {
       val || this.close()
     },
     targets() {
-        this.$emit('updateRules', this.targets)
-    }
+      this.$emit('updateRules', this.targets)
+    },
   },
-
-  created() {
-    this.initialize()
-  },
-
   methods: {
     compPrice(item) {
-        let orpt = item.overridePriceType
-        let returnThis
-        if (orpt === 'false') {
-            returnThis = ''
-        } else if (orpt === 'set') {
-            returnThis = item.overridePrice
-        } else if (orpt === 'add') {
-            returnThis = `+${item.overridePrice}`
-        } else if (orpt === 'multiply') {
-            returnThis = `*${item.overridePrice}`
-        } else {
-            returnThis = 'ELSE'
-        }
-        return returnThis
+      let orpt = item.overridePriceType
+      let returnThis
+      if (orpt === 'false') {
+        returnThis = ''
+      } else if (orpt === 'set') {
+        returnThis = item.overridePrice
+      } else if (orpt === 'add') {
+        returnThis = `+${item.overridePrice}`
+      } else if (orpt === 'multiply') {
+        returnThis = `*${item.overridePrice}`
+      } else {
+        returnThis = 'ELSE'
+      }
+      return returnThis
     },
-    initialize() {
-      this.targets = [
-        // {
-        //   gender: 'Frozen Yogurt',
-        //   size: 159,
-        //   variation: 6.0,
-        //   type: 24,
-        //   subtype: 4.0,
-        //   active: true,
-        //   available: true,
-        //   overridePriceType: 'false',
-        //   overridePrice: null,
-        //   message: '',
-        // },
-      ]
-    },
-
     onNewItem() {
       this.editedItem = {
-      index: this.compIndex,
-      gender: this.compGenders[0],
-      size: "Visi",
-      variation: "Visi",
-      type: this.compTypes[0],
-      subtype: "Visi",
-      active: true,
-      available: true,
-      overridePriceType: 'false',
-      overridePrice: null,
-      message: '',
-      key: null,
+        index: this.compIndex,
+        gender: this.compGenders[0],
+        size: 'Visi',
+        variation: 'Visi',
+        type: this.compTypes[0],
+        subtype: 'Visi',
+        active: true,
+        available: true,
+        overridePriceType: 'false',
+        overridePrice: null,
+        message: '',
+        key: null,
       }
     },
 
@@ -408,4 +408,3 @@ What about rules overriding each other?
 
  */
 </style>
-
