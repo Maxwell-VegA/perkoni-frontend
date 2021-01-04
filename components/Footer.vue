@@ -6,7 +6,7 @@
         <v-row no-gutters class="ml-lg-3">
           <v-col cols="12" sm="6" lg="3" style="display: grid">
             <nuxt-link class="accent--text my-1 text--lighten-4" to="/payments">
-              Piegade un apmaksa
+              Piegāde un apmaksa
             </nuxt-link>
             <nuxt-link class="accent--text my-1 text--lighten-4" to="/terms">
               Noteikumi

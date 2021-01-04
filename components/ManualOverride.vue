@@ -11,14 +11,12 @@
     sort-by="index"
     class="elevation-4"
   >
-    <!-- <template #item.data-table-expand></template> -->
     <template #expanded-item="{ headers, item }">
       <td :colspan="headers.length">{{ item.message }}</td>
     </template>
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>Manualie noteikumi:</v-toolbar-title>
-        <!-- <v-divider class="mx-4" inset vertical></v-divider> -->
+        <v-toolbar-title>Manuālie noteikumi:</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="600px">
           <template v-slot:activator="{ on, attrs }">
@@ -35,16 +33,6 @@
           </template>
           <v-card>
             <v-card-title>
-              <!-- <span class="headline"
-                >{{ formTitle }} //
-                {{
-                  editedItem.gender.text +
-                  editedItem.size +
-                  editedItem.variation +
-                  editedItem.type.text +
-                  editedItem.subtype
-                }}</span
-              > -->
             </v-card-title>
 
             <v-card-text>
@@ -67,7 +55,7 @@
                     <v-select
                       :disabled="compSizes.length < 3"
                       v-model="editedItem.size"
-                      label="Izmers"
+                      label="Izmērs"
                       :items="compSizes"
                     ></v-select>
                   </v-col>
@@ -108,7 +96,7 @@
                   <v-col cols="12" sm="6" md="6">
                     <v-select
                       v-model="editedItem.overridePriceType"
-                      label="Aprekina metode"
+                      label="Aprēķina metode"
                       :items="overridePriceOptions"
                     ></v-select>
                   </v-col>
@@ -122,29 +110,26 @@
                       type="number"
                     ></v-text-field>
                   </v-col>
-                  <!-- {{ editedItem.overridePriceType }} -->
                 </v-row>
                 <v-row>
                   <v-col cols="12">
                     <v-textarea
                       v-model="editedItem.message"
-                      label="Zina"
+                      label="Ziņa"
                       :items="compSubtypes"
                       no-resize
                       outlined
                       counter="144"
                     ></v-textarea>
                   </v-col>
-                  <!-- on/off, price: auto/custom, price as: multiplicative, addition, constant, message: none/custom, available: t/f, targeted item count (welcome to for loop hell), price -->
-                  <!-- See if you can get any modified prices displayed in the price table and highlighted (what about types and genders?). -->
                 </v-row>
               </v-container>
             </v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close"> Cancel </v-btn>
-              <v-btn color="blue darken-1" text @click="save"> Save </v-btn>
+              <v-btn color="blue darken-1" text @click="close"> Atcelt </v-btn>
+              <v-btn color="blue darken-1" text @click="save"> Saglabāt </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -179,7 +164,6 @@
     </template>
     <template v-slot:no-data>
       <span>Nav izveidoti noteikumi</span>
-      <!-- <v-btn color="primary" @click="initialize"> Reset </v-btn> -->
     </template>
   </v-data-table>
   <!-- </v-row> -->
@@ -200,15 +184,15 @@ export default {
     dialog: false,
     headers: [
       { text: 'Dzimums', value: 'gender' },
-      { text: 'Izmers', value: 'size' },
-      { text: 'Variacija', value: 'variation' },
+      { text: 'Izmērs', value: 'size' },
+      { text: 'Variācija', value: 'variation' },
       { text: 'Tips', value: 'type' },
       { text: 'Subtips', value: 'subtype' },
-      { text: 'Aprekina metode', value: 'overridePriceType' },
+      { text: 'Aprēķina metode', value: 'overridePriceType' },
       { text: 'Cena', value: 'overridePrice' },
       { text: 'Pieejams', value: 'available' },
-      { text: 'Aktivs', value: 'active' },
-      { text: 'Rediget', value: 'actions', sortable: false },
+      { text: 'Aktīvs', value: 'active' },
+      { text: 'Rediģēt', value: 'actions', sortable: false },
     ],
     targets: [],
     editedIndex: -1,
@@ -225,10 +209,6 @@ export default {
       overridePrice: null,
       message: '',
       key: null,
-      //   normala, noteikt, pielikt, reizinat,
-      //   false, set, add, multiply (multiply what exactly?)
-      //   combination price
-      //   targetted items
     },
     defaultItem: {
       index: 1,
@@ -246,7 +226,7 @@ export default {
     },
     overridePriceOptions: [
       {
-        text: 'Automatiska',
+        text: 'Automātiska',
         value: 'false',
       },
       {
@@ -254,11 +234,11 @@ export default {
         value: 'set',
       },
       {
-        text: 'Saskaitita',
+        text: 'Saskaītita',
         value: 'add',
       },
       {
-        text: 'Reizinata',
+        text: 'Reizināta',
         value: 'multiply',
       },
     ],
@@ -400,11 +380,3 @@ export default {
   },
 }
 </script>
-
-<style>
-/* 
-
-What about rules overriding each other?
-
- */
-</style>

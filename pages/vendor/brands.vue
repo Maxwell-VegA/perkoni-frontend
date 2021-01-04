@@ -270,13 +270,4 @@ export default {
 </script>
 
 <style>
-/* 
-
-hint: to change logo upload a new image otherwise the logo will remain unchanged
-
-Place rules on the input fields as well as limit the characters
-
-Warning: deleting a brand will also delete all products listed under this brand *list out the products* else *this brand has no products* / or maybe allow deleting only when a brand has no products 
-
- */
 </style>

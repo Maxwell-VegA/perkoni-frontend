@@ -13,10 +13,10 @@
         <v-row justify="center">
           <v-btn-toggle group tile>
             <v-btn to="/products">Veikals</v-btn>
-            <v-btn to="/brands">Razotaji</v-btn>
+            <v-btn to="/brands">Ražotaji</v-btn>
             <v-btn to="/contacts">Kontakti</v-btn>
             <v-btn @click="searchActive = !searchActive">
-              Meklesana
+              Meklēšana
               <v-icon>mdi-magnify</v-icon>
             </v-btn>
           </v-btn-toggle>
@@ -71,25 +71,16 @@
                   >
                   </v-combobox>
                 </v-list-item-action>
-                <!-- <v-list-item-avatar
-                  class="py-0"
-                  size="50"
-                  style="border-radius: 0px !important"
-                  right
-                >
-                  <v-img src="http://localhost:8000/notfound.gif"></v-img>
-                </v-list-item-avatar> -->
               </v-list-item>
               <v-divider></v-divider>
-              <!-- item quantity, price, total price, (on click go to product/id),  -->
               <v-list-item v-if="cart.length > 0">
-                <v-list-item-title>Norekinaties</v-list-item-title>
+                <v-list-item-title>Norēķināties</v-list-item-title>
                 <v-list-item-action>
                   <v-icon>mdi-cart-arrow-right</v-icon>
                 </v-list-item-action>
               </v-list-item>
               <v-list-item v-else>
-                <v-list-item-title>Grozs tuksh</v-list-item-title>
+                <v-list-item-title>Grozs tukš</v-list-item-title>
                 <v-list-item-action>
                   <v-icon>mdi-cart-remove</v-icon>
                 </v-list-item-action>
@@ -105,7 +96,7 @@
             </template>
             <v-list v-if="$auth.loggedIn" dense>
               <v-list-item>
-                <v-list-item-title>Zinas</v-list-item-title>
+                <v-list-item-title>Ziņas</v-list-item-title>
                 <!-- Notifications for new orders (vendors), publication requests (admins), updates on order progress (buyers) -->
                 <v-list-item-action>
                   <v-icon>mdi-android-messages</v-icon>
@@ -118,7 +109,7 @@
                 </v-list-item-action>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title> Saglabatie produkti</v-list-item-title>
+                <v-list-item-title> Saglabātie produkti</v-list-item-title>
                 <v-icon>mdi-bookmark-check-outline</v-icon>
               </v-list-item>
               <v-list-item @click="$auth.logout()">
@@ -160,7 +151,7 @@
                 ></v-text-field>
               </v-card-title>
               <!-- list of search results - image, name, price, category -->
-              <v-card-text> Dzemperis </v-card-text>
+              <v-card-text> Džemperis </v-card-text>
             </v-card>
           </v-overlay>
         </div>
@@ -188,7 +179,7 @@ export default {
   middleware: ['load-cart'],
   data() {
     return {
-      title: 'DEVINI X PERKONI',
+      title: 'DEVIŅI X PĒRKONI',
       searchActive: false,
       lsTest: false,
       update: false,
@@ -212,33 +203,6 @@ export default {
       } else {
         return []
       }
-    },
-    currentPathArray() {
-      const arr = this.$route.path.split('/')
-      const array = [
-        {
-          text: 'home',
-          exact: true,
-          to: '/',
-        },
-        {
-          text: arr[1],
-          exact: true,
-          to: '/' + arr[1],
-        },
-        {
-          text: arr[2],
-          exact: true,
-          to: '/' + arr[1] + '/' + arr[2],
-          // disabled: true,
-        },
-        {
-          text: arr[3],
-          exact: true,
-          to: '/' + arr[1] + '/' + arr[2] + '/' + arr[3],
-        },
-      ]
-      return array
     },
   },
   created() {},
@@ -266,15 +230,7 @@ export default {
 
 <style lang="sass">
 *
-  // scroll-behavior: smooth
-
-// input::-webkit-outer-spin-button, input::-webkit-inner-spin-button
-//   -webkit-appearance: none
-//   margin: 0
-
-// input[type='number']
-//   -moz-appearance: textfield
-
+  scroll-behavior: smooth
 
 .v-card__text, .v-card__title
   word-break: normal !important
@@ -329,8 +285,6 @@ a
   .text-input
     width: 100%
     margin-bottom: -1.5rem
-    // margin-top: .25rem
-    // margin-top: 2rem
 
   .unreadMsg
     background: linear-gradient(135deg, rgba(212, 32, 14, 0.31) 0%, rgba(212, 32, 14, 0.05) 110%)

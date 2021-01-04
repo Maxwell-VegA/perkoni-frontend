@@ -2,10 +2,10 @@
   <v-container>
     <h1>Sign in</h1>
     <user-auth-form button-text="Sign in" :submit-form="submit" />
-    <v-btn href="http://localhost:8000/api/auth/signin/google">Google</v-btn>
+    <!-- <v-btn href="http://localhost:8000/api/auth/signin/google">Google</v-btn>
     <v-btn href="http://localhost:8000/api/auth/signin/facebook">
       Facebook
-    </v-btn>
+    </v-btn> -->
   </v-container>
 </template>
 

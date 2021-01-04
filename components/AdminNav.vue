@@ -1,6 +1,7 @@
 <template>
-  <!-- v-if="$auth.loggedIn && $auth.user.is_admin" -->
-  <v-navigation-drawer :mini-variant="miniVariant" clipped fixed right app>
+  <v-navigation-drawer
+  v-if="$auth.loggedIn && $auth.user.is_admin"
+   :mini-variant="miniVariant" clipped fixed right app>
     <v-list>
       <v-list-item @click.stop="miniVariant = !miniVariant">
         <v-list-item-action icon>
@@ -48,11 +49,6 @@ export default {
           icon: 'mdi-view-dashboard-variant',
           title: 'Customize CTA',
           to: '/admin/customize/cta',
-        },
-        {
-          icon: 'mdi-view-dashboard-variant',
-          title: 'Customize CTA',
-          to: '/admin/chat',
         },
         // mdi-truck-outline - for shipping
         // mdi-badge-account-horizontal-outline - driver's license

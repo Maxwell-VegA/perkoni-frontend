@@ -10,9 +10,6 @@
       <h1 class="text-h4 text-sm-h3 text-md-h2 my-8">
         {{ product.title }}
       </h1>
-      <!-- <h3 class="font-weight-light">
-        {{ product.mainCategory }} / {{ product.subcategory }} /
-      </h3> -->
     </v-col>
     <div>
       <!-- Fullscreen carousel -->
@@ -112,7 +109,6 @@
                   xl="9"
                 >
                   <p>{{ product.description }}</p>
-                  <!-- <p> {{ selectedCombination }} </p> -->
                 </v-col>
 
                 <!-- Selects -->
@@ -125,8 +121,6 @@
                     label="Modelis"
                     @change="selectedSize = 0"
                   ></v-select>
-                  <!-- @change="productSizesArray = 0" -->
-                  <!-- should be if selectedSize on the new gender doesn't exist then it gets reset -->
 
                   <v-select
                     v-show="productSizesArray[0].text != 'singleSizeProduct'"
@@ -134,7 +128,7 @@
                     v-model="selectedSize"
                     class="my-n1"
                     :disabled="
-                      productSizesArray[0].text == 'Izvelies modeli' ||
+                      productSizesArray[0].text == 'Izvēlies modeli' ||
                       !productSizesArray[0].text
                     "
                     :items="productSizesArray"
@@ -241,10 +235,9 @@
                         style="margin-top: -2px"
                         class="py-5 ml-1"
                       >
-                        produkts ir groza
+                        produkts ir grozā
                         <v-icon>mdi-check-circle-outline</v-icon>
                       </v-btn>
-                      <!-- {{ quantity + '/' + setQuantity }} -->
                     </v-col>
                   </v-row>
                 </v-col>
@@ -313,8 +306,8 @@
                         </v-icon>
                       </v-btn>
                     </template>
-                    <span v-if="!bookmarked">Saglabat produktu</span>
-                    <span v-else>Saglabats!</span>
+                    <span v-if="!bookmarked">Saglabāt produktu</span>
+                    <span v-else>Saglabāts!</span>
                   </v-tooltip>
                   <v-tooltip right close-delay="500">
                     <template #activator="{ on, attrs }">
@@ -328,7 +321,7 @@
                         <v-icon large> mdi-share-outline </v-icon>
                       </v-btn>
                     </template>
-                    <span>Dalities</span>
+                    <span>Dalīties</span>
                   </v-tooltip>
                 </v-card-actions>
               </v-card>
@@ -345,7 +338,7 @@
               <!-- Brand -->
               <v-card class="mb-2">
                 <v-card-subtitle class="mb-n8" primary-title>
-                  Razotajs:
+                  Ražotājs:
                 </v-card-subtitle>
                 <v-card-title>
                   {{ product.brand_name }}
@@ -404,7 +397,7 @@
               <!-- Shipping -->
               <v-card>
                 <v-card-title>
-                  Piegades iespejas
+                  Piegādes iespējas
                   <v-spacer></v-spacer>
                   <v-btn
                     icon
@@ -605,7 +598,7 @@ export default {
         gender = 'ANY-1337'
       }
       if (
-        this.productSizesArray[this.selectedSize].text != 'Izvelies modeli' &&
+        this.productSizesArray[this.selectedSize].text != 'Izvēlies modeli' &&
         this.productSizesArray[this.selectedSize].text != null
       ) {
         size = this.productSizesArray[this.selectedSize].text
@@ -674,7 +667,7 @@ export default {
           })
         } else {
           arr.push({
-            text: 'Izvelies modeli',
+            text: 'Izvēlies modeli',
             price: 0,
             value: 0,
             weight: 0,
@@ -732,14 +725,6 @@ export default {
         ].typeSecondary[index]
       },
     },
-    // compShipping() {
-    //   let arr = this.product.shipping
-    //   if (this.productSizesArray[this.selectedSize].customShipping) {
-    //     console.log(this.productSizesArray)
-    //     arr = this.productSizesArray[this.selectedSize].shippingOptions
-    //   }
-    //   return arr
-    // },
     targetMatch() {
       const val = []
 
@@ -810,14 +795,6 @@ export default {
       return returnThis
     },
   },
-  watch: {
-    // update() {
-    //   this.$nuxt.$emit('refreshCart')
-    // }
-    // 'product': function() {
-    //   console.log(123)
-    // }
-  },
   mounted() {
     this.getRelated()
     this.lsTest = true
@@ -885,11 +862,6 @@ export default {
       }
 
       return val.toFixed(2)
-      // Under this setup a SET price can be altered by another later targetMatch.
-      // It can be added to or multiplied but most dangerously it can
-      // be set to something completly different.
-      // Two set prices should never be allowed to overlap
-      // The likeliest solution to this is some kind of checking and validation on /create
     },
     addToCart() {
       this.setQuantity = this.quantity
@@ -930,10 +902,6 @@ export default {
           key: this.selectedCombination,
         }
         localStorage.setItem('cart', JSON.stringify(current))
-        // this.$nuxt.$emit('refreshCart')
-        // basically watch the quantity and update cart on change
-        // when a product is added to cart some options for heading to checkout should pop up (perhaps only when the user is a guest)
-        // Might be I can use a snackbar here
       }
       this.update = !this.update
     },
@@ -988,24 +956,3 @@ export default {
   },
 }
 </script>
-<style>
-/* 
-
-need to set up the bookmarking mechanism as well as send out a snackbar saying product saved, unsaved or log in to save.
-
-MUST add some link for sharing
-
-Verify that product options have been chosen before the product is added to cart
-
-If product is already in cart get the quantity of it and change the btn to a success version. Will also need an update method for changing the quantity.
-
-Should add like a cool and gratifying animation for adding a product to the cart
-
-If there is a gender which has less than two sizes then do not display sizes at all. Or perhaps to simplify only display sizes after a gender has been selected.
-
-Make the item quantity combobox of the cart and the /id page numbers only and only positive numbers or zero to remove.
-
-If a product is not public and confirmed you shouldn't be able to add it to cart.
-
-*/
-</style>

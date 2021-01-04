@@ -34,20 +34,8 @@
           @keyup.enter="submit(userInfo)"
         />
 
-        <!-- <v-text-field
-      v-model="confirmPassword"
-      label="Confirm password"
-      :type="showPassword2 ? 'text' : 'password'"
-      :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
-      :rules="[required('password'), minLength('password', 7)]"
-      validate-on-blur
-      @click:append="showPassword2 = !showPassword2"
-    /> -->
-
         <!-- <v-btn :disabled="!valid" @click="submitForm(userInfo)"> Register </v-btn> -->
         <v-btn @click="submit(userInfo)"> Register </v-btn>
-        <!-- <v-btn color="success">Google</v-btn> -->
-        <!-- <v-btn color="primary">Facebook</v-btn> -->
       </v-col>
     </v-row>
   </v-container>
@@ -60,7 +48,6 @@ export default {
     return {
       valid: false,
       showPassword: false,
-      //   showPassword2: false,
       confirmPassword: '',
       userInfo: {
         password: '',
@@ -72,25 +59,13 @@ export default {
   },
   methods: {
     async submit(registrationInfo) {
-      this.$fire.auth
-        .createUserWithEmailAndPassword(
-          this.userInfo.email,
-          this.userInfo.password
-        )
-        .then((user) => {
-          console.log(user)
-        })
-        .catch((err) => {
-          console.error(err)
-        })
+      this.$axios
+        .post('auth/register', registrationInfo)
+        .catch((err) => console.log(err.message))
 
-      // this.$axios
-      //   .post('auth/register', registrationInfo)
-      //   .catch((err) => console.log(err.message))
-
-      // await this.$auth.loginWith('local', {
-      //   data: registrationInfo,
-      // })
+      await this.$auth.loginWith('local', {
+        data: registrationInfo,
+      })
 
       const local = JSON.parse(localStorage.getItem('cart'))
       if (local) {
@@ -114,7 +89,3 @@ export default {
   },
 }
 </script>
-
-<style>
-/* Add a confirm password field. Somehow need to check if email is unique and display the error if its not. As well as display the errors thrown by the laravel validation. */
-</style>

@@ -27,7 +27,6 @@ export default {
       messages: null,
     }
   },
-  computed: {},
 }
 </script>
 

@@ -14,10 +14,10 @@
           color="success"
           @click="setChatStatus(true)"
         >
-          Ieslegt Catu
+          Ieslegt Čatu
         </v-btn>
         <v-btn v-else color="error" @click="setChatStatus(false)">
-          Izslegt Catu
+          Izslegt Čatu
         </v-btn>
         <v-btn
           v-if="time != end_time && time != null && chatStatus"
@@ -25,17 +25,17 @@
           color="info"
           @click="setChatStatus(true)"
         >
-          Mainit Laiku
+          Mainīt Laiku
         </v-btn>
       </v-col>
       <v-col cols="12">
         <div>
-          <h3 class="mb-n6">Lidz izslegsanai:</h3>
+          <h3 class="mb-n6">Līdz izslēgšanai:</h3>
           <br />
           <h1 v-if="chatStatus">
             {{ timeLeft }}
           </h1>
-          <h1 v-else>--:--:--</h1>
+          <h1 v-else>--</h1>
         </div>
       </v-col>
     </v-row>
@@ -119,5 +119,3 @@ export default {
   },
 }
 </script>
-
-<style></style>

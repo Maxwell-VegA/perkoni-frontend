@@ -1,6 +1,7 @@
 <template>
-  <!-- v-if="$auth.loggedIn && $auth.user.is_vendor" -->
-  <v-navigation-drawer :mini-variant="miniVariant" clipped fixed app>
+  <v-navigation-drawer
+  v-if="$auth.loggedIn && $auth.user.is_vendor"
+   :mini-variant="miniVariant" clipped fixed app>
     <v-list>
       <v-list-item @click.stop="miniVariant = !miniVariant">
         <v-list-item-action icon>

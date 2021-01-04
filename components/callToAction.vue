@@ -47,19 +47,19 @@ export default {
         },
         {
           image: 'IMG_00.jpg',
-          text: 'Uzlimju redaktors',
+          text: 'Uzlīmju redaktors',
           light: false,
           index: 1,
         },
         {
           image: 'DSC_0244-Edit.jpg',
-          text: 'Lieldienu uzlimes',
+          text: 'Lieldienu uzlīmes',
           light: false,
           index: 2,
         },
         {
           image: 'DSC_0231.jpg',
-          text: 'Dzemperis "Latvija"',
+          text: 'Džemperis "Latvija"',
           light: true,
           index: 3,
         },
@@ -89,16 +89,6 @@ export default {
   .carousel-container {
     height: 30vh;
     min-height: auto;
-    .v-window__container {
-      .v-carousel__controls {
-        // button {
-        //   display: none !important;
-        //   visibility: hidden !important;
-        //   z-index: -100 !important;
-        //   background: red;
-        // }
-      }
-    }
   }
 }
 </style>

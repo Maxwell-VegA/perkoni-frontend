@@ -23,9 +23,6 @@
                     sizeGenders()
                 "
               ></v-select>
-              <!-- {{ product.gender }}
-            <br>
-            {{ product.sizes }} -->
             </v-col>
             <v-col md="6">
               <v-select
@@ -58,7 +55,7 @@
           ></v-textarea>
           <v-textarea
             v-model="product.longDescription"
-            label="Garais apraksts (opcionals)"
+            label="Garais apraksts (opcionāls)"
             validate-on-blur
             outlined
             rows="6"
@@ -84,7 +81,7 @@
             />
             <v-checkbox
               v-model="product.operatorIsMultiply"
-              label="Reizinat izmeru un tipu cenas"
+              label="Reizināt izmēru un tipu cenas"
             ></v-checkbox>
             <p v-if="devMode" class="text--disabled">
               product.operatorIsMultiply - {{ product.operatorIsMultiply }}
@@ -147,7 +144,7 @@
         class="px-8"
       >
         <v-checkbox
-          label=" Radit svara-specifiskas piegades iespejas "
+          label="Rādīt svara-specifiskās piegades iespējas "
           @click="showCustomShipping = !showCustomShipping"
         >
         </v-checkbox>
@@ -209,7 +206,7 @@
                       dense
                       multiple
                       :items="allShippingOptions"
-                      label="Piegade"
+                      label="Piegāde"
                     ></v-select>
                   </v-col>
                   <v-col
@@ -229,11 +226,11 @@
                     cols="8"
                   >
                     <v-text-field
-                      value="Noklusejuma"
+                      value="Noklusējuma"
                       disabled
                       outlined
                       dense
-                      label="Piegade"
+                      label="Piegāde"
                     ></v-text-field>
                   </v-col>
                   <v-col
@@ -274,7 +271,7 @@
             <v-text-field
               v-model="product.typesName"
               label="Selekcijas nosaukums"
-              placeholder="E.g. Uzlimes matreali, Fakturas, Modeli"
+              placeholder="E.g. Uzlīmes matereāli, Fakturas"
               max="20"
               min="3"
               clearable
@@ -285,7 +282,7 @@
             <v-text-field
               v-model="product.subtypesName"
               label="Subselekcijas nosaukums"
-              placeholder="E.g. Uzlimes krasas"
+              placeholder="E.g. Uzlīmes krāsas"
               max="20"
               min="3"
               clearable
@@ -365,7 +362,7 @@
           <v-col v-show="showVariations" md="3">
             <v-text-field
               v-model="product.variationsName"
-              placeholder="E.g. Krekla krasa, Uzraksts, Veidi"
+              placeholder="E.g. Krekla krāsa, Uzraksts, Veidi"
               label="Nosaukums"
               height="65"
               max="20"
@@ -377,7 +374,7 @@
           <v-spacer></v-spacer>
           <v-col md="3" xl="2">
             <v-checkbox
-              label="Papildus variacijas"
+              label="Papildus variācijas"
               @click="showVariations = !showVariations"
             ></v-checkbox>
           </v-col>
@@ -432,7 +429,7 @@
                         <v-text-field
                           v-model="image.title"
                           outlined
-                          label="Attela nosaukums"
+                          label="Attēla nosaukums"
                           autofocus
                           counter="50"
                         ></v-text-field>
@@ -441,7 +438,7 @@
                         <v-text-field
                           v-model="image.order"
                           type="number"
-                          label="Kartas nummurs"
+                          label="Kārtas nummurs"
                           filled
                           persistent-hint
                         ></v-text-field>
@@ -449,7 +446,7 @@
                       <v-col cols="12" md="12">
                         <v-textarea
                           v-model="image.description"
-                          label="Attela apraksts"
+                          label="Attēla apraksts"
                           counter="86"
                           dense
                           outlined
@@ -464,7 +461,6 @@
           </v-expansion-panels>
           <br />
         </div>
-        <!-- hint="All images will be displayed square // For some reason axios can't get an immage from the API if it has underscores in the name even though I can get the same image through the browser" -->
         <v-file-input
           v-model="files"
           counter
@@ -472,7 +468,7 @@
           label="File input"
           multiple
           persistent-hint
-          placeholder="Pievieno produkta fotografijas"
+          placeholder="Pievieno produkta fotogrāfijas"
           prepend-icon=""
           prepend-inner-icon="mdi-camera"
           :show-size="1000"
@@ -490,42 +486,10 @@
             </span>
           </template>
         </v-file-input>
-        <!-- @event - loading : while loading images display this dialog -->
-        <!-- <v-dialog
-          v-model="dialog"
-          hide-overlay
-          persistent
-          width="300"
-          >
-          <v-card
-            color="primary"
-            dark
-          >
-            <v-card-text>
-              Please stand by
-              <v-progress-linear
-                indeterminate
-                color="white"
-                class="mb-0"
-              ></v-progress-linear>
-            </v-card-text>
-        <v-combobox
-          v-model="product.taggs"
-          label="Produkta tagi"
-          clearable
-          chips
-          multiple
-          :items="taggs"
-          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Hit enter to separate"
-        >
-        </v-combobox>
-          </v-card>
-          </v-dialog> -->
         <p v-if="devMode" class="text--disabled">
           {{ selectedImages }}
         </p>
       </v-col>
-      <!-- I could use this fourth quarter to display a preview carousel showing how things are going to look on the product page -->
     </v-row>
 
     <v-row>
@@ -534,14 +498,14 @@
         <v-select
           v-model="product.brand_id"
           :items="compUserBrands"
-          label="razotajs"
+          label="Ražotājs"
           @change="getUserProducts"
         >
         </v-select>
         <v-select
           v-model="compRelatedProducts"
           v-bind="{ disabled: !product.brand_id }"
-          label="Lidzgie produkti"
+          label="Līdzīgie produkti"
           clearable
           deletable-chips
           chips
@@ -561,7 +525,6 @@
           deletable-chips
           hide-selected
           :items="taggs"
-          hint="Taggs will be used for... // Choose from existing taggs or enter your own // Comma or semicolon to separate"
         >
         </v-combobox>
 
@@ -583,13 +546,12 @@
           :items="locale.options"
           multiple
           chips
-          :label="'Iespejamie piegades veidi: ' + locale.locale"
+          :label="'Iespējamie piegādes veidi: ' + locale.locale"
         ></v-select>
         <v-spacer></v-spacer>
-        <!-- :disabled="product.shipping != 'Sanemt uz vietas'" -->
         <v-text-field
           v-model="product.address"
-          label="Adrese kur var sanemt produktu"
+          label="Adrese kur var saņemt produktu"
         ></v-text-field>
         {{ product.shipping.Latvija }}
       </v-col>
@@ -607,8 +569,6 @@
           :subtypes-name="product.subtypesName"
           @updateRules="updateOverrideRules($event)"
         ></manual-override>
-        <!-- will have to pass all five parameters -->
-        <!-- will have to pass the three parameter names -->
       </v-col>
     </v-row>
 
@@ -622,23 +582,15 @@
       <v-col offset-xl="1">
         <!-- controlls -->
         <!-- <v-btn to="/info#shipping"> Piegades cenu tabula </v-btn> -->
-        <!-- <v-btn @click="devMode = !devMode">Dev Mode</v-btn> -->
         <v-btn color="primary" @click="storeProduct">Create Product</v-btn>
         <!-- <v-btn @click="computeTargetsKeys(product.targets)">Keys</v-btn> -->
         <!-- <v-btn @click="log(product.shipping)">Shipping</v-btn> -->
         <!-- <v-btn v-if="$auth.user.is_admin">Mark as approved</v-btn>
       <v-btn>Submit for review</v-btn> -->
 
-        <!-- <v-btn v-bind="{ disabled: product.isPublic }">Mark for deletion</v-btn> -->
-        <!-- Only visible on edit page -->
       </v-col>
-      <!-- {{ product.targets }} -->
-      <!-- {{ errors }} -->
     </v-row>
 
-    <!-- <v-snackbar v-model="showErrorsSnackbar" timeout="-1"
-      >{{ errors }}hey</v-snackbar
-    > -->
   </div>
 </template>
 
@@ -646,12 +598,10 @@
 import ManualOverride from '~/components/ManualOverride'
 //
 
-/* eslint-disable */
 export default {
   components: { ManualOverride },
   data() {
     return {
-      devMode: false,
       errors: [],
       showErrorsSnackbar: false,
       userBrands: [],
@@ -661,6 +611,7 @@ export default {
       selectedGender: 0,
       showCustomShipping: false,
       showVariations: false,
+      devMode: false,
       product: {
         brand_id: 0,
         title: 'Hoodie "Latvia"',
@@ -694,17 +645,7 @@ export default {
         typesName: 'Matreali',
         subtypesName: 'Krasas',
         variations: [],
-        types: [
-          // { typeName: 'Basic', typePrice: 0, typeSecondary: [] },
-          // // { typeName: 'Cool', typePrice: 2, typeSecondary: [] },
-          // // { typeName: 'Extra Cool', typePrice: 3, typeSecondary: [] },
-          // {
-          //   typeName: 'Super Cool',
-          //   typePrice: 5,
-          //   typeSecondary: ['black', 'white', 'gray'],
-          // },
-          // { typeName: 'Ultra Awesome', typePrice: 10, typeSecondary: [] },
-        ],
+        types: [],
         sizes: [
           {
             gender: 'genderUndefined',
@@ -772,8 +713,6 @@ export default {
         }
       ],
       taggs: [
-        //   this should probably be a generated collection of the most popular taggs on the site instead of being a predefined collection
-        // Perhaps also try to include the user's previously used taggs for convenience
         'November',
         'Thunder',
         'Autumn',
@@ -876,20 +815,7 @@ export default {
           // this.shippingOptions.forEach((locale) => (locale.options.find(option => option.value === size.shippingOptions)))
           (shipping['price' + i] = size.customShipping)
       )
-
       arr.push(shipping)
-
-      // this.product.sizes[this.selectedGender].sizes.forEach(function (size, i) {
-      //   if (shipping['price' + i] === true) {
-      //     weight['price' + i] = size.weight
-      //   }
-      //   // else {
-      //   //   weight['price' + i] = product.weight
-      //   // }
-      // }
-      // )
-      // arr.push(weight)
-
       return arr
     },
     tableSizes() {
@@ -1206,7 +1132,6 @@ export default {
   }
 }
 
-/* eslint-disable */
 </script>
 
 <style lang="scss">
@@ -1216,40 +1141,5 @@ export default {
     z-index: -1000 !important;
   }
 }
-/* 
 
-Taggs will be used for - this should be explained in some hoverable info
-pannel. Each tag should have a tooltip showing how many products already exist using the tag.
-
-It will be possible to create a product have it approved and then edit it into a completely different product. Changes to products should be logged and displayed somewhere for the admin to see. 
-
-Confirm deleting the product by typing its name. Product will be deleted in 24 hours. If you want to prevent this you will still be able to access this page from your products dasboard. New changes will not be saved. Or maybe they should be changes (person tries to edit a product figures he should delete it then changes his mind but the changes haven't been saved). 
-
-Display loading progress when uploading images
-
-Related products
-
-Product shipping (Weight, Size, Available shipping options) Ability to set specific shipping options per size. use v-data-table - headers = sizes, rows = shipping options. Content = checkmarks. At the bottom there is a row to mark or unmark all checkmarks in a column. This table is selectable as complex shipping options. The default is simple shipping options which is simply auto setting the same shipping options for every size of the product.
-What about shipping quantities? 
-
-Product image order is assigned in the array by the number given in image.order. if this number however is outside the array an error will likely occur.
-
-Add optional long description and shorten limits on the main description
-
-Perhaps after a product has been created the user should be asked where he would like to be redirected to - the product/id page of his new product or the product/id/edit page. If he closes out he simply gets back to a clean create product page.
-
-Non mvp: 
-  add the ability to express the discounted price as a percentage of the total price (size and type multipliers included)
-
-Should it be possible to have products pre-approved?
-
-In the admin dashboard by default delete marked products will have to be manually removed by the admin however it should be possible to set an autodelete which will delete any products that have been marked for deletion but haven't been updated since then for a day.
-
-A product must have at least two sizes or none at all. Same for variations and types.
-
-Problem to be solved. Every time there is a change to the product genderthe sizes settings are completely reset. 
-
-Currently it is possible to set a price for a gender's size then leave that as the only size for that gender and so effectively get gender dependant prices. 
-
-*/
 </style>

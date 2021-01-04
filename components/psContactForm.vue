@@ -17,12 +17,12 @@
       <v-col class="" cols="12">
         <v-textarea
           outlined
-          label="Zina:"
+          label="Ziņa:"
           v-model="message"
         ></v-textarea>
       </v-col>
       <v-col class="mt-n2 d-flex justify-end" cols="12">
-        <v-btn class="accent" >Sutit</v-btn>
+        <v-btn class="accent" >Sūtit</v-btn>
       </v-col>
       <!-- {{ to }} -->
     </v-row>
